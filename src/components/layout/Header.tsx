@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -11,6 +11,7 @@ import { Menu as MenuIcon, ShoppingCart, User } from 'lucide-react';
 import Navigation from '@/components/layout/Navigation';
 import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { RouterWrapperContext } from '@/contexts';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
 import type { Menu, MenuGroup } from '@/types';
@@ -21,6 +22,7 @@ type HeaderProps = {
 
 const Header = ({ menuGroup }: HeaderProps) => {
   const { main, category } = menuGroup;
+  const { wrappedPush } = useContext(RouterWrapperContext);
   const queryClient = useQueryClient();
   const router = useRouter();
   const { setMenu } = useMenuStore();
@@ -49,7 +51,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
   };
 
   const moveToLoginPage = () => {
-    router.push('/login');
+    // router.push('/login');
+    wrappedPush('/login');
   };
 
   /**
@@ -73,7 +76,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
    * 장바구니 이동
    */
   const moveToCartPage = () => {
-    router.push('/cart');
+    wrappedPush('/cart');
   };
 
   const onClickMain = (menuId: string) => {
@@ -103,24 +106,55 @@ const Header = ({ menuGroup }: HeaderProps) => {
     });
   };
 
-  const handleScroll = () => {
-    setIsScrolled(window.scrollY > 0);
-  };
-
   /**
    * Menu 정보 Store 저장
    */
   useEffect(() => setMenu(menuGroup), [menuGroup]);
 
   /**
-   * 스크롤 위치에 따라 헤더 배경색 변경
+   * 스크롤 위치 감지 (IntersectionObserver 사용)
+   * 부모 스크롤 컨테이너(PageTransitionTemplate) 내부에서의 스크롤을 감지하기 위함
    */
   useEffect(() => {
-    // 초기 스크롤 위치 확인
-    handleScroll();
+    // sentinel 요소 생성 (스크롤 감지용 투명 1px 요소)
+    const sentinel = document.createElement('div');
+    sentinel.style.position = 'absolute';
+    sentinel.style.top = '0';
+    sentinel.style.left = '0';
+    sentinel.style.height = '1px';
+    sentinel.style.width = '1px';
+    sentinel.style.visibility = 'hidden';
+    sentinel.style.pointerEvents = 'none';
+    sentinel.id = 'header-scroll-sentinel';
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Header 컴포넌트(Sticky) 바로 위에 sentinel 삽입
+    // Header는 Sticky이므로 스크롤 시에도 화면 상단에 붙지만, sentinel은 스크롤과 함께 올라감
+    const headerElement = document.querySelector('header');
+    if (headerElement && headerElement.parentElement) {
+      // 이미 존재하는지 확인
+      const existingSentinel = document.getElementById('header-scroll-sentinel');
+      if (!existingSentinel) {
+        headerElement.parentElement.insertBefore(sentinel, headerElement);
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // sentinel이 화면(viewport 또는 root) 상단 밖으로 나가면(isIntersecting === false) 스크롤 된 것
+        // sentinel이 화면에 보이면(isIntersecting === true) 최상단
+        setIsScrolled(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      if (document.body.contains(sentinel)) {
+        sentinel.remove();
+      }
+    };
   }, []);
 
   return (
@@ -155,7 +189,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
                   alt="gwana_logo"
                   width={180}
                   height={100}
-                  onClick={() => router.push('/')}
+                  onClick={() => wrappedPush('/')}
                   className="w-[180px] h-auto"
                   priority
                 />
