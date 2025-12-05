@@ -62,14 +62,14 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
     <>
       {/* 오버레이 */}
       <div
-        className={`fixed inset-0 bg-gray-800 bg-opacity-5 z-45 transition-opacity duration-600 ${
+        className={`fixed inset-0 bg-gray-800 bg-opacity-5 z-[70] transition-opacity duration-600 ${
           isMenuOpen ? 'opacity-30 visible' : 'opacity-0 invisible'
         }`}
       />
 
       {/* 사이드바 메뉴 */}
       <div
-        className={`fixed top-0 left-0 h-full w-[90%] bg-white z-50 transform transition-transform duration-600 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-[90%] bg-white z-[80] transform transition-transform duration-600 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } shadow-2xl flex flex-col`}
       >
