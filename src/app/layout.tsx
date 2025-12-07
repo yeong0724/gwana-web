@@ -8,8 +8,6 @@ import localFont from 'next/font/local';
 
 import GlobalAlert from '@/components/common/GlobalAlert';
 import GlobalLoading from '@/components/common/GlobalLoading';
-import PageTransitionTemplate from '@/components/common/PageTransitionTemplate';
-import { RouterWrapper } from '@/components/common/RouterWrapper';
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
 
@@ -32,11 +30,9 @@ const pretendard = localFont({
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={pretendard.variable}>
-      <body className="min-h-screen flex flex-col overflow-x-hidden">
+      <body className="min-h-screen flex flex-col">
         <ReactQueryProvider>
-          <RouterWrapper>
-            <PageTransitionTemplate>{children}</PageTransitionTemplate>
-          </RouterWrapper>
+          {children}
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           <GlobalAlert />
           <Toaster />

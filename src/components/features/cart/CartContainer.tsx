@@ -1,20 +1,21 @@
 'use client';
 
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { cloneDeep, filter, first, isEmpty, map, reject, size, some, sumBy } from 'lodash-es';
 import { ChevronLeft, Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { RouterWrapperContext } from '@/contexts';
 import { localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
 import { Cart } from '@/types';
 
 const CartContainer = () => {
-  const { wrappedBack } = useContext(RouterWrapperContext);
+  const router = useRouter();
+
   const { cart: cartStore, setCart: setCartStore, _hasHydrated } = useCartStore();
   const { isLogin } = useLoginStore();
   const { useDeleteCartListMutation, useGetCartListQuery, useUpdateCartQuantityMutation } =
@@ -43,7 +44,7 @@ const CartContainer = () => {
   const isNoSelect = useMemo(() => !some(cart, { checked: true }), [cart]);
 
   const moveToBackpage = () => {
-    wrappedBack();
+    router.back();
   };
 
   const onCheckboxHandler = (checked: boolean, index: number) => {

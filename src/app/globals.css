@@ -48,16 +48,6 @@
   background: #d1d5db;
 }
 
-/* styles/transitions.css */
-.cached-page {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
-
 @theme inline {
   --font-family-pretendard:
     var(--font-pretendard), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -187,8 +177,6 @@
       'Droid Sans',
       'Helvetica Neue',
       sans-serif;
-    /* 모바일 앱처럼 각 페이지별 스크롤을 사용하기 위해 body 스크롤 방지 */
-    overflow: hidden;
   }
   button {
     @apply transition-all active:scale-[0.95];

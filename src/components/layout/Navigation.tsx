@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { concat, filter, isEmpty } from 'lodash-es';
 import { ChevronDown, User, X } from 'lucide-react';
 
-import { RouterWrapperContext } from '@/contexts';
 import { useLoginStore } from '@/stores';
 import { MenuGroup } from '@/types';
 
@@ -16,7 +16,7 @@ type Props = {
 
 const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Props) => {
   const { main, category } = menuGroup;
-  const { wrappedPush } = useContext(RouterWrapperContext);
+  const router = useRouter();
   const { isLogin } = useLoginStore();
   const [currentMenu, setCurrentMenu] = useState<string>('');
 
@@ -36,8 +36,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
 
   const onClickCategory = (categoryId: string) => {
     if (currentMenu === 'product') {
-      // router.push(`/${currentMenu}?category=${categoryId}`);
-      wrappedPush(`/${currentMenu}?category=${categoryId}`);
+      router.push(`/${currentMenu}?category=${categoryId}`);
       closeSidebar();
     }
   };
