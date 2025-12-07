@@ -1,17 +1,16 @@
 'use client';
 
-import React, { useContext } from 'react';
+import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { X } from 'lucide-react';
 
-import { RouterWrapperContext } from '@/contexts';
-
 const LoginContainer = () => {
-  const { wrappedBack } = useContext(RouterWrapperContext);
+  const router = useRouter();
 
   const moveToBackpage = () => {
-    wrappedBack();
+    router.back();
   };
 
   const onKakaoLogin = async () => {

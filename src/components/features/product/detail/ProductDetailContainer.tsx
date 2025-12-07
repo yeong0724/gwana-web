@@ -7,7 +7,6 @@ import ProductDetailSkeleton from '@components/features/product/detail/ProductDe
 import { useQueryClient } from '@tanstack/react-query';
 import { clone, find, findIndex } from 'lodash-es';
 import { ChevronDown, ChevronUp, Share2 } from 'lucide-react';
-import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
 import { productMockData } from '@/api/mock';
@@ -61,9 +60,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
   // 모바일 하단 패널 토글 상태
   const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(false);
 
-  // Portal을 위한 클라이언트 마운트 상태
-  const [mounted, setMounted] = useState(false);
-
   // const { data: productDetailData, isFetching } = useProductDetailQuery(
   //   { productId },
   //   { enabled: !!productId }
@@ -80,11 +76,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
     const data = find(productMockData, { productId }) ?? initial;
     setProduct(data);
   }, [productId]);
-
-  // 클라이언트 마운트 확인 (Portal 사용을 위해)
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!api) return;
@@ -355,107 +346,104 @@ const ProductDetailContainer = ({ productId }: Props) => {
         </div>
       )}
 
-      {/* 모바일 하단 고정 버튼 영역 - Portal로 body에 직접 렌더링 (transform 영향 회피) */}
-      {!isFetching &&
-        mounted &&
-        createPortal(
-          <div className="fixed bottom-0 left-0 right-0 z-[100] lg:hidden">
-            {/* 상단 곡선 테두리 + 탭 버튼 */}
-            <div className="relative">
-              {/* SVG 곡선 상단 */}
-              <svg
-                className="absolute bottom-full left-0 w-full h-6"
-                viewBox="0 0 400 24"
-                preserveAspectRatio="none"
+      {/* 모바일 하단 고정 버튼 영역 */}
+      {!isFetching && (
+        <div className="fixed bottom-0 left-0 right-0 z-[100] lg:hidden">
+          {/* 상단 곡선 테두리 + 탭 버튼 */}
+          <div className="relative">
+            {/* SVG 곡선 상단 */}
+            <svg
+              className="absolute bottom-full left-0 w-full h-6"
+              viewBox="0 0 400 24"
+              preserveAspectRatio="none"
+              fill="none"
+            >
+              <path
+                d="M0 24 L0 24 L160 24 Q175 24 180 12 Q185 0 200 0 Q215 0 220 12 Q225 24 240 24 L400 24 L400 24"
+                fill="white"
+              />
+              <path
+                d="M0 24 L160 24 Q175 24 180 12 Q185 0 200 0 Q215 0 220 12 Q225 24 240 24 L400 24"
+                stroke="#e5e7eb"
+                strokeWidth="1"
                 fill="none"
-              >
-                <path
-                  d="M0 24 L0 24 L160 24 Q175 24 180 12 Q185 0 200 0 Q215 0 220 12 Q225 24 240 24 L400 24 L400 24"
-                  fill="white"
-                />
-                <path
-                  d="M0 24 L160 24 Q175 24 180 12 Q185 0 200 0 Q215 0 220 12 Q225 24 240 24 L400 24"
-                  stroke="#e5e7eb"
-                  strokeWidth="1"
-                  fill="none"
-                />
-              </svg>
-              {/* 탭 버튼 (클릭 영역) */}
-              <button
-                onClick={() => setIsBottomPanelOpen(!isBottomPanelOpen)}
-                className="absolute bottom-full left-1/2 -translate-x-1/2 w-20 h-6 flex items-center justify-center"
-              >
-                {isBottomPanelOpen ? (
-                  <ChevronDown size={18} className="text-gray-400" />
-                ) : (
-                  <ChevronUp size={18} className="text-gray-400" />
-                )}
-              </button>
-            </div>
+              />
+            </svg>
+            {/* 탭 버튼 (클릭 영역) */}
+            <button
+              onClick={() => setIsBottomPanelOpen(!isBottomPanelOpen)}
+              className="absolute bottom-full left-1/2 -translate-x-1/2 w-20 h-6 flex items-center justify-center"
+            >
+              {isBottomPanelOpen ? (
+                <ChevronDown size={18} className="text-gray-400" />
+              ) : (
+                <ChevronUp size={18} className="text-gray-400" />
+              )}
+            </button>
+          </div>
 
-            {/* 메인 패널 */}
-            <div className="bg-white">
-              {/* 확장 패널: 구매수량 + 상품금액 합계 */}
-              <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  isBottomPanelOpen ? 'max-h-60' : 'max-h-0'
-                }`}
-              >
-                <div className="px-4 py-4 space-y-4 bg-white">
-                  {/* 구매수량 */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">구매수량</span>
-                    <div className="flex items-center">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setQuantity((prev) => prev - 1)}
-                        disabled={quantity <= 1}
-                        className="h-9 w-9 rounded-none border-r-0 cursor-pointer text-base bg-white"
-                      >
-                        -
-                      </Button>
-                      <div className="w-16 text-center h-9 rounded-none border border-gray-300 text-sm bg-white flex items-center justify-center select-none">
-                        {quantity}
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setQuantity((prev) => prev + 1)}
-                        className="h-9 w-9 rounded-none border-l-0 cursor-pointer text-base"
-                      >
-                        +
-                      </Button>
+          {/* 메인 패널 */}
+          <div className="bg-white">
+            {/* 확장 패널: 구매수량 + 상품금액 합계 */}
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                isBottomPanelOpen ? 'max-h-60' : 'max-h-0'
+              }`}
+            >
+              <div className="px-4 py-4 space-y-4 bg-white">
+                {/* 구매수량 */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">구매수량</span>
+                  <div className="flex items-center">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setQuantity((prev) => prev - 1)}
+                      disabled={quantity <= 1}
+                      className="h-9 w-9 rounded-none border-r-0 cursor-pointer text-base bg-white"
+                    >
+                      -
+                    </Button>
+                    <div className="w-16 text-center h-9 rounded-none border border-gray-300 text-sm bg-white flex items-center justify-center select-none">
+                      {quantity}
                     </div>
-                  </div>
-
-                  {/* 상품금액 합계 */}
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-sm font-medium text-gray-700">상품 금액 합계</span>
-                    <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setQuantity((prev) => prev + 1)}
+                      className="h-9 w-9 rounded-none border-l-0 cursor-pointer text-base"
+                    >
+                      +
+                    </Button>
                   </div>
                 </div>
-              </div>
 
-              {/* 버튼 */}
-              <div className="flex">
-                <Button
-                  onClick={handleAddToCart}
-                  className="flex-[0_0_35%] h-14 text-base bg-black text-white hover:bg-gray-800 rounded-none cursor-pointer"
-                >
-                  장바구니
-                </Button>
-                <Button
-                  onClick={handlePurchase}
-                  className="flex-[0_0_65%] h-14 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none cursor-pointer"
-                >
-                  구매하기
-                </Button>
+                {/* 상품금액 합계 */}
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <span className="text-sm font-medium text-gray-700">상품 금액 합계</span>
+                  <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
+                </div>
               </div>
             </div>
-          </div>,
-          document.body
-        )}
+
+            {/* 버튼 */}
+            <div className="flex">
+              <Button
+                onClick={handleAddToCart}
+                className="flex-[0_0_35%] h-14 text-base bg-black text-white hover:bg-gray-800 rounded-none cursor-pointer"
+              >
+                장바구니
+              </Button>
+              <Button
+                onClick={handlePurchase}
+                className="flex-[0_0_65%] h-14 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none cursor-pointer"
+              >
+                구매하기
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <CartGuideModal
         cartGuideModalOpen={cartGuideModalOpen}
         setCartGuideModalOpen={setCartGuideModalOpen}

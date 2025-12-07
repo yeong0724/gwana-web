@@ -43,10 +43,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
   };
 
   return (
-    <div
-      className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-shadow"
-      onClick={() => onClickProduct(product.productId)}
-    >
+    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
       {/* 이미지 슬라이더 영역 */}
       <div
         className="relative w-full bg-gray-100 group overflow-hidden"
@@ -98,7 +95,10 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
       </div>
 
       {/* 상품 정보 */}
-      <div className="p-4 space-y-2 cursor-pointer">
+      <div
+        className="p-4 space-y-2 cursor-pointer"
+        onClick={() => onClickProduct(product.productId)}
+      >
         <h3 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
           {product.productName}
         </h3>
