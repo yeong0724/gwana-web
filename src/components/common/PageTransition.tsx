@@ -34,7 +34,7 @@ function PageTransition({ children }: PageTransitionProps) {
         initial="initial"
         animate="animate"
         exit="exit"
-        transition={{ stiffness: 300, duration: 0.4 }}
+        transition={{ duration: 0.4 }}
         onAnimationComplete={resetAnimation}
         className="w-full"
       >

@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { concat, filter, find } from 'lodash-es';
 
@@ -10,14 +10,12 @@ import ProductSkeleton from '@/components/features/product/ProductSkeleton';
 import { useDragScroll } from '@/hooks/useDragScroll';
 import { useMenuStore } from '@/stores';
 
-type Props = {
-  categoryId: string;
-};
-
-const ProductContainer = ({ categoryId }: Props) => {
+const ProductContainer = () => {
   // 드래그 스크롤 훅들
   const categoryTabScroll = useDragScroll();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get('category') ?? 'all';
   const router = useRouter();
 
   const {

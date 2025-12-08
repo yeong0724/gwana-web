@@ -1,13 +1,7 @@
 import ProductContainer from '@/components/features/product/ProductContainer';
 
-type PageProps = {
-  searchParams: Promise<{ category: string }>;
-};
-
-const Page = async ({ searchParams }: PageProps) => {
-  const { category } = await searchParams;
-
-  return <ProductContainer categoryId={category} />;
+const Page = () => {
+  return <ProductContainer />;
 };
 
 export default Page;
