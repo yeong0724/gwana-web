@@ -8,7 +8,6 @@ import localFont from 'next/font/local';
 
 import GlobalAlert from '@/components/common/GlobalAlert';
 import GlobalLoading from '@/components/common/GlobalLoading';
-import PageTransition from '@/components/common/PageTransition';
 import { RouterWrapper } from '@/components/common/RouterWrapper';
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';

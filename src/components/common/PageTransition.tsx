@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,27 +14,31 @@ interface PageTransitionProps {
 
 function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
-  const { direction, isBrowserNavigation } = useContext(RouterWrapperContext);
+  const { direction, shouldAnimate, resetAnimation } = useContext(RouterWrapperContext);
   const isMobile = useIsMobile();
 
+  // const variants = {
+  //   initial: {
+  //     x: direction === 'forward' ? '100vw' : '-100vw',
+  //   },
+  //   animate: {
+  //     x: 0,
+  //   },
+  //   exit: {
+  //     x: direction === 'forward' ? '-100vw' : '100vw',
+  //   },
+  // };
+
+  const shouldApplyAnimation = isMobile && shouldAnimate;
+
   const variants = {
-    initial: {
-      x: direction === 'forward' ? '100vw' : '-100vw',
-    },
-    animate: {
-      x: 0,
-    },
-    exit: {
-      x: direction === 'forward' ? '-100vw' : '100vw',
-    },
+    initial: shouldApplyAnimation ? { x: direction === 'forward' ? '100vw' : '-100vw' } : { x: 0 },
+    animate: { x: 0 },
+    exit: shouldApplyAnimation ? { x: direction === 'forward' ? '-100vw' : '100vw' } : { x: 0 },
   };
 
-  if (!isMobile || isBrowserNavigation) {
-    return <>{children}</>;
-  }
-
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="popLayout">
       <motion.div
         key={pathname}
         variants={variants}
@@ -42,20 +46,9 @@ function PageTransition({ children }: PageTransitionProps) {
         animate="animate"
         exit="exit"
         transition={{ type: 'spring', stiffness: 300, damping: 30, duration: 0.3 }}
+        onAnimationComplete={resetAnimation}
       >
         {children}
-      </motion.div>
-
-      <motion.div
-        key="cached-page"
-        className="cached-page"
-        initial={{ x: 0 }}
-        animate={{
-          x: direction === 'forward' ? '-100vw' : '100vw',
-        }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
-        Cached Page Content
       </motion.div>
     </AnimatePresence>
   );

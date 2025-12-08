@@ -1,4 +1,3 @@
-import PageTransition from '@/components/common/PageTransition';
 import ProductContainer from '@/components/features/product/ProductContainer';
 
 type PageProps = {
@@ -8,11 +7,7 @@ type PageProps = {
 const Page = async ({ searchParams }: PageProps) => {
   const { category } = await searchParams;
 
-  return (
-    <PageTransition>
-      <ProductContainer categoryId={category} />
-    </PageTransition>
-  );
+  return <ProductContainer categoryId={category} />;
 };
 
 export default Page;

@@ -51,7 +51,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
   };
 
   const moveToLoginPage = () => {
-    router.push('/login');
+    wrappedPush('/login');
   };
 
   /**

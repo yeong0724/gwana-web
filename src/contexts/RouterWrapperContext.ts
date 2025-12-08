@@ -7,7 +7,8 @@ interface RouterWrapperContextType {
   setDirection: (direction: Direction) => void;
   wrappedPush: (url: string) => void;
   wrappedBack: () => void;
-  isBrowserNavigation: boolean;
+  shouldAnimate: boolean;
+  resetAnimation: () => void;
 }
 
 export const RouterWrapperContext = createContext<RouterWrapperContextType>({
@@ -15,5 +16,6 @@ export const RouterWrapperContext = createContext<RouterWrapperContextType>({
   setDirection: () => {},
   wrappedPush: () => {},
   wrappedBack: () => {},
-  isBrowserNavigation: false,
+  shouldAnimate: false,
+  resetAnimation: () => {},
 });
