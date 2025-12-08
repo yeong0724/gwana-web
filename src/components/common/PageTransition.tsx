@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+import FrozenRouter from '@/components/common/FrozenRouter';
 import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -17,38 +18,27 @@ function PageTransition({ children }: PageTransitionProps) {
   const { direction, shouldAnimate, resetAnimation } = useContext(RouterWrapperContext);
   const isMobile = useIsMobile();
 
-  // const variants = {
-  //   initial: {
-  //     x: direction === 'forward' ? '100vw' : '-100vw',
-  //   },
-  //   animate: {
-  //     x: 0,
-  //   },
-  //   exit: {
-  //     x: direction === 'forward' ? '-100vw' : '100vw',
-  //   },
-  // };
-
   const shouldApplyAnimation = isMobile && shouldAnimate;
 
   const variants = {
-    initial: shouldApplyAnimation ? { x: direction === 'forward' ? '100vw' : '-100vw' } : { x: 0 },
+    initial: shouldApplyAnimation ? { x: direction === 'forward' ? '100%' : '-100%' } : { x: 0 },
     animate: { x: 0 },
-    exit: shouldApplyAnimation ? { x: direction === 'forward' ? '-100vw' : '100vw' } : { x: 0 },
+    exit: shouldApplyAnimation ? { x: direction === 'forward' ? '-100%' : '100%' } : { x: 0 },
   };
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence mode="popLayout" initial={false}>
       <motion.div
         key={pathname}
         variants={variants}
         initial="initial"
         animate="animate"
         exit="exit"
-        transition={{ type: 'spring', stiffness: 300, damping: 30, duration: 0.3 }}
+        transition={{ stiffness: 300, duration: 0.4 }}
         onAnimationComplete={resetAnimation}
+        className="w-full"
       >
-        {children}
+        <FrozenRouter>{children}</FrozenRouter>
       </motion.div>
     </AnimatePresence>
   );

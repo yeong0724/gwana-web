@@ -51,6 +51,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
   };
 
   const moveToLoginPage = () => {
+    toggleMenu();
     wrappedPush('/login');
   };
 

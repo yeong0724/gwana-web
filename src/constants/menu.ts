@@ -1,7 +1,3 @@
-import PageTransition from '@/components/common/PageTransition';
-import MainContainer from '@/components/features/MainContainer';
-import Footer from '@/components/layout/Footer';
-import Header from '@/components/layout/Header';
 import { MenuGroup } from '@/types';
 
 export const menuGroup: MenuGroup = {
@@ -45,23 +41,3 @@ export const menuGroup: MenuGroup = {
     },
   ],
 };
-
-type RootLayoutProps = Readonly<{
-  children: React.ReactNode;
-}>;
-
-const Layout = ({ children }: RootLayoutProps) => {
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Header menuGroup={menuGroup} />
-      <main className="flex-1 min-h-[1800px]">
-        <PageTransition>
-          <MainContainer>{children}</MainContainer>
-        </PageTransition>
-      </main>
-      <Footer />
-    </div>
-  );
-};
-
-export default Layout;

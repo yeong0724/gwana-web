@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
+import { some, startsWith } from 'lodash-es';
 import { twMerge } from 'tailwind-merge';
 
 import { cartActions } from '@/stores/useCartStore';
@@ -76,6 +77,10 @@ const delayAsync = (delay: number = 1000): Promise<number> => {
   });
 };
 
+const withHeaderAndFooterPage = (pathname: string) => {
+  return !some(['/cart', '/login'], (path) => startsWith(pathname, path));
+};
+
 export {
   allClearPersistStore,
   getRegexpByType,
@@ -84,4 +89,5 @@ export {
   validateToken,
   decodeToken,
   delayAsync,
+  withHeaderAndFooterPage,
 };

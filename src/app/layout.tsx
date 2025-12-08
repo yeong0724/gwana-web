@@ -9,6 +9,7 @@ import localFont from 'next/font/local';
 import GlobalAlert from '@/components/common/GlobalAlert';
 import GlobalLoading from '@/components/common/GlobalLoading';
 import { RouterWrapper } from '@/components/common/RouterWrapper';
+import RootPageTransition from '@/components/layout/RootPageTransition';
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
 
@@ -34,7 +35,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <html lang="en" className={pretendard.variable}>
         <body className="min-h-screen flex flex-col">
           <ReactQueryProvider>
-            {children}
+            <RootPageTransition>{children}</RootPageTransition>
             {/* <ReactQueryDevtools initialIsOpen={false} /> */}
             <GlobalAlert />
             <Toaster />
