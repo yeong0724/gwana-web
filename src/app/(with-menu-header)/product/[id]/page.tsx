@@ -9,9 +9,7 @@ const Page = async ({ params }: PageProps) => {
   const { id } = await params;
 
   return (
-    <PageTransition>
-      <ProductDetailContainer productId={id} />
-    </PageTransition>
+     <ProductDetailContainer productId={id} />
   );
 };
 
