@@ -34,7 +34,7 @@ function PageTransition({ children }: PageTransitionProps) {
   }
 
   return (
-    <AnimatePresence mode="sync">
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
         variants={variants}
