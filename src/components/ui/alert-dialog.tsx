@@ -5,8 +5,7 @@ import * as React from 'react';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 
 import { buttonVariants } from '@/components/ui/button';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import { cn, getIsMobile } from '@/lib/utils';
 
 function AlertDialog({
   ...props
@@ -46,7 +45,7 @@ function AlertDialogContent({
   className,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
-  const isMobile = useIsMobile();
+  const isMobile = getIsMobile();
 
   return (
     <AlertDialogPortal>

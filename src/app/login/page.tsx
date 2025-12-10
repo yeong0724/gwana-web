@@ -1,7 +1,13 @@
+import CustomHeader from '@/components/common/CustomHeader';
 import LoginContainer from '@/components/features/login/LoginContainer';
 
 const page = () => {
-  return <LoginContainer />;
+  return (
+    <div className="h-screen bg-gray-50 flex flex-col relative overflow-hidden">
+      <CustomHeader title="로그인" />
+      <LoginContainer />
+    </div>
+  );
 };
 
 export default page;

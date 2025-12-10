@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 
 import PageTransition from '@/components/common/PageTransition';
@@ -10,11 +10,11 @@ import Header from '@/components/layout/Header';
 import { menuGroup } from '@/constants/menu';
 import { cn, withHeaderAndFooterPage } from '@/lib/utils';
 
-interface RootPageTransitionProps {
-  children: React.ReactNode;
+interface Props {
+  children: ReactNode;
 }
 
-export default function RootPageTransition({ children }: RootPageTransitionProps) {
+export default function RootPageTransition({ children }: Props) {
   const pathname = usePathname();
   const isMainGroup = withHeaderAndFooterPage(pathname);
 

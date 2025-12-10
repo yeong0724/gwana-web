@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 
 import ProductDetailSkeleton from '@components/features/product/detail/ProductDetailSkeleton';
 import { useQueryClient } from '@tanstack/react-query';
 import { clone, find, findIndex } from 'lodash-es';
-import { ChevronDown, ChevronUp, Share2 } from 'lucide-react';
+import { ChevronDown, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { productMockData } from '@/api/mock';
@@ -20,6 +20,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
+import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useProductService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
@@ -42,6 +43,7 @@ type Props = {
 
 const ProductDetailContainer = ({ productId }: Props) => {
   const queryClient = useQueryClient();
+  const { wrappedPush } = useContext(RouterWrapperContext);
   const { isLogin } = useLoginStore();
   const { setCart, addCart, cart } = useCartStore();
   const { useProductDetailQuery } = useProductService();
@@ -89,18 +91,21 @@ const ProductDetailContainer = ({ productId }: Props) => {
     [product.price, quantity, product.shippingPrice]
   );
 
+  const moveToLoginPage = () => {
+    wrappedPush('/login');
+  };
+
   const handlePurchase = () => {
-    // TODO: 구매하기 로직 구현
-    setPurchaseGuideModalOpen(true);
+    if (isLogin) {
+      wrappedPush('/payment');
+    } else {
+      setPurchaseGuideModalOpen(true);
+    }
   };
 
   const handleShare = () => {
     // TODO: 공유하기 로직 구현
     console.log('공유하기', { productId });
-  };
-
-  const handleDotClick = (index: number) => {
-    api?.scrollTo(index);
   };
 
   /**
@@ -147,6 +152,24 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }
   };
 
+  const onPurchaseMobileHandler = () => {
+    if (isBottomPanelOpen) {
+      handlePurchase();
+      return;
+    }
+
+    setIsBottomPanelOpen(true);
+  };
+
+  const onCartMobileHandler = () => {
+    if (!isBottomPanelOpen) {
+      setIsBottomPanelOpen(true);
+      return;
+    }
+
+    handleAddToCart();
+  };
+
   const handleSuccessToast = () => {
     toast.success('상품이 장바구니에 추가되었습니다', {
       description: '장바구니 페이지에서 확인하세요',
@@ -165,7 +188,14 @@ const ProductDetailContainer = ({ productId }: Props) => {
             <div className="flex-1 lg:flex-[0_0_50%] px-6 lg:px-0">
               {product?.images && product.images.length > 0 ? (
                 <div className="w-full group">
-                  <Carousel className="w-full" setApi={setApi}>
+                  <Carousel
+                    className="w-full"
+                    setApi={setApi}
+                    opts={{
+                      align: 'start',
+                      loop: product.images.length > 1,
+                    }}
+                  >
                     <CarouselContent>
                       {product.images.map((image, index) => (
                         <CarouselItem key={index}>
@@ -189,20 +219,17 @@ const ProductDetailContainer = ({ productId }: Props) => {
                       </>
                     )}
                   </Carousel>
-                  {/* 도트 네비게이션 */}
+                  {/* 페이지 인디케이터 - 프로그레스 바 스타일 */}
                   {product.images.length > 1 && (
-                    <div className="flex justify-center gap-2 mt-4">
-                      {product.images.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleDotClick(index)}
-                          className={`
-                          w-2 h-2 rounded-full transition-all duration-300
-                          ${current === index ? 'bg-black w-6' : 'bg-gray-300'}
-                        `}
-                          aria-label={`이미지 ${index + 1}로 이동`}
+                    <div className="flex justify-center mt-4">
+                      <div className="w-1/3 relative h-1 bg-gray-200 overflow-hidden">
+                        <div
+                          className="absolute left-0 h-full bg-black/80 transition-all duration-300 ease-out"
+                          style={{
+                            width: `${((current + 1) / product.images.length) * 100}%`,
+                          }}
                         />
-                      ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -349,41 +376,19 @@ const ProductDetailContainer = ({ productId }: Props) => {
       {/* 모바일 하단 고정 버튼 영역 */}
       {!isFetching && (
         <div className="fixed bottom-0 left-0 right-0 z-[100] lg:hidden">
-          {/* 상단 곡선 테두리 + 탭 버튼 */}
-          <div className="relative">
-            {/* SVG 곡선 상단 */}
-            <svg
-              className="absolute bottom-full left-0 w-full h-6"
-              viewBox="0 0 400 24"
-              preserveAspectRatio="none"
-              fill="none"
-            >
-              <path
-                d="M0 24 L0 24 L160 24 Q175 24 180 12 Q185 0 200 0 Q215 0 220 12 Q225 24 240 24 L400 24 L400 24"
-                fill="white"
-              />
-              <path
-                d="M0 24 L160 24 Q175 24 180 12 Q185 0 200 0 Q215 0 220 12 Q225 24 240 24 L400 24"
-                stroke="#e5e7eb"
-                strokeWidth="1"
-                fill="none"
-              />
-            </svg>
-            {/* 탭 버튼 (클릭 영역) */}
-            <button
-              onClick={() => setIsBottomPanelOpen(!isBottomPanelOpen)}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 w-20 h-6 flex items-center justify-center"
-            >
-              {isBottomPanelOpen ? (
-                <ChevronDown size={18} className="text-gray-400" />
-              ) : (
-                <ChevronUp size={18} className="text-gray-400" />
-              )}
-            </button>
-          </div>
-
           {/* 메인 패널 */}
-          <div className="bg-white">
+          <div
+            className={`bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] ${isBottomPanelOpen ? 'rounded-t-2xl' : ''}`}
+          >
+            {/* 닫기 버튼 - 열린 상태에서만 표시 */}
+            {isBottomPanelOpen && (
+              <button
+                onClick={() => setIsBottomPanelOpen(false)}
+                className="w-full flex items-center justify-center"
+              >
+                <ChevronDown size={24} className="text-gray-400" />
+              </button>
+            )}
             {/* 확장 패널: 구매수량 + 상품금액 합계 */}
             <div
               className={`overflow-hidden transition-all duration-300 ease-in-out ${
@@ -429,13 +434,13 @@ const ProductDetailContainer = ({ productId }: Props) => {
             {/* 버튼 */}
             <div className="flex">
               <Button
-                onClick={handleAddToCart}
+                onClick={onCartMobileHandler}
                 className="flex-[0_0_35%] h-14 text-base bg-black text-white hover:bg-gray-800 rounded-none cursor-pointer"
               >
                 장바구니
               </Button>
               <Button
-                onClick={handlePurchase}
+                onClick={onPurchaseMobileHandler}
                 className="flex-[0_0_65%] h-14 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none cursor-pointer"
               >
                 구매하기
@@ -451,6 +456,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
       <PurchaseGuideModal
         modalOpen={purchaseGuideModalOpen}
         setModalOpen={setPurchaseGuideModalOpen}
+        moveToLoginPage={moveToLoginPage}
       />
     </>
   );

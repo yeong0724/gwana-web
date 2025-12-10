@@ -4,19 +4,21 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 
 import { cloneDeep, filter, first, isEmpty, map, reject, size, some, sumBy } from 'lodash-es';
-import { ChevronLeft, Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
+import { Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
-import { useCartStore, useLoginStore } from '@/stores';
+import { useCartStore, useLoginStore, useOrderItemStore } from '@/stores';
 import { Cart } from '@/types';
 
 const CartContainer = () => {
-  const { wrappedBack } = useContext(RouterWrapperContext);
+  const { wrappedPush } = useContext(RouterWrapperContext);
   const { cart: cartStore, setCart: setCartStore, _hasHydrated } = useCartStore();
   const { isLogin } = useLoginStore();
+  const { setOrderItems } = useOrderItemStore();
+
   const { useDeleteCartListMutation, useGetCartListQuery, useUpdateCartQuantityMutation } =
     useCartService();
 
@@ -41,10 +43,6 @@ const CartContainer = () => {
   );
 
   const isNoSelect = useMemo(() => !some(cart, { checked: true }), [cart]);
-
-  const moveToBackpage = () => {
-    wrappedBack();
-  };
 
   const onCheckboxHandler = (checked: boolean, index: number) => {
     const cloneCart = cloneDeep(cart);
@@ -95,6 +93,11 @@ const CartContainer = () => {
     setCart(cloneCart);
   };
 
+  const moveToOrderPage = () => {
+    setOrderItems(filter(cart, { checked: true }));
+    wrappedPush('/payment');
+  };
+
   useEffect(() => {
     if (!_hasHydrated) return;
     const list = isLogin ? (cartListData?.data ?? []) : cartStore;
@@ -102,20 +105,7 @@ const CartContainer = () => {
   }, [cartListData, isLogin, _hasHydrated]);
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col relative overflow-hidden">
-      {/* 헤더 */}
-      <header className="relative flex items-center justify-center p-3 sm:p-4 border-b border-gray-200 w-full flex-shrink-0 bg-white">
-        <button
-          className="absolute left-3 sm:left-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
-          onClick={moveToBackpage}
-        >
-          <ChevronLeft size={20} className="text-gray-700 sm:w-6 sm:h-6" />
-        </button>
-        <h1 className="text-[17px] sm:text-[18px] md:text-[20px] font-semibold text-gray-900">
-          장바구니
-        </h1>
-      </header>
-
+    <>
       {/* 메인 컨텐츠 */}
       <div className="flex flex-col w-full max-w-[500px] mx-auto flex-1 border-x border-gray-100 overflow-hidden">
         {/* 전체선택 헤더 - 고정 영역 */}
@@ -278,6 +268,7 @@ const CartContainer = () => {
           <button
             disabled={isNoSelect}
             className="w-full bg-teal-600 text-white hover:bg-teal-700 rounded-full py-3 sm:py-4 flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300"
+            onClick={moveToOrderPage}
           >
             <span className="text-[15px] sm:text-[16px] md:text-[17px] font-semibold">
               {isNoSelect
@@ -288,7 +279,7 @@ const CartContainer = () => {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

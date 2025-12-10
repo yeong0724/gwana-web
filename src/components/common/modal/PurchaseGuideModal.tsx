@@ -10,11 +10,17 @@ import {
 type Props = {
   modalOpen: boolean;
   setModalOpen: (open: boolean) => void;
+  moveToLoginPage: () => void;
 };
 
-const PurchaseGuideModal = ({ modalOpen, setModalOpen }: Props) => {
+const PurchaseGuideModal = ({ modalOpen, setModalOpen, moveToLoginPage }: Props) => {
   const onClose = () => {
     setModalOpen(false);
+  };
+
+  const onLogin = () => {
+    moveToLoginPage();
+    onClose();
   };
 
   return (
@@ -33,7 +39,7 @@ const PurchaseGuideModal = ({ modalOpen, setModalOpen }: Props) => {
           <Button variant="outline" onClick={onClose} className="flex-1 cursor-pointer">
             취소
           </Button>
-          <Button onClick={onClose} variant="default" className="flex-1 cursor-pointer">
+          <Button onClick={onLogin} variant="default" className="flex-1 cursor-pointer">
             로그인
           </Button>
         </DialogFooter>

@@ -10,29 +10,28 @@ import {
 } from 'react-hook-form';
 
 import { getRegexpByType } from '@/lib/utils';
-import type {
-  FormatEnum,
-  HandleChange,
-  ReactHookFormEventType,
-} from '@/types/type';
+import type { FormatEnum, HandleChange, ReactHookFormEventType } from '@/types/type';
 
 const ControllerInput = <T extends FieldValues>({
   required = false,
   name,
   className = '',
+  wrapperClassName = '',
   placeholder = '',
   type = '',
   callbackFn = null,
+  readOnly = false,
+  disabled = false,
 }: {
   required?: boolean;
   name: FieldPath<T>;
   className?: string;
+  wrapperClassName?: string;
   placeholder?: string;
   type?: FormatEnum;
-  callbackFn?: HandleChange<
-    HTMLInputElement,
-    FieldPathValue<T, FieldPath<T>>
-  > | null;
+  readOnly?: boolean;
+  disabled?: boolean;
+  callbackFn?: HandleChange<HTMLInputElement, FieldPathValue<T, FieldPath<T>>> | null;
 }) => {
   const { setValue, control, clearErrors } = useFormContext<T>();
 
@@ -51,9 +50,7 @@ const ControllerInput = <T extends FieldValues>({
     return REG_EXP ? value.replace(REG_EXP, '') : value;
   };
 
-  const onChangeHandler = (
-    event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>
-  ) => {
+  const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
     const value = onFilterValue(event);
 
     if (callbackFn) {
@@ -74,7 +71,7 @@ const ControllerInput = <T extends FieldValues>({
   };
 
   return (
-    <>
+    <div className={wrapperClassName}>
       <input
         name={name}
         placeholder={placeholder}
@@ -82,11 +79,13 @@ const ControllerInput = <T extends FieldValues>({
         onChange={onChangeHandler}
         onFocus={handleFocus}
         className={`${className} ${error?.message ? 'border-red-500' : ''}`}
+        readOnly={readOnly}
+        disabled={disabled}
       />
       {error?.message && (
-        <div className="text-red-500 p-1 text-sm">{error.message}</div>
+        <div className="text-red-500 pt-1 pl-2 text-[12px] sm:text-[8px]">{error.message}</div>
       )}
-    </>
+    </div>
   );
 };
 

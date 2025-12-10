@@ -1,19 +1,9 @@
 'use client';
 
-import React, { useContext } from 'react';
+import React from 'react';
 import Image from 'next/image';
 
-import { ChevronLeft } from 'lucide-react';
-
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
-
 const LoginContainer = () => {
-  const { wrappedBack } = useContext(RouterWrapperContext);
-
-  const moveToBackpage = () => {
-    wrappedBack();
-  };
-
   const onKakaoLogin = async () => {
     // window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao`;
     console.log('카카오 로그인');
@@ -30,20 +20,9 @@ const LoginContainer = () => {
   };
 
   return (
-    <div className="h-screen bg-white flex flex-col relative overflow-hidden">
-      {/* 헤더 */}
-      <header className="relative flex items-center justify-center p-4 border-b border-gray-200 w-full flex-shrink-0">
-        <h1 className="text-[20px] font-bold text-gray-900">로그인</h1>
-        <button
-          className="absolute left-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
-          onClick={moveToBackpage}
-        >
-          <ChevronLeft size={20} className="text-gray-700 sm:w-6 sm:h-6" />
-        </button>
-      </header>
-
+    <>
       {/* 메인 컨텐츠 */}
-      <div className="flex flex-col items-center px-6 w-full max-w-[500px] mx-auto flex-1 overflow-hidden">
+      <div className="flex bg-white flex-col items-center px-6 w-full max-w-[500px] mx-auto flex-1 overflow-hidden border-x border-gray-100">
         {/* 로고 */}
         <div className="mt-8 sm:mt-12 md:mt-16 flex-shrink-0">
           <Image
@@ -114,7 +93,7 @@ const LoginContainer = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

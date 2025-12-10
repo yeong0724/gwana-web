@@ -13,7 +13,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
-import { cn } from '@/lib/utils';
 import { Product } from '@/types';
 
 type ProductCardProps = {
@@ -78,20 +77,17 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
             </>
           )}
 
-          {/* 페이지 인디케이터 */}
+          {/* 페이지 인디케이터 - 프로그레스 바 스타일 */}
           {images.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 pointer-events-none">
-              {images.map((_, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    'h-2 rounded-full transition-all pointer-events-auto',
-                    current === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
-                  )}
-                  onClick={() => api?.scrollTo(index)}
-                  aria-label={`이미지 ${index + 1}로 이동`}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-1/3">
+              <div className="relative h-1 bg-white/30 overflow-hidden">
+                <div
+                  className="absolute left-0 h-full bg-black/80 transition-all duration-300 ease-out"
+                  style={{
+                    width: `${((current + 1) / images.length) * 100}%`,
+                  }}
                 />
-              ))}
+              </div>
             </div>
           )}
         </Carousel>

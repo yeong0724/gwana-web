@@ -78,7 +78,13 @@ const delayAsync = (delay: number = 1000): Promise<number> => {
 };
 
 const withHeaderAndFooterPage = (pathname: string) => {
-  return !some(['/cart', '/login'], (path) => startsWith(pathname, path));
+  return !some(['/cart', '/login', '/payment'], (path) => startsWith(pathname, path));
+};
+
+const getIsMobile = () => {
+  const userAgent = navigator.userAgent;
+  const isMobile = /mobile/i.test(userAgent);
+  return isMobile;
 };
 
 export {
@@ -90,4 +96,5 @@ export {
   decodeToken,
   delayAsync,
   withHeaderAndFooterPage,
+  getIsMobile,
 };
