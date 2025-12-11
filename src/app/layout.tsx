@@ -33,7 +33,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <RouterWrapper>
       <html lang="en" className={pretendard.variable}>
-        <body className="min-h-screen flex flex-col">
+        <body className="min-h-dvh flex flex-col">
           <ReactQueryProvider>
             <RootPageTransition>{children}</RootPageTransition>
             {/* <ReactQueryDevtools initialIsOpen={false} /> */}
