@@ -1,13 +1,13 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { menuGroup } from '@/constants';
 import { cn, withHeaderAndFooterPage } from '@/lib/utils';
-import { TransitionsProvider, TransitionWrapper } from '@/providers/TransitionProvider';
+import { TransitionsContext, TransitionWrapper } from '@/providers/TransitionProvider';
 
 interface Props {
   children: ReactNode;

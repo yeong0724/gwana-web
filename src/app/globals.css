@@ -417,7 +417,7 @@ html.slide-backward .navigation-overlay {
   view-transition-name: page-header;
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 110;
   width: 100%;
 }
 
@@ -427,22 +427,18 @@ html.slide-backward .navigation-overlay {
 
 /* View Transition 컨테이너 설정 */
 @supports (view-transition-name: none) {
-  /* root를 다시 활성화하여 스크롤 튀는 현상 방지 */
-  :root {
-    view-transition-name: root;
+  /* root 애니메이션 최적화 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* 헤더와 푸터는 애니메이션 제외 (제자리에 고정) */
   ::view-transition-group(page-header),
   ::view-transition-group(page-footer) {
     animation: none;
-    z-index: 10;
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.5s;
-    animation-timing-function: ease-in-out;
+    z-index: 110;
   }
 
   /* 앞으로 이동 (Next) - 왼쪽으로 슬라이드 */
@@ -461,14 +457,6 @@ html.slide-backward .navigation-overlay {
 
   .slide-backward::view-transition-new(root) {
     animation-name: vt-slide-right-in;
-  }
-
-  /* PC (lg 이상) - 더 짧은 duration */
-  @media (min-width: 1024px) {
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.3s;
-    }
   }
 }
 
