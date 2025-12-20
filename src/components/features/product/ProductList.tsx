@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { filter, map } from 'lodash-es';
 
@@ -16,7 +15,6 @@ type Props = {
 };
 
 const ProductList = ({ categoryId }: Props) => {
-  const router = useRouter();
   const transitions = usePageTransitions();
   const { useProductListQuery } = useProductService();
   const [productList, setProductList] = useState<Array<Product>>([]);
@@ -42,9 +40,8 @@ const ProductList = ({ categoryId }: Props) => {
   }, [categoryId]);
 
   const onClickProduct = (productId: string) => {
-    transitions.hide(FlowType.Next).then(() => {
-      router.push(`/product/${productId}`);
-    });
+    // View Transitions API로 동시 슬라이드 전환
+    transitions.navigateWithTransition(`/product/${productId}`, FlowType.Next);
   };
 
   return (
