@@ -10,11 +10,17 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-const Page = () => {
+type PageProps = {
+  searchParams: Promise<{ sessionId?: string }>;
+};
+
+const Page = async ({ searchParams }: PageProps) => {
+  const { sessionId = '' } = await searchParams;
+
   return (
     <div className="h-screen bg-gray-50 flex flex-col relative overflow-hidden">
       <CustomHeader title="주문/결제" />
-      <PaymentContainer />
+      <PaymentContainer sessionId={sessionId} />
     </div>
   );
 };

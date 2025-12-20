@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { first, isEmpty } from 'lodash-es';
@@ -37,13 +37,14 @@ type PaymentForm = {
 const inputClassName =
   'w-full px-4 py-2 bg-white rounded-lg border border-gray-200 text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500';
 
-const PaymentContainer = () => {
+type Props = {
+  sessionId: string;
+};
+
+const PaymentContainer = ({ sessionId }: Props) => {
   const isMobile = getIsMobile();
   const router = useRouter();
   const { showConfirmAlert } = useAlertStore();
-
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get('sessionId') ?? '';
 
   const { useGetPaymentSessionQuery } = useCartService();
 
