@@ -13,3 +13,8 @@ export enum DeliveryRequestEnum {
   NONE = 'NONE',
   CUSTOM_INPUT = 'CUSTOM_INPUT',
 }
+
+export enum FlowType {
+  Previous = 'previous',
+  Next = 'next',
+}

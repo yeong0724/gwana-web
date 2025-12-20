@@ -201,16 +201,6 @@
   animation: shimmer 2s infinite;
 }
 
-/* styles/transitions.css */
-.cached-page {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
-
 /* 스크롤바 숨김 클래스 */
 .scrollbar-hide {
   /* Firefox */
@@ -291,4 +281,115 @@
 
 [data-sonner-toast][data-type='info'] [data-title] {
   @apply !text-blue-900;
+}
+
+/* 페이지 트랜지션 애니메이션 정의 */
+
+/* 모바일 (기본) - 슬라이드 효과 */
+@keyframes slide-left-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-left-in {
+  from {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-right-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-right-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* PC (lg 이상) - 페이드 효과 */
+@media (min-width: 1024px) {
+  @keyframes slide-left-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-left-in {
+    from {
+      transform: translateX(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-right-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-right-in {
+    from {
+      transform: translateX(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* 애니메이션 클래스 */
+.animate-slide-left-out {
+  animation: slide-left-out 0.5s linear forwards;
+}
+
+.animate-slide-left-in {
+  animation: slide-left-in 0.5s linear forwards;
+}
+
+.animate-slide-right-out {
+  animation: slide-right-out 0.5s linear forwards;
+}
+
+.animate-slide-right-in {
+  animation: slide-right-in 0.5s linear forwards;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -11,20 +11,20 @@ import { ChevronLeft, Menu as MenuIcon, ShoppingCart, User } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation';
 import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
+import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
-import type { Menu, MenuGroup } from '@/types';
+import { FlowType, type Menu, type MenuGroup } from '@/types';
 
 type HeaderProps = {
   menuGroup: MenuGroup;
 };
 
 const Header = ({ menuGroup }: HeaderProps) => {
-  const { wrappedPush, wrappedBack } = useContext(RouterWrapperContext);
   const { main, category } = menuGroup;
   const queryClient = useQueryClient();
   const router = useRouter();
+  const transitions = usePageTransitions();
   const { setMenu } = useMenuStore();
   const { isLogin } = useLoginStore();
   const { cart } = useCartStore();
@@ -52,7 +52,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
 
   const moveToLoginPage = () => {
     toggleMenu();
-    wrappedPush('/login');
+    router.push('/login');
   };
 
   /**
@@ -76,7 +76,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
    * 장바구니 이동
    */
   const moveToCartPage = () => {
-    wrappedPush('/cart');
+    router.push('/cart');
   };
 
   const onClickMain = (menuId: string) => {
@@ -108,6 +108,12 @@ const Header = ({ menuGroup }: HeaderProps) => {
 
   const handleScroll = () => {
     setIsScrolled(window.scrollY > 0);
+  };
+
+  const goBackWithTransitions = () => {
+    transitions.hide(FlowType.Previous).then(() => {
+      router.back();
+    });
   };
 
   /**
@@ -241,7 +247,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
               ) : (
                 <button
                   className="text-gray-800 cursor-pointer hover:bg-gray-100 p-2 lg:p-3 transition-colors duration-500 rounded-2xl whitespace-nowrap"
-                  onClick={moveToLoginPage}
+                  onClick={() => router.push('/login')}
                 >
                   <span className="font-bold text-sm lg:text-base">로그인</span>
                 </button>
@@ -253,9 +259,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
       {/* Side - Header */}
       <header className="sticky lg:hidden top-0 bg-white border-b border-gray-200 z-40">
         <div className="flex items-center justify-between px-4 py-3">
-          {/* 햄버거 메뉴 버튼 */}
           <button
-            onClick={wrappedBack}
+            onClick={goBackWithTransitions}
             className="p-2 hover:bg-gray-100 rounded-md transition-colors z-50 relative"
           >
             {/* <MenuIcon size={24} className="text-gray-700" /> */}

@@ -4,12 +4,12 @@ import '@/app/globals.css';
 
 import localFont from 'next/font/local';
 
-import { GlobalAlert, GlobalLoading, RouterWrapper } from '@/components/common';
+import { GlobalAlert, GlobalLoading } from '@/components/common';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import RootPageTransition from '@/components/layout/RootPageTransition';
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
+import { TransitionsProvider } from '@/providers/TransitionProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -27,20 +27,18 @@ const pretendard = localFont({
   variable: '--font-pretendard',
 });
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function Layout({ children }: RootLayoutProps) {
   return (
-    <RouterWrapper>
-      <html lang="en" className={pretendard.variable}>
-        <body className="min-h-dvh flex flex-col">
-          <ReactQueryProvider>
-            <RootPageTransition>{children}</RootPageTransition>
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-            <GlobalAlert />
-            <Toaster />
-            <GlobalLoading />
-          </ReactQueryProvider>
-        </body>
-      </html>
-    </RouterWrapper>
+    <html lang="en" className={pretendard.variable}>
+      <body className="min-h-dvh flex flex-col">
+        <ReactQueryProvider>
+          <TransitionsProvider>{children}</TransitionsProvider>
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+          <GlobalAlert />
+          <Toaster />
+          <GlobalLoading />
+        </ReactQueryProvider>
+      </body>
+    </html>
   );
 }

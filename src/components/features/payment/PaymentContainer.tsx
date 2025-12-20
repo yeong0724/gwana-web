@@ -1,27 +1,26 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { first, isEmpty } from 'lodash-es';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { ControllerInput, ControllerSelect } from '@/components/common';
+import ControllerInput from '@/components/common/ControllerInput';
+import ControllerSelect from '@/components/common/ControllerSelect';
 import { SearchPostcodeModal } from '@/components/common/modal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { deliveryRequestOptions } from '@/constants';
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { getIsMobile, localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
 import { useAlertStore } from '@/stores';
-import { ApiResponse, DeliveryRequestEnum, PaymentSession, ResultCode } from '@/types';
+import { ApiResponse, DeliveryRequestEnum, PaymentSession } from '@/types';
 
 type PaymentForm = {
   senderName: string;
@@ -40,7 +39,7 @@ const inputClassName =
 
 const PaymentContainer = () => {
   const isMobile = getIsMobile();
-  const { wrappedPush } = useContext(RouterWrapperContext);
+  const router = useRouter();
   const { showConfirmAlert } = useAlertStore();
 
   const searchParams = useSearchParams();
@@ -59,7 +58,7 @@ const PaymentContainer = () => {
 
   const [paymentSession, setPaymentSession] = useState<PaymentSession[]>([]);
 
-  const { data: paymentSessionData } = useGetPaymentSessionQuery(
+  const { data: paymentSessionData, error: paymentSessionError } = useGetPaymentSessionQuery(
     { sessionId },
     { enabled: !!sessionId }
   );
@@ -126,17 +125,34 @@ const PaymentContainer = () => {
         description: '결제 세션이 만료되었습니다.',
         size: 'sm',
       });
-      wrappedPush('/');
+      router.push('/');
     } else {
       setPaymentSession(data);
     }
   };
 
+  const invalidAccessPaymentSession = async () => {
+    await showConfirmAlert({
+      title: '에러',
+      description: '올바르지 않은 접근입니다.',
+      size: 'sm',
+    });
+    router.push('/');
+  };
+
+  useEffect(() => {
+    if (!sessionId) {
+      invalidAccessPaymentSession();
+    }
+  }, [sessionId]);
+
   useEffect(() => {
     if (paymentSessionData) {
       getPaymentSession(paymentSessionData);
+    } else if (paymentSessionError) {
+      invalidAccessPaymentSession();
     }
-  }, [paymentSessionData]);
+  }, [paymentSessionData, paymentSessionError]);
 
   const onSubmit = (data: PaymentForm) => {
     console.log('결제 데이터:', data);

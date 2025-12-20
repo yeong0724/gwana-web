@@ -1,12 +1,14 @@
 'use client';
 
-import { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import ProductDetailSkeleton from '@components/features/product/detail/ProductDetailSkeleton';
 import { useQueryClient } from '@tanstack/react-query';
 import { clone, find, findIndex } from 'lodash-es';
 import { ChevronDown, Share2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
 import { productMockData } from '@/api/mock';
@@ -20,7 +22,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
+import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useProductService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
@@ -43,7 +45,8 @@ type Props = {
 
 const ProductDetailContainer = ({ productId }: Props) => {
   const queryClient = useQueryClient();
-  const { wrappedPush } = useContext(RouterWrapperContext);
+  const router = useRouter();
+  const transitions = usePageTransitions();
   const { isLogin } = useLoginStore();
   const { setCart, addCart, cart } = useCartStore();
   const { useProductDetailQuery } = useProductService();
@@ -61,6 +64,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
   // 모바일 하단 패널 토글 상태
   const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(false);
 
+  // Portal을 위한 클라이언트 마운트 상태
+  const [isMounted, setIsMounted] = useState(false);
+
   // const { data: productDetailData, isFetching } = useProductDetailQuery(
   //   { productId },
   //   { enabled: !!productId }
@@ -73,6 +79,14 @@ const ProductDetailContainer = ({ productId }: Props) => {
   // }, [productDetailData]);
 
   const isFetching = false;
+
+  // 클라이언트 마운트 감지 + 스크롤 최상단 이동
+  useEffect(() => {
+    setIsMounted(true);
+    window.scrollTo(0, 0);
+    transitions.show();
+  }, []);
+
   useEffect(() => {
     const data = find(productMockData, { productId }) ?? initial;
     setProduct(data);
@@ -91,12 +105,12 @@ const ProductDetailContainer = ({ productId }: Props) => {
   );
 
   const moveToLoginPage = () => {
-    wrappedPush('/login');
+    router.push('/login');
   };
 
   const handlePurchase = () => {
     if (isLogin) {
-      wrappedPush('/payment');
+      router.push('/payment');
     } else {
       setPurchaseGuideModalOpen(true);
     }
@@ -149,6 +163,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
       handleSuccessToast();
     }
+
+    setIsBottomPanelOpen(false);
   };
 
   const onPurchaseMobileHandler = () => {
@@ -372,82 +388,85 @@ const ProductDetailContainer = ({ productId }: Props) => {
         </div>
       )}
 
-      {/* 모바일 하단 고정 버튼 영역 */}
-      {!isFetching && (
-        <div className="fixed bottom-0 left-0 right-0 z-[100] lg:hidden">
-          {/* 메인 패널 */}
-          <div
-            className={`bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] ${isBottomPanelOpen ? 'rounded-t-2xl' : ''}`}
-          >
-            {/* 닫기 버튼 - 열린 상태에서만 표시 */}
-            {isBottomPanelOpen && (
-              <button
-                onClick={() => setIsBottomPanelOpen(false)}
-                className="w-full flex items-center justify-center"
-              >
-                <ChevronDown size={24} className="text-gray-400" />
-              </button>
-            )}
-            {/* 확장 패널: 구매수량 + 상품금액 합계 */}
+      {/* 모바일 하단 고정 버튼 영역 - Portal로 body에 직접 렌더링 */}
+      {!isFetching &&
+        isMounted &&
+        createPortal(
+          <div className="fixed bottom-0 left-0 right-0 z-[100] lg:hidden">
+            {/* 메인 패널 */}
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                isBottomPanelOpen ? 'max-h-60' : 'max-h-0'
-              }`}
+              className={`bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] ${isBottomPanelOpen ? 'rounded-t-2xl' : ''}`}
             >
-              <div className="px-4 py-4 space-y-4 bg-white">
-                {/* 구매수량 */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">구매수량</span>
-                  <div className="flex items-center">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setQuantity((prev) => prev - 1)}
-                      disabled={quantity <= 1}
-                      className="h-9 w-9 rounded-none border-r-0 cursor-pointer text-base bg-white"
-                    >
-                      -
-                    </Button>
-                    <div className="w-16 text-center h-9 rounded-none border border-gray-300 text-sm bg-white flex items-center justify-center select-none">
-                      {quantity}
+              {/* 닫기 버튼 - 열린 상태에서만 표시 */}
+              {isBottomPanelOpen && (
+                <button
+                  onClick={() => setIsBottomPanelOpen(false)}
+                  className="w-full flex items-center justify-center"
+                >
+                  <ChevronDown size={24} className="text-gray-400" />
+                </button>
+              )}
+              {/* 확장 패널: 구매수량 + 상품금액 합계 */}
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isBottomPanelOpen ? 'max-h-60' : 'max-h-0'
+                }`}
+              >
+                <div className="px-4 py-4 space-y-4 bg-white">
+                  {/* 구매수량 */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">구매수량</span>
+                    <div className="flex items-center">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity((prev) => prev - 1)}
+                        disabled={quantity <= 1}
+                        className="h-9 w-9 rounded-none border-r-0 cursor-pointer text-base bg-white"
+                      >
+                        -
+                      </Button>
+                      <div className="w-16 text-center h-9 rounded-none border border-gray-300 text-sm bg-white flex items-center justify-center select-none">
+                        {quantity}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setQuantity((prev) => prev + 1)}
+                        className="h-9 w-9 rounded-none border-l-0 cursor-pointer text-base"
+                      >
+                        +
+                      </Button>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setQuantity((prev) => prev + 1)}
-                      className="h-9 w-9 rounded-none border-l-0 cursor-pointer text-base"
-                    >
-                      +
-                    </Button>
+                  </div>
+
+                  {/* 상품금액 합계 */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span className="text-sm font-medium text-gray-700">상품 금액 합계</span>
+                    <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
                   </div>
                 </div>
+              </div>
 
-                {/* 상품금액 합계 */}
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <span className="text-sm font-medium text-gray-700">상품 금액 합계</span>
-                  <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
-                </div>
+              {/* 버튼 */}
+              <div className="flex">
+                <Button
+                  onClick={onCartMobileHandler}
+                  className="flex-[0_0_35%] h-14 text-base bg-black text-white hover:bg-gray-800 rounded-none cursor-pointer"
+                >
+                  장바구니
+                </Button>
+                <Button
+                  onClick={onPurchaseMobileHandler}
+                  className="flex-[0_0_65%] h-14 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none cursor-pointer"
+                >
+                  구매하기
+                </Button>
               </div>
             </div>
-
-            {/* 버튼 */}
-            <div className="flex">
-              <Button
-                onClick={onCartMobileHandler}
-                className="flex-[0_0_35%] h-14 text-base bg-black text-white hover:bg-gray-800 rounded-none cursor-pointer"
-              >
-                장바구니
-              </Button>
-              <Button
-                onClick={onPurchaseMobileHandler}
-                className="flex-[0_0_65%] h-14 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none cursor-pointer"
-              >
-                구매하기
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
       <PurchaseGuideModal
         modalOpen={purchaseGuideModalOpen}
         setModalOpen={setPurchaseGuideModalOpen}
