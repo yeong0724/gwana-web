@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { concat, filter, find } from 'lodash-es';
@@ -8,9 +8,19 @@ import { concat, filter, find } from 'lodash-es';
 import ProductList from '@/components/features/product/ProductList';
 import ProductSkeleton from '@/components/features/product/ProductSkeleton';
 import { useDragScroll } from '@/hooks/useDragScroll';
+import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { useMenuStore } from '@/stores';
 
+// 카테고리 전환용 애니메이션 duration (ms)
+const CATEGORY_ANIMATION_DURATION = 300;
+
 const ProductContainer = () => {
+  const pageTransitions = usePageTransitions(); // 페이지 전환용 (상위 Provider)
+
+  // 카테고리 전환용 로컬 애니메이션 state
+  const [listAnimationClass, setListAnimationClass] = useState('');
+  const pendingCategoryRef = useRef<string | null>(null);
+
   // 드래그 스크롤 훅들
   const categoryTabScroll = useDragScroll();
   const pathname = usePathname();
@@ -47,6 +57,35 @@ const ProductContainer = () => {
     }
   }, [categoryId, categoryTabScroll.scrollRef]);
 
+  // 페이지 마운트 시 상위 Provider의 show() 호출 (상품 상세에서 뒤로 왔을 때)
+  useEffect(() => {
+    pageTransitions.show();
+  }, []);
+
+  // 카테고리 변경 시 show 애니메이션 (카테고리 전환용)
+  useEffect(() => {
+    if (pendingCategoryRef.current === categoryId) {
+      // 카테고리 전환으로 인한 변경 → show 애니메이션
+      setListAnimationClass('animate-slide-left-in');
+      setTimeout(() => {
+        setListAnimationClass('');
+        pendingCategoryRef.current = null;
+      }, CATEGORY_ANIMATION_DURATION);
+    }
+  }, [categoryId]);
+
+  const onClickCategory = (menuId: string) => {
+    if (menuId === categoryId) return; // 같은 카테고리면 무시
+
+    // 카테고리 전환용 hide 애니메이션
+    pendingCategoryRef.current = menuId;
+    setListAnimationClass('animate-slide-left-out');
+
+    setTimeout(() => {
+      router.push(`/product?category=${menuId}`);
+    }, CATEGORY_ANIMATION_DURATION);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50 max-w-[1800px] mx-auto">
       {/* 사이드 네비게이션 - 데스크톱용 */}
@@ -66,7 +105,7 @@ const ProductContainer = () => {
             <div key={menuId} className="mb-1">
               {/* 2뎁스 메뉴 */}
               <button
-                onClick={() => router.push(`/product?category=${menuId}`)}
+                onClick={() => onClickCategory(menuId)}
                 className={`w-full px-5 py-4 text-left text-[20px] transition-all duration-500 cursor-pointer flex items-center justify-between hover:bg-gray-100 hover:text-green-800 font-bold text-black ${categoryId === menuId ? 'text-green-800' : 'text-black'}`}
               >
                 <span>{menuName}</span>
@@ -94,7 +133,7 @@ const ProductContainer = () => {
                   className={`pb-4 px-1 cursor-pointer text-lg min-w-[80px] font-medium transition-colors duration-200 relative flex-shrink-0 ${
                     categoryId === menuId ? 'text-black' : 'text-gray-500 hover:text-gray-700'
                   }`}
-                  onClick={() => router.push(`/product?category=${menuId}`)}
+                  onClick={() => onClickCategory(menuId)}
                 >
                   {menuName}
                   {/* 선택된 탭의 밑줄 */}
@@ -116,9 +155,13 @@ const ProductContainer = () => {
             </span>
           </div>
         </div>
-        <Suspense fallback={<ProductSkeleton />}>
-          <ProductList key={categoryId} categoryId={categoryId} />
-        </Suspense>
+
+        {/* ProductList - 카테고리 전환용 로컬 애니메이션 */}
+        <div className={`overflow-hidden ${listAnimationClass}`}>
+          <Suspense fallback={<ProductSkeleton />}>
+            <ProductList key={categoryId} categoryId={categoryId} />
+          </Suspense>
+        </div>
       </main>
     </div>
   );

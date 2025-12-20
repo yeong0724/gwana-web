@@ -58,7 +58,7 @@ const PaymentContainer = () => {
 
   const [paymentSession, setPaymentSession] = useState<PaymentSession[]>([]);
 
-  const { data: paymentSessionData } = useGetPaymentSessionQuery(
+  const { data: paymentSessionData, error: paymentSessionError } = useGetPaymentSessionQuery(
     { sessionId },
     { enabled: !!sessionId }
   );
@@ -131,11 +131,28 @@ const PaymentContainer = () => {
     }
   };
 
+  const invalidAccessPaymentSession = async () => {
+    await showConfirmAlert({
+      title: '에러',
+      description: '올바르지 않은 접근입니다.',
+      size: 'sm',
+    });
+    router.push('/');
+  };
+
+  useEffect(() => {
+    if (!sessionId) {
+      invalidAccessPaymentSession();
+    }
+  }, [sessionId]);
+
   useEffect(() => {
     if (paymentSessionData) {
       getPaymentSession(paymentSessionData);
+    } else if (paymentSessionError) {
+      invalidAccessPaymentSession();
     }
-  }, [paymentSessionData]);
+  }, [paymentSessionData, paymentSessionError]);
 
   const onSubmit = (data: PaymentForm) => {
     console.log('결제 데이터:', data);

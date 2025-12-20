@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { concat, filter, isEmpty } from 'lodash-es';
@@ -36,8 +36,8 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
 
   const onClickCategory = (categoryId: string) => {
     if (currentMenu === 'product') {
-      router.push(`/${currentMenu}?category=${categoryId}`);
       closeSidebar();
+      router.push(`/${currentMenu}?category=${categoryId}`);
     }
   };
 

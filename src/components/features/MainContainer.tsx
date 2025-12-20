@@ -2,58 +2,59 @@
 
 import { ReactNode, useEffect } from 'react';
 
-import { allClearPersistStore, validateToken } from '@/lib/utils';
-import { useLoginService } from '@/service';
-import { useLoginStore } from '@/stores';
-import { ResultCode } from '@/types';
+import { usePageTransitions } from '@/hooks/usePageTransitions';
 
 type Props = {
   children: ReactNode;
 };
 
 const MainContainer = ({ children }: Props) => {
-  const { setLoginInfo, loginInfo, _hasHydrated } = useLoginStore();
-  const { useRefreshAccessToken } = useLoginService();
+  const transitions = usePageTransitions();
 
-  const { mutateAsync: refreshAccessTokenMutate } = useRefreshAccessToken();
+  useEffect(() => transitions.show(), []);
 
-  const onCheckLoginStatus = async () => {
-    const { accessToken } = loginInfo;
-    if (!accessToken) {
-      setLoginInfo({ isLogin: false, accessToken });
-      return;
-    }
+  // const { setLoginInfo, loginInfo, _hasHydrated } = useLoginStore();
+  // const { useRefreshAccessToken } = useLoginService();
 
-    // Access Token이 아직 유효한 경우
-    if (validateToken(accessToken)) {
-      onLoginSuccess(accessToken);
-      return;
-    }
+  // const { mutateAsync: refreshAccessTokenMutate } = useRefreshAccessToken();
 
-    // Access Token 만료 시 갱신 시도
-    try {
-      const { code, data } = await refreshAccessTokenMutate({ accessToken });
-      if (code === ResultCode.SUCCESS) {
-        onLoginSuccess(data);
-      } else {
-        allClearPersistStore();
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      allClearPersistStore();
-    }
-  };
+  // const onCheckLoginStatus = async () => {
+  //   const { accessToken } = loginInfo;
+  //   if (!accessToken) {
+  //     setLoginInfo({ isLogin: false, accessToken });
+  //     return;
+  //   }
 
-  const onLoginSuccess = async (accessToken: string) => {
-    setLoginInfo({ isLogin: true, accessToken });
-  };
+  //   // Access Token이 아직 유효한 경우
+  //   if (validateToken(accessToken)) {
+  //     onLoginSuccess(accessToken);
+  //     return;
+  //   }
 
-  useEffect(() => {
-    // hydration이 완료된 후에만 로그인 체크 수행
-    if (_hasHydrated) {
-      onCheckLoginStatus();
-    }
-  }, [_hasHydrated]);
+  //   // Access Token 만료 시 갱신 시도
+  //   try {
+  //     const { code, data } = await refreshAccessTokenMutate({ accessToken });
+  //     if (code === ResultCode.SUCCESS) {
+  //       onLoginSuccess(data);
+  //     } else {
+  //       allClearPersistStore();
+  //     }
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   } catch (error) {
+  //     allClearPersistStore();
+  //   }
+  // };
+
+  // const onLoginSuccess = async (accessToken: string) => {
+  //   setLoginInfo({ isLogin: true, accessToken });
+  // };
+
+  // useEffect(() => {
+  //   // hydration이 완료된 후에만 로그인 체크 수행
+  //   if (_hasHydrated) {
+  //     onCheckLoginStatus();
+  //   }
+  // }, [_hasHydrated]);
 
   return <>{children}</>;
 };

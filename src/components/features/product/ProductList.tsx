@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { filter, map } from 'lodash-es';
 
 import { productMockData } from '@/api/mock';
+import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { useProductService } from '@/service';
-import { Product } from '@/types';
+import { FlowType, Product } from '@/types';
 
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
@@ -16,6 +17,7 @@ type Props = {
 
 const ProductList = ({ categoryId }: Props) => {
   const router = useRouter();
+  const transitions = usePageTransitions();
   const { useProductListQuery } = useProductService();
   const [productList, setProductList] = useState<Array<Product>>([]);
 
@@ -31,6 +33,8 @@ const ProductList = ({ categoryId }: Props) => {
   //   }
   // }, [productListData, categoryId]);
 
+  useEffect(() => transitions.show(), []);
+
   useEffect(() => {
     const data = categoryId === 'all' ? productMockData : filter(productMockData, { categoryId });
 
@@ -38,7 +42,9 @@ const ProductList = ({ categoryId }: Props) => {
   }, [categoryId]);
 
   const onClickProduct = (productId: string) => {
-    router.push(`/product/${productId}`);
+    transitions.hide(FlowType.Next).then(() => {
+      router.push(`/product/${productId}`);
+    });
   };
 
   return (
