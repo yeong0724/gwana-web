@@ -11,7 +11,8 @@ import DaumPostcode, { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { ControllerInput, ControllerSelect } from '@/components/common';
+import ControllerInput from '@/components/common/ControllerInput';
+import ControllerSelect from '@/components/common/ControllerSelect';
 import { SearchPostcodeModal } from '@/components/common/modal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
