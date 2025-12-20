@@ -1,7 +1,8 @@
 'use client';
 
-import { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import ProductDetailSkeleton from '@components/features/product/detail/ProductDetailSkeleton';
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,7 +21,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useProductService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
@@ -43,7 +43,7 @@ type Props = {
 
 const ProductDetailContainer = ({ productId }: Props) => {
   const queryClient = useQueryClient();
-  const { wrappedPush } = useContext(RouterWrapperContext);
+  const router = useRouter();
   const { isLogin } = useLoginStore();
   const { setCart, addCart, cart } = useCartStore();
   const { useProductDetailQuery } = useProductService();
@@ -91,12 +91,12 @@ const ProductDetailContainer = ({ productId }: Props) => {
   );
 
   const moveToLoginPage = () => {
-    wrappedPush('/login');
+    router.push('/login');
   };
 
   const handlePurchase = () => {
     if (isLogin) {
-      wrappedPush('/payment');
+      router.push('/payment');
     } else {
       setPurchaseGuideModalOpen(true);
     }

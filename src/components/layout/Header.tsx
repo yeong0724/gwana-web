@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -11,7 +11,6 @@ import { ChevronLeft, Menu as MenuIcon, ShoppingCart, User } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation';
 import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
 import type { Menu, MenuGroup } from '@/types';
@@ -21,7 +20,6 @@ type HeaderProps = {
 };
 
 const Header = ({ menuGroup }: HeaderProps) => {
-  const { wrappedPush, wrappedBack } = useContext(RouterWrapperContext);
   const { main, category } = menuGroup;
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -52,7 +50,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
 
   const moveToLoginPage = () => {
     toggleMenu();
-    wrappedPush('/login');
+    router.push('/login');
   };
 
   /**
@@ -76,7 +74,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
    * 장바구니 이동
    */
   const moveToCartPage = () => {
-    wrappedPush('/cart');
+    router.push('/cart');
   };
 
   const onClickMain = (menuId: string) => {
@@ -255,7 +253,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
         <div className="flex items-center justify-between px-4 py-3">
           {/* 햄버거 메뉴 버튼 */}
           <button
-            onClick={wrappedBack}
+            onClick={() => router.back()}
             className="p-2 hover:bg-gray-100 rounded-md transition-colors z-50 relative"
           >
             {/* <MenuIcon size={24} className="text-gray-700" /> */}

@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { concat, filter, isEmpty } from 'lodash-es';
 import { ChevronDown, Home, X } from 'lucide-react';
 
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { useLoginStore } from '@/stores';
 import { MenuGroup } from '@/types';
 
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Props) => {
-  const { wrappedPush } = useContext(RouterWrapperContext);
+  const router = useRouter();
   const { main, category } = menuGroup;
   const { isLogin } = useLoginStore();
   const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -36,7 +36,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
 
   const onClickCategory = (categoryId: string) => {
     if (currentMenu === 'product') {
-      wrappedPush(`/${currentMenu}?category=${categoryId}`);
+      router.push(`/${currentMenu}?category=${categoryId}`);
       closeSidebar();
     }
   };
@@ -65,7 +65,12 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
    * 장바구니 이동
    */
   const moveToCart = () => {
-    wrappedPush('/cart');
+    router.push('/cart');
+    closeSidebar();
+  };
+
+  const moveToHome = () => {
+    router.push('/');
     closeSidebar();
   };
 
@@ -87,10 +92,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
         {/* 사이드바 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
           <button
-            onClick={() => {
-              wrappedPush('/');
-              closeSidebar();
-            }}
+            onClick={moveToHome}
             className="p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer"
             aria-label="홈으로 이동"
           >

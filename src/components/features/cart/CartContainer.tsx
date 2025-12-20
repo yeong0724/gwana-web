@@ -1,21 +1,21 @@
 'use client';
 
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { cloneDeep, filter, first, isEmpty, map, reject, size, some, sumBy } from 'lodash-es';
 import { Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { PurchaseGuideModal } from '@/components/common/modal';
 import { Checkbox } from '@/components/ui/checkbox';
-import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
 import { Cart } from '@/types';
 
 const CartContainer = () => {
-  const { wrappedPush } = useContext(RouterWrapperContext);
+  const router = useRouter();
   const { cart: cartStore, setCart: setCartStore, _hasHydrated } = useCartStore();
   const { isLogin } = useLoginStore();
 
@@ -112,11 +112,11 @@ const CartContainer = () => {
     }));
 
     const { data: sessionId } = await createPaymentSessionAsync(payload);
-    wrappedPush(`/payment?sessionId=${sessionId}`);
+    router.push(`/payment?sessionId=${sessionId}`);
   };
 
   const moveToLoginPage = () => {
-    wrappedPush('/login');
+    router.push('/login');
   };
 
   useEffect(() => {
