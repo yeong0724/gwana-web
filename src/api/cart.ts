@@ -1,5 +1,12 @@
 import { getAxios, postAxios } from '@/lib/api';
-import { AddToCartRequest, ApiResponse, Cart } from '@/types';
+import {
+  AddToCartRequest,
+  ApiResponse,
+  Cart,
+  CreatePaymentSessionRequest,
+  GetPaymentSessionRequest,
+  PaymentSession,
+} from '@/types';
 
 const addToCart = async (params: AddToCartRequest) => {
   return postAxios<ApiResponse<void>>({
@@ -35,4 +42,26 @@ const updateCartQuantity = async (params: AddToCartRequest) => {
   });
 };
 
-export { addToCart, getCartList, updateCartList, deleteCartList, updateCartQuantity };
+const createPaymentSession = async (params: CreatePaymentSessionRequest[]) => {
+  return postAxios<ApiResponse<string>>({
+    url: '/cart/create/payment/session',
+    params,
+  });
+};
+
+const getPaymentSession = async (params: GetPaymentSessionRequest) => {
+  return postAxios<ApiResponse<PaymentSession[]>>({
+    url: '/cart/search/payment/session',
+    params,
+  });
+};
+
+export {
+  addToCart,
+  getCartList,
+  updateCartList,
+  deleteCartList,
+  updateCartQuantity,
+  createPaymentSession,
+  getPaymentSession,
+};

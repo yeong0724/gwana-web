@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
-import FrozenRouter from '@/components/common/FrozenRouter';
+import { FrozenRouter } from '@/components/common';
 import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { getIsMobile } from '@/lib/utils';
 

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 
-export function RouterWrapper({ children }: { children: React.ReactNode }) {
+function RouterWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [shouldAnimate, setShouldAnimate] = useState(false);
@@ -36,3 +36,5 @@ export function RouterWrapper({ children }: { children: React.ReactNode }) {
     </RouterWrapperContext.Provider>
   );
 }
+
+export default RouterWrapper;

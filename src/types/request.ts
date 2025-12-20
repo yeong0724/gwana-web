@@ -29,3 +29,12 @@ export interface AddToCartRequest {
 export interface KakaoLogoutRequest {
   accessToken: string;
 }
+
+export interface CreatePaymentSessionRequest {
+  productId: string;
+  quantity: number;
+}
+
+export interface GetPaymentSessionRequest {
+  sessionId: string;
+}

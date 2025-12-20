@@ -2,12 +2,20 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import {
   addToCart,
+  createPaymentSession,
   deleteCartList,
   getCartList,
+  getPaymentSession,
   updateCartList,
   updateCartQuantity,
 } from '@/api/cart';
-import { AddToCartRequest, Cart, UseQueryOptionsType } from '@/types';
+import {
+  AddToCartRequest,
+  Cart,
+  CreatePaymentSessionRequest,
+  GetPaymentSessionRequest,
+  UseQueryOptionsType,
+} from '@/types';
 
 const useCartService = () => {
   const useAddToCartMutation = () =>
@@ -30,10 +38,25 @@ const useCartService = () => {
       mutationFn: (param: AddToCartRequest) => updateCartQuantity(param),
     });
 
+  const useCreatePaymentSessionMutation = () =>
+    useMutation({
+      mutationFn: (param: CreatePaymentSessionRequest[]) => createPaymentSession(param),
+    });
+
   const useGetCartListQuery = (options?: UseQueryOptionsType) =>
     useQuery({
       queryKey: ['cartList'],
       queryFn: () => getCartList(),
+      ...options,
+    });
+
+  const useGetPaymentSessionQuery = (
+    payload: GetPaymentSessionRequest,
+    options?: UseQueryOptionsType
+  ) =>
+    useQuery({
+      queryKey: ['paymentSession', payload.sessionId],
+      queryFn: () => getPaymentSession(payload),
       ...options,
     });
 
@@ -43,6 +66,8 @@ const useCartService = () => {
     useUpdateCartListMutation,
     useDeleteCartListMutation,
     useUpdateCartQuantityMutation,
+    useCreatePaymentSessionMutation,
+    useGetPaymentSessionQuery,
   };
 };
 

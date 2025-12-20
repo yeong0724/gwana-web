@@ -1,4 +1,4 @@
-import CartGuideModal from './CartGuideModal';
 import PurchaseGuideModal from './PurchaseGuideModal';
+import SearchPostcodeModal from './SearchPostcodeModal';
 
-export { CartGuideModal, PurchaseGuideModal };
+export { PurchaseGuideModal, SearchPostcodeModal };

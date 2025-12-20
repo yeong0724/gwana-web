@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       position="bottom-center"
       richColors
       closeButton
-      duration={4000}
+      duration={2000}
       style={
         {
           '--normal-bg': 'var(--popover)',

@@ -14,7 +14,9 @@ const CustomHeader = ({ title }: Props) => {
 
   return (
     <header className="relative flex items-center justify-center p-4 border-b border-gray-200 w-full flex-shrink-0 bg-white">
-      <h1 className="text-[18px] font-semibold text-gray-900">{title}</h1>
+      <h1 className="text-[18px] sm:text-[19px] md:text-[20px] lg:text-[22px] font-semibold text-gray-900">
+        {title}
+      </h1>
       <button
         className="absolute left-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
         onClick={wrappedBack}

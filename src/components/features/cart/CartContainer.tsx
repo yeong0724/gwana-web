@@ -6,21 +6,27 @@ import Image from 'next/image';
 import { cloneDeep, filter, first, isEmpty, map, reject, size, some, sumBy } from 'lodash-es';
 import { Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
+import { PurchaseGuideModal } from '@/components/common/modal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RouterWrapperContext } from '@/contexts/RouterWrapperContext';
 import { localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
-import { useCartStore, useLoginStore, useOrderItemStore } from '@/stores';
+import { useCartStore, useLoginStore } from '@/stores';
 import { Cart } from '@/types';
 
 const CartContainer = () => {
   const { wrappedPush } = useContext(RouterWrapperContext);
   const { cart: cartStore, setCart: setCartStore, _hasHydrated } = useCartStore();
   const { isLogin } = useLoginStore();
-  const { setOrderItems } = useOrderItemStore();
 
-  const { useDeleteCartListMutation, useGetCartListQuery, useUpdateCartQuantityMutation } =
-    useCartService();
+  const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
+
+  const {
+    useDeleteCartListMutation,
+    useGetCartListQuery,
+    useUpdateCartQuantityMutation,
+    useCreatePaymentSessionMutation,
+  } = useCartService();
 
   const { data: cartListData } = useGetCartListQuery({
     enabled: isLogin,
@@ -28,6 +34,7 @@ const CartContainer = () => {
 
   const { mutateAsync: deleteCartListAsync } = useDeleteCartListMutation();
   const { mutateAsync: updateCartQuantityAsync } = useUpdateCartQuantityMutation();
+  const { mutateAsync: createPaymentSessionAsync } = useCreatePaymentSessionMutation();
 
   const [cart, setCart] = useState<Array<Cart & { checked: boolean }>>([]);
 
@@ -93,9 +100,23 @@ const CartContainer = () => {
     setCart(cloneCart);
   };
 
-  const moveToOrderPage = () => {
-    setOrderItems(filter(cart, { checked: true }));
-    wrappedPush('/payment');
+  const moveToOrderPage = async () => {
+    if (!isLogin) {
+      setPurchaseGuideModalOpen(true);
+      return;
+    }
+
+    const payload = filter(cart, { checked: true }).map(({ productId, quantity }) => ({
+      productId,
+      quantity,
+    }));
+
+    const { data: sessionId } = await createPaymentSessionAsync(payload);
+    wrappedPush(`/payment?sessionId=${sessionId}`);
+  };
+
+  const moveToLoginPage = () => {
+    wrappedPush('/login');
   };
 
   useEffect(() => {
@@ -279,6 +300,11 @@ const CartContainer = () => {
           </button>
         </div>
       </div>
+      <PurchaseGuideModal
+        modalOpen={purchaseGuideModalOpen}
+        setModalOpen={setPurchaseGuideModalOpen}
+        moveToLoginPage={moveToLoginPage}
+      />
     </>
   );
 };

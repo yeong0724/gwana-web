@@ -1,4 +1,4 @@
-import CustomHeader from '@/components/common/CustomHeader';
+import { CustomHeader } from '@/components/common';
 import CartContainer from '@/components/features/cart/CartContainer';
 
 const Page = () => {

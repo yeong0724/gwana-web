@@ -38,3 +38,13 @@ export type Cart = {
   shippingPrice: number;
   images: string[];
 };
+
+export type PaymentSession = {
+  productId: string;
+  productName: string;
+  categoryName: string;
+  quantity: number;
+  price: number;
+  shippingPrice: number;
+  images: string[];
+};

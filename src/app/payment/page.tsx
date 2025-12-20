@@ -1,6 +1,6 @@
 import { Viewport } from 'next';
 
-import CustomHeader from '@/components/common/CustomHeader';
+import { CustomHeader } from '@/components/common';
 import PaymentContainer from '@/components/features/payment/PaymentContainer';
 
 export const viewport: Viewport = {

@@ -2,7 +2,8 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { get, isEmpty } from 'lodash-es';
 import { toast } from 'sonner';
 
-import { allClearPersistStore, delayAsync } from '@/lib/utils';
+import { allClearPersistStore } from '@/lib/utils';
+import { alertStore } from '@/stores/useAlertStore';
 import { loginActions } from '@/stores/useLoginStore';
 import { ResultCode } from '@/types';
 import { HttpMethod } from '@/types/api';
@@ -47,7 +48,7 @@ instance.interceptors.response.use(
      * HttpStatus.CREATED (201)
      */
 
-    await delayAsync();
+    // await delayAsync();
     return response.data;
   },
   async (error) => {
@@ -58,27 +59,39 @@ instance.interceptors.response.use(
 
     const { status, data } = errorResponse;
 
-    if (status === 401 && data.code === ResultCode.UNAUTHORIZED) {
-      const { accessToken } = loginActions.getLoginInfo();
+    if (status === 401) {
+      if (data.code === ResultCode.UNAUTHORIZED) {
+        const { accessToken } = loginActions.getLoginInfo();
 
-      try {
-        const { data } = await basicInstance.post('/user/refresh/token', { accessToken });
-        const code = get(data, 'code', '');
-        const newAccessToken = get(data, 'data', '');
+        try {
+          const { data } = await basicInstance.post('/user/refresh/token', { accessToken });
+          const code = get(data, 'code', '');
+          const newAccessToken = get(data, 'data', '');
 
-        if (code === '0000') {
-          loginActions.setLoginInfo({ accessToken: newAccessToken, isLogin: true });
+          if (code === '0000') {
+            loginActions.setLoginInfo({ accessToken: newAccessToken, isLogin: true });
 
-          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-          return instance(error.config);
-        } else {
+            error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+            return instance(error.config);
+          } else {
+            allClearPersistStore();
+            toast.error(data.message);
+            window.location.href = '/';
+            throw error;
+          }
+        } catch (refreshTokenError) {
           allClearPersistStore();
-          toast.error(data.message);
-          throw error;
+          throw refreshTokenError;
         }
-      } catch (refreshTokenError) {
+      } else if (data.code === ResultCode.INVALID || data.code === ResultCode.FORBIDDEN) {
         allClearPersistStore();
-        throw refreshTokenError;
+        await alertStore.getState().showConfirmAlert({
+          title: '알림',
+          description: data.message,
+          size: 'sm',
+        });
+        window.location.href = '/';
+        throw error;
       }
     }
 

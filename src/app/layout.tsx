@@ -4,11 +4,9 @@ import '@/app/globals.css';
 
 import localFont from 'next/font/local';
 
+import { GlobalAlert, GlobalLoading, RouterWrapper } from '@/components/common';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import GlobalAlert from '@/components/common/GlobalAlert';
-import GlobalLoading from '@/components/common/GlobalLoading';
-import { RouterWrapper } from '@/components/common/RouterWrapper';
 import RootPageTransition from '@/components/layout/RootPageTransition';
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';

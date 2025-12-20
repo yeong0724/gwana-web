@@ -179,13 +179,17 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
                 >
                   장바구니
                 </button>
-                <span className="text-gray-300 mx-5">|</span>
-                <button
-                  onClick={moveToOrderHistory}
-                  className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium"
-                >
-                  주문조회
-                </button>
+                {isLogin && (
+                  <>
+                    <span className="text-gray-300 mx-5">|</span>
+                    <button
+                      onClick={moveToOrderHistory}
+                      className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium"
+                    >
+                      마이페이지
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

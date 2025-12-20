@@ -1,4 +1,4 @@
-import CustomHeader from '@/components/common/CustomHeader';
+import { CustomHeader } from '@/components/common';
 import LoginContainer from '@/components/features/login/LoginContainer';
 
 const page = () => {

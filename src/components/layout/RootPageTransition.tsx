@@ -3,11 +3,10 @@
 import React, { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 
-import PageTransition from '@/components/common/PageTransition';
-import MainContainer from '@/components/features/MainContainer';
+import { PageTransition } from '@/components/common';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
-import { menuGroup } from '@/constants/menu';
+import { menuGroup } from '@/constants';
 import { cn, withHeaderAndFooterPage } from '@/lib/utils';
 
 interface Props {
@@ -29,9 +28,7 @@ export default function RootPageTransition({ children }: Props) {
           'page-transition-wrapper'
         )}
       >
-        <MainContainer>
-          <PageTransition>{children}</PageTransition>
-        </MainContainer>
+        <PageTransition>{children}</PageTransition>
       </main>
       {isMainGroup && <Footer />}
     </div>

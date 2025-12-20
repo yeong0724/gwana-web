@@ -10,7 +10,7 @@ import { ChevronDown, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { productMockData } from '@/api/mock';
-import { CartGuideModal, PurchaseGuideModal } from '@/components/common/modal';
+import { PurchaseGuideModal } from '@/components/common/modal';
 import { Button } from '@/components/ui/button';
 import {
   Carousel,
@@ -52,7 +52,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
   const [product, setProduct] = useState<Product>({ ...initial });
   const [quantity, setQuantity] = useState<number>(1);
 
-  const [cartGuideModalOpen, setCartGuideModalOpen] = useState<boolean>(false);
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
 
   // Carousel State
@@ -449,10 +448,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
           </div>
         </div>
       )}
-      <CartGuideModal
-        cartGuideModalOpen={cartGuideModalOpen}
-        setCartGuideModalOpen={setCartGuideModalOpen}
-      />
       <PurchaseGuideModal
         modalOpen={purchaseGuideModalOpen}
         setModalOpen={setPurchaseGuideModalOpen}
