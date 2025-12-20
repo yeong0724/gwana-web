@@ -165,7 +165,7 @@ const ProductContainer = () => {
         <div className="relative overflow-hidden">
           {/* 나가는 리스트 (이전 카테고리) */}
           {prevCategory && (
-            <div className="absolute inset-0 animate-slide-left-out">
+            <div className="absolute inset-0 animate-tab-slide-left-out">
               <Suspense fallback={<ProductSkeleton />}>
                 <ProductList key={prevCategory} categoryId={prevCategory} />
               </Suspense>
@@ -174,7 +174,7 @@ const ProductContainer = () => {
 
           {/* 들어오는 리스트 (현재 카테고리) */}
           {currentCategory && (
-            <div className={isTransitioning ? 'animate-slide-left-in' : ''}>
+            <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
               <Suspense fallback={<ProductSkeleton />}>
                 <ProductList key={currentCategory} categoryId={currentCategory} />
               </Suspense>

@@ -379,17 +379,25 @@
 
 /* 애니메이션 클래스 */
 .animate-slide-left-out {
-  animation: slide-left-out 0.5s linear forwards;
+  animation: slide-left-out 0.3s linear forwards;
 }
 
 .animate-slide-left-in {
-  animation: slide-left-in 0.5s linear forwards;
+  animation: slide-left-in 0.3s linear forwards;
 }
 
 .animate-slide-right-out {
-  animation: slide-right-out 0.5s linear forwards;
+  animation: slide-right-out 0.3s linear forwards;
 }
 
 .animate-slide-right-in {
-  animation: slide-right-in 0.5s linear forwards;
+  animation: slide-right-in 0.3s linear forwards;
+}
+
+.animate-tab-slide-left-out {
+  animation: slide-left-out 0.5s linear forwards;
+}
+
+.animate-tab-slide-left-in {
+  animation: slide-left-in 0.5s linear forwards;
 }
