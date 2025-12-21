@@ -42,6 +42,9 @@ export function usePageTransitions() {
         context.setClassName('');
         context.flowType.current = null;
       }, context.animationDuration);
+    } else {
+      // flowType이 없더라도 클래스네임은 비워줌 (스타일 깨짐 방지)
+      context.setClassName('');
     }
   }
 

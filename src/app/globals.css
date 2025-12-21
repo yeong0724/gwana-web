@@ -395,9 +395,9 @@
 }
 
 .animate-tab-slide-left-out {
-  animation: slide-left-out 0.5s linear forwards;
+  animation: slide-left-out 0.4s linear forwards;
 }
 
 .animate-tab-slide-left-in {
-  animation: slide-left-in 0.5s linear forwards;
+  animation: slide-left-in 0.4s linear forwards;
 }

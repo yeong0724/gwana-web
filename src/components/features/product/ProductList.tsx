@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { filter, map } from 'lodash-es';
@@ -6,7 +6,7 @@ import { filter, map } from 'lodash-es';
 import { productMockData } from '@/api/mock';
 import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { useProductService } from '@/service';
-import { FlowType, Product } from '@/types';
+import { FlowType } from '@/types';
 
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
