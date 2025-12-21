@@ -80,9 +80,10 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
   const isFetching = false;
 
-  // 클라이언트 마운트 감지
+  // 클라이언트 마운트 감지 + 스크롤 최상단 이동
   useEffect(() => {
     setIsMounted(true);
+    window.scrollTo(0, 0);
     transitions.show();
   }, []);
 

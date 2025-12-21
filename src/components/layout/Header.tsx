@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu
 import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
-import { type Menu, type MenuGroup } from '@/types';
+import { FlowType, type Menu, type MenuGroup } from '@/types';
 
 type HeaderProps = {
   menuGroup: MenuGroup;
@@ -111,8 +111,9 @@ const Header = ({ menuGroup }: HeaderProps) => {
   };
 
   const goBackWithTransitions = () => {
-    // View Transitions API로 동시 슬라이드 전환
-    transitions.goBackWithTransition();
+    transitions.hide(FlowType.Previous).then(() => {
+      router.back();
+    });
   };
 
   /**
@@ -132,10 +133,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
   }, []);
 
   return (
-    <div className="page-header">
+    <>
       {/* Main Bar Header */}
       <header
-        className={`hidden lg:block transition-all duration-300 ${
+        className={`hidden lg:block sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled ? 'bg-white shadow-lg' : 'bg-white/30'
         } hover:bg-white hover:shadow-lg`}
         onMouseEnter={() => setIsHeaderHovered(true)}
@@ -256,7 +257,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
         </div>
       </header>
       {/* Side - Header */}
-      <header className="lg:hidden bg-white border-b border-gray-200">
+      <header className="sticky lg:hidden top-0 bg-white border-b border-gray-200 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={goBackWithTransitions}
@@ -291,7 +292,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
         toggleMenu={toggleMenu}
         menuGroup={menuGroup}
       />
-    </div>
+    </>
   );
 };
 
