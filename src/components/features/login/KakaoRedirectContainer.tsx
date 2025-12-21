@@ -3,10 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { cloneDeep, isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 import { useCartService, useLoginService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
+import { loginActions } from '@/stores/useLoginStore';
 import { ResultCode } from '@/types';
 
 interface Props {
@@ -16,7 +17,7 @@ interface Props {
 const KakaoRedirectContainer = ({ code }: Props) => {
   const router = useRouter();
   const { showConfirmAlert } = useAlertStore();
-  const { setLoginInfo, clearLoginInfo, redirectUrl } = useLoginStore();
+  const { setLoginInfo, clearLoginInfo } = useLoginStore();
   const { cart, _hasHydrated } = useCartStore();
 
   const { useGetAccessTokenByKakaoCode } = useLoginService();
@@ -31,7 +32,7 @@ const KakaoRedirectContainer = ({ code }: Props) => {
       {
         onSuccess: async ({ code, data }) => {
           if (code === ResultCode.SUCCESS) {
-            const url = cloneDeep(redirectUrl);
+            const url = loginActions.getLoginInfo().redirectUrl;
 
             setLoginInfo({ accessToken: data, isLogin: true, redirectUrl: '/' });
 
