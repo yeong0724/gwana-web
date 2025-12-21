@@ -1,8 +1,11 @@
+'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { concat, filter, isEmpty } from 'lodash-es';
 import { ChevronDown, Home, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 import { useLoginStore } from '@/stores';
 import { MenuGroup } from '@/types';
@@ -18,6 +21,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
   const router = useRouter();
   const { main, category } = menuGroup;
   const { isLogin } = useLoginStore();
+
   const [currentMenu, setCurrentMenu] = useState<string>('');
 
   const getFilteredCategory = (menuId: string) => {
@@ -74,10 +78,11 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
     closeSidebar();
   };
 
-  return (
+  return createPortal(
     <>
       {/* 오버레이 */}
       <div
+        style={{ viewTransitionName: 'navigation-overlay' }}
         className={`fixed inset-0 bg-gray-800 bg-opacity-5 z-[70] transition-opacity duration-600 ${
           isMenuOpen ? 'opacity-30 visible' : 'opacity-0 invisible'
         }`}
@@ -85,6 +90,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
 
       {/* 사이드바 메뉴 */}
       <div
+        style={{ viewTransitionName: 'navigation-sidebar' }}
         className={`fixed top-0 left-0 h-full w-[90%] bg-white z-[1000] transform transition-transform duration-600 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } shadow-2xl flex flex-col`}
@@ -197,7 +203,8 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };
 

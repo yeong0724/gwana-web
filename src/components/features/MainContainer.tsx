@@ -1,18 +1,12 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
-
-import { usePageTransitions } from '@/hooks/usePageTransitions';
+import { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
 };
 
 const MainContainer = ({ children }: Props) => {
-  const transitions = usePageTransitions();
-
-  useEffect(() => transitions.show(), []);
-
   // const { setLoginInfo, loginInfo, _hasHydrated } = useLoginStore();
   // const { useRefreshAccessToken } = useLoginService();
 

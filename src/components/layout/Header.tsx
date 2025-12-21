@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+// Header.tsx
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -8,13 +10,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import { filter, size } from 'lodash-es';
 import { ChevronLeft, Menu as MenuIcon, ShoppingCart, User } from 'lucide-react';
 
-import Navigation from '@/components/layout/Navigation';
 import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { usePageTransitions } from '@/hooks/usePageTransitions';
+import useNativeRouter from '@/hooks/useNativeRouter';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
-import { FlowType, type Menu, type MenuGroup } from '@/types';
+import type { Menu, MenuGroup } from '@/types';
+
+// SSR 비활성화로 import
+const Navigation = dynamic(() => import('@/components/layout/Navigation'), {
+  ssr: false,
+});
 
 type HeaderProps = {
   menuGroup: MenuGroup;
@@ -24,7 +30,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
   const { main, category } = menuGroup;
   const queryClient = useQueryClient();
   const router = useRouter();
-  const transitions = usePageTransitions();
+  const { backward } = useNativeRouter();
   const { setMenu } = useMenuStore();
   const { isLogin } = useLoginStore();
   const { cart } = useCartStore();
@@ -111,9 +117,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
   };
 
   const goBackWithTransitions = () => {
-    transitions.hide(FlowType.Previous).then(() => {
-      router.back();
-    });
+    backward();
   };
 
   /**
@@ -133,7 +137,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
   }, []);
 
   return (
-    <>
+    <div className="sticky top-0 z-50" style={{ viewTransitionName: 'header' }}>
       {/* Main Bar Header */}
       <header
         className={`hidden lg:block sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -292,7 +296,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
         toggleMenu={toggleMenu}
         menuGroup={menuGroup}
       />
-    </>
+    </div>
   );
 };
 

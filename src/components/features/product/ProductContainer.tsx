@@ -8,15 +8,12 @@ import { concat, filter, find } from 'lodash-es';
 import ProductList from '@/components/features/product/ProductList';
 import ProductSkeleton from '@/components/features/product/ProductSkeleton';
 import { useDragScroll } from '@/hooks/useDragScroll';
-import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { useMenuStore } from '@/stores';
 
 // 카테고리 전환용 애니메이션 duration (ms)
 const CATEGORY_ANIMATION_DURATION = 400;
 
 const ProductContainer = () => {
-  const pageTransitions = usePageTransitions(); // 페이지 전환용 (상위 Provider)
-
   const searchParams = useSearchParams();
   const categoryId = searchParams.get('category') ?? 'all';
 
@@ -58,13 +55,6 @@ const ProductContainer = () => {
       selectedTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
   }, [categoryId, categoryTabScroll.scrollRef]);
-
-  // 페이지 마운트 시 상위 Provider의 show() 호출 (상품 상세에서 뒤로 왔을 때)
-  useEffect(() => {
-    pageTransitions.show();
-  }, []);
-
-  // 초기 카테고리 설정 제거 (useState에서 직접 수행)
 
   // URL의 categoryId가 변경되면 동시 슬라이드 애니메이션 시작
   useEffect(() => {

@@ -401,3 +401,33 @@
 .animate-tab-slide-left-in {
   animation: slide-left-in 0.4s linear forwards;
 }
+
+/* globals.css */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(header),
+::view-transition-new(header) {
+  animation: none;
+}
+
+::view-transition-old(custom-header),
+::view-transition-new(custom-header) {
+  animation: none;
+}
+
+/* globals.css */
+/* View Transition 진행 중일 때 Navigation 숨김 */
+::view-transition-old(navigation-sidebar),
+::view-transition-new(navigation-sidebar) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+::view-transition-old(navigation-overlay),
+::view-transition-new(navigation-overlay) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}

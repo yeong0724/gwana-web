@@ -22,7 +22,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
-import { usePageTransitions } from '@/hooks/usePageTransitions';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useProductService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
@@ -46,7 +45,6 @@ type Props = {
 const ProductDetailContainer = ({ productId }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const transitions = usePageTransitions();
   const { isLogin } = useLoginStore();
   const { setCart, addCart, cart } = useCartStore();
   const { useProductDetailQuery } = useProductService();
@@ -84,7 +82,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
   useEffect(() => {
     setIsMounted(true);
     window.scrollTo(0, 0);
-    transitions.show();
   }, []);
 
   useEffect(() => {

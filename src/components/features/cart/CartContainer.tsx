@@ -9,15 +9,15 @@ import { Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { PurchaseGuideModal } from '@/components/common/modal';
 import { Checkbox } from '@/components/ui/checkbox';
-import { usePageTransitions } from '@/hooks/usePageTransitions';
+import useNativeRouter from '@/hooks/useNativeRouter';
 import { localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
-import { Cart, FlowType } from '@/types';
+import { Cart } from '@/types';
 
 const CartContainer = () => {
   const router = useRouter();
-  const transitions = usePageTransitions();
+  const { forward } = useNativeRouter();
   const { cart: cartStore, setCart: setCartStore, _hasHydrated } = useCartStore();
   const { isLogin, setRedirectUrl } = useLoginStore();
 
@@ -115,16 +115,12 @@ const CartContainer = () => {
 
     const { data: sessionId } = await createPaymentSessionAsync(payload);
 
-    transitions.hide(FlowType.Next).then(() => {
-      router.push(`/payment?sessionId=${sessionId}`);
-    });
+    forward(`/payment?sessionId=${sessionId}`);
   };
 
   const moveToLoginPage = () => {
     setRedirectUrl('/cart');
-    transitions.hide(FlowType.Next).then(() => {
-      router.push('/login');
-    });
+    forward('/login');
   };
 
   useEffect(() => {
@@ -133,7 +129,9 @@ const CartContainer = () => {
     setCart(map(list, (item) => ({ ...item, checked: false })));
   }, [cartListData, isLogin, _hasHydrated]);
 
-  useEffect(() => transitions.show(), []);
+  useEffect(() => {
+    router.prefetch('/payment');
+  }, [router]);
 
   return (
     <>

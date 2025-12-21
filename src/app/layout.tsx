@@ -9,7 +9,6 @@ import { GlobalAlert, GlobalLoading } from '@/components/common';
 
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import { TransitionsProvider } from '@/providers/TransitionProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -32,7 +31,8 @@ export default function Layout({ children }: RootLayoutProps) {
     <html lang="en" className={pretendard.variable}>
       <body className="min-h-dvh flex flex-col">
         <ReactQueryProvider>
-          <TransitionsProvider>{children}</TransitionsProvider>
+          {/* <TransitionsProvider>{children}</TransitionsProvider> */}
+          {children}
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           <GlobalAlert />
           <Toaster />

@@ -1,12 +1,9 @@
 import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { filter, map } from 'lodash-es';
 
 import { productMockData } from '@/api/mock';
-import { usePageTransitions } from '@/hooks/usePageTransitions';
-import { useProductService } from '@/service';
-import { FlowType } from '@/types';
+import useNativeRouter from '@/hooks/useNativeRouter';
 
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
@@ -16,20 +13,14 @@ type Props = {
 };
 
 const ProductList = ({ categoryId }: Props) => {
-  const router = useRouter();
-  const transitions = usePageTransitions();
-  const { useProductListQuery } = useProductService();
+  const { forward } = useNativeRouter();
 
   const productList = useMemo(() => {
     return categoryId === 'all' ? productMockData : filter(productMockData, { categoryId });
   }, [categoryId]);
 
-  // useEffect(() => transitions.show(), []);
-
   const onClickProduct = (productId: string) => {
-    transitions.hide(FlowType.Next).then(() => {
-      router.push(`/product/${productId}`);
-    });
+    forward(`/product/${productId}`);
   };
 
   return (

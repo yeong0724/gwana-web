@@ -1,16 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
 import Image from 'next/image';
 
-import { usePageTransitions } from '@/hooks/usePageTransitions';
-
 const LoginContainer = () => {
-  const transitions = usePageTransitions();
-
   const onKakaoLogin = async () => {
     window.location.replace(`${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao`);
-    // console.log('카카오 로그인');
   };
 
   const onNaverLogin = async () => {
@@ -22,8 +16,6 @@ const LoginContainer = () => {
     // TODO: 구글 로그인 구현
     console.log('구글 로그인');
   };
-
-  useEffect(() => transitions.show(), []);
 
   return (
     <>

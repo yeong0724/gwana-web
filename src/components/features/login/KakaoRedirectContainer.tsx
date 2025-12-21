@@ -32,7 +32,7 @@ const KakaoRedirectContainer = ({ code }: Props) => {
       {
         onSuccess: async ({ code, data }) => {
           if (code === ResultCode.SUCCESS) {
-            const url = loginActions.getLoginInfo().redirectUrl;
+            const url = loginActions.getLoginInfo().redirectUrl || '/';
 
             setLoginInfo({ accessToken: data, isLogin: true, redirectUrl: '/' });
 
