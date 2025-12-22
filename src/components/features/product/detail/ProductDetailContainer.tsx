@@ -319,7 +319,7 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
 
       {/* 상세정보 섹션 */}
       {!isFetching && (
-        <div className="max-w-[1000px] mx-auto px-4 pt-0 pb-8 lg:py-16 mb-[200px]">
+        <div className="max-w-[800px] mx-auto px-4 pt-0 pb-8 lg:py-16 mb-[200px]">
           {/* 상세정보 타이틀 */}
           <div className="relative flex items-center justify-center mb-8 lg:mb-12">
             {/* 양쪽 라인 */}

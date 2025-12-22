@@ -1,8 +1,15 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+
 const Footer = () => {
+  const pathname = usePathname();
+  const isProductDetail = pathname.startsWith('/product/');
+
   return (
-    <footer className="relative z-[60] w-full bg-[#F9F9F9] border-t border-gray-200 min-h-[200px] py-8 pb-18 lg:pb-8">
+    <footer
+      className={`relative z-[60] w-full bg-[#F9F9F9] border-t border-gray-200 min-h-[200px] py-4 ${isProductDetail ? 'pb-18' : ''}`}
+    >
       <div className="mx-auto px-6 max-w-7xl">
         <div className="hidden md:flex flex-col space-y-4 text-sm text-gray-700">
           {/* 첫 번째 줄: 사업자 정보 */}

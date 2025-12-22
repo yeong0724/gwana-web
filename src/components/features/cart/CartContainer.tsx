@@ -131,6 +131,7 @@ const CartContainer = () => {
 
   useEffect(() => {
     router.prefetch('/payment');
+    router.prefetch('/login');
   }, [router]);
 
   return (
