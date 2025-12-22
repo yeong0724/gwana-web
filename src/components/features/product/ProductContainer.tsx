@@ -3,8 +3,9 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { concat, filter, find } from 'lodash-es';
+import { concat, filter, find, forEach } from 'lodash-es';
 
+import { productMockData } from '@/api/mock';
 import ProductList from '@/components/features/product/ProductList';
 import ProductSkeleton from '@/components/features/product/ProductSkeleton';
 import { useDragScroll } from '@/hooks/useDragScroll';
@@ -71,6 +72,13 @@ const ProductContainer = () => {
       }, CATEGORY_ANIMATION_DURATION);
     }
   }, [categoryId, currentCategory, isTransitioning]);
+
+  // 1~9번 상품 페이지 미리 로딩
+  useEffect(() => {
+    forEach(productMockData, ({ productId }) => {
+      router.prefetch(`/product/${productId}`);
+    });
+  }, []);
 
   const onClickCategory = (menuId: string) => {
     if (menuId === categoryId || isTransitioning) return; // 같은 카테고리거나 전환 중이면 무시
