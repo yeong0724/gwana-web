@@ -5,6 +5,7 @@ import '@/app/globals.css';
 import localFont from 'next/font/local';
 
 import { GlobalAlert, GlobalLoading } from '@/components/common';
+import MainLayout from '@/components/layout/MainLayout';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Toaster } from '@/components/ui/sonner';
@@ -43,7 +44,7 @@ export default function Layout({ children }: RootLayoutProps) {
       <body className="min-h-dvh flex flex-col">
         <ReactQueryProvider>
           {/* <TransitionsProvider>{children}</TransitionsProvider> */}
-          {children}
+          <MainLayout>{children}</MainLayout>
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           <GlobalAlert />
           <Toaster />

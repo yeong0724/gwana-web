@@ -77,8 +77,8 @@ const delayAsync = (delay: number = 1000): Promise<number> => {
   });
 };
 
-const withHeaderAndFooterPage = (pathname: string) => {
-  return !some(['/cart', '/login', '/payment'], (path) => startsWith(pathname, path));
+const noMainHeaderPage = (pathname: string) => {
+  return some(['/cart', '/login', '/payment'], (path) => startsWith(pathname, path));
 };
 
 const getIsMobile = () => {
@@ -95,6 +95,6 @@ export {
   validateToken,
   decodeToken,
   delayAsync,
-  withHeaderAndFooterPage,
+  noMainHeaderPage,
   getIsMobile,
 };
