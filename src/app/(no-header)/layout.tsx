@@ -8,7 +8,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <div className="h-screen bg-gray-50 flex flex-col relative overflow-hidden">
+    <div className="h-dvh bg-gray-50 flex flex-col relative overflow-hidden">
       <CustomHeader />
       {children}
     </div>
