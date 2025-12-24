@@ -261,7 +261,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
         </div>
       </header>
       {/* Side - Header */}
-      <header className="sticky h-[70px] lg:hidden top-0 bg-white border-b border-gray-200 z-40">
+      <header className="h-[70px] lg:hidden top-0 bg-white border-b border-gray-200 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={goBackWithTransitions}

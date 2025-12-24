@@ -18,12 +18,12 @@ const MainLayout = ({ children }: Props) => {
   const isNoMainHeaderPage = noMainHeaderPage(pathname);
 
   return isNoMainHeaderPage ? (
-    <div className="h-dvh bg-gray-50 flex flex-col relative overflow-hidden">
+    <div className="min-h-dvh bg-gray-50 flex flex-col relative overflow-hidden">
       <CustomHeader />
       {children}
     </div>
   ) : (
-    <div className={cn('flex flex-col', 'h-dvh')}>
+    <div className={cn('flex flex-col', 'min-h-dvh')}>
       <Header menuGroup={menuGroup} />
       <main className="flex-1">{children}</main>
       <Footer />
