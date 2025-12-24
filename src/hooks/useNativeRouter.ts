@@ -37,8 +37,6 @@ const useNativeRouter = () => {
   };
 
   const forward = (path: string) => {
-    const isMobile = getIsMobile();
-
     if (!isMobile || !document.startViewTransition) {
       router.push(path);
       return;

@@ -261,18 +261,18 @@ const Header = ({ menuGroup }: HeaderProps) => {
         </div>
       </header>
       {/* Side - Header */}
-      <header className="sticky h-[72px] lg:hidden top-0 bg-white border-b border-gray-200 z-40">
+      <header className="sticky h-[70px] lg:hidden top-0 bg-white border-b border-gray-200 z-40">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={goBackWithTransitions}
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors z-50 relative"
+            className="hover:bg-gray-100 rounded-md transition-colors z-50 relative"
           >
             {/* <MenuIcon size={24} className="text-gray-700" /> */}
             <ChevronLeft size={24} className="text-gray-700 sm:w-6 sm:h-6" />
           </button>
 
           {/* 로고 */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div>
             <Image
               src="/images/gwana_logo.webp"
               alt="gwana_logo"

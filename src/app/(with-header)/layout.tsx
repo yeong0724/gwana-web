@@ -13,7 +13,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <div className={cn('flex flex-col', 'min-h-screen')}>
+    <div className={cn('flex flex-col', 'h-dvh')}>
       <Header menuGroup={menuGroup} />
       <main className="flex-1">{children}</main>
       <Footer />
