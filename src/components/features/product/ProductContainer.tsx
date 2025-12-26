@@ -40,22 +40,31 @@ const ProductContainer = () => {
 
   // 선택된 탭이 보이도록 자동 스크롤
   useEffect(() => {
+  // View Transition 완료 후 실행되도록 딜레이
+  const timer = setTimeout(() => {
     const scrollContainer = categoryTabScroll.scrollRef.current;
+    console.log('scrollContainer:', scrollContainer); // 디버깅
+    
     if (!scrollContainer) return;
 
     const selectedTab = scrollContainer.querySelector(
       `[data-category-id="${categoryId}"]`
     ) as HTMLElement;
+    
+    console.log('selectedTab:', selectedTab); // 디버깅
+    
     if (!selectedTab) return;
 
     const containerRect = scrollContainer.getBoundingClientRect();
     const tabRect = selectedTab.getBoundingClientRect();
 
-    // 탭이 컨테이너 밖에 있으면 스크롤
     if (tabRect.left < containerRect.left || tabRect.right > containerRect.right) {
       selectedTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
-  }, [categoryId, categoryTabScroll.scrollRef, pathname]);
+  }, 300); // 트랜지션(800ms)보다 짧게, 하지만 DOM 준비될 정도로
+
+  return () => clearTimeout(timer);
+}, [categoryId, pathname, searchParams]);
 
   // URL의 categoryId가 변경되면 동시 슬라이드 애니메이션 시작
   useEffect(() => {
