@@ -55,7 +55,7 @@ const ProductContainer = () => {
     if (tabRect.left < containerRect.left || tabRect.right > containerRect.right) {
       selectedTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
-  }, [categoryId, categoryTabScroll.scrollRef]);
+  }, [categoryId, categoryTabScroll.scrollRef, pathname]);
 
   // URL의 categoryId가 변경되면 동시 슬라이드 애니메이션 시작
   useEffect(() => {
