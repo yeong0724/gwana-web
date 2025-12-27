@@ -15,7 +15,7 @@ const useNativeRouter = () => {
         { transform: `translateX(${isForward ? '-100%' : '100%'})` },
       ],
       {
-        duration: 800,
+        duration: 600,
         easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         fill: 'forwards',
         pseudoElement: '::view-transition-old(root)',
@@ -28,7 +28,7 @@ const useNativeRouter = () => {
         { transform: 'translateX(0)' },
       ],
       {
-        duration: 800,
+        duration: 600,
         easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         fill: 'forwards',
         pseudoElement: '::view-transition-new(root)',
@@ -60,6 +60,11 @@ const useNativeRouter = () => {
     });
 
     transition.ready.then(() => slideAnimation('backward'));
+
+    // View Transition 완료 후 이벤트 발생
+    transition.finished.then(() => {
+      window.dispatchEvent(new CustomEvent('viewTransitionComplete'));
+    });
   };
 
   return { forward, backward };

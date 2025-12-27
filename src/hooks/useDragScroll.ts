@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 export const useDragScroll = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+  const isProgrammaticScroll = useRef(false); // 추가
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
@@ -59,6 +60,8 @@ export const useDragScroll = () => {
     if (!element) return;
 
     const handleTouchMove = (e: TouchEvent) => {
+      // 프로그래매틱 스크롤 중이면 preventDefault 하지 않음
+      if (isProgrammaticScroll.current) return;
       if (!isDragging.current || !scrollRef.current) return;
 
       e.preventDefault();
@@ -67,7 +70,6 @@ export const useDragScroll = () => {
       scrollRef.current.scrollLeft = scrollLeft.current - walk;
     };
 
-    // passive: false로 등록하여 preventDefault 가능하게 함
     element.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
@@ -75,8 +77,31 @@ export const useDragScroll = () => {
     };
   }, []);
 
+  // 프로그래매틱 스크롤을 위한 함수 추가
+  const scrollToElement = useCallback((element: HTMLElement) => {
+    if (!scrollRef.current) return;
+
+    isProgrammaticScroll.current = true;
+
+    const tabOffsetLeft = element.offsetLeft;
+    const tabWidth = element.offsetWidth;
+    const containerWidth = scrollRef.current.offsetWidth;
+    const scrollPosition = tabOffsetLeft - containerWidth / 2 + tabWidth / 2;
+
+    scrollRef.current.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth',
+    });
+
+    // 스크롤 완료 후 플래그 해제
+    setTimeout(() => {
+      isProgrammaticScroll.current = false;
+    }, 500);
+  }, []);
+
   return {
     scrollRef,
+    scrollToElement,
     dragHandlers: {
       onMouseDown: handleMouseDown,
       onMouseMove: handleMouseMove,

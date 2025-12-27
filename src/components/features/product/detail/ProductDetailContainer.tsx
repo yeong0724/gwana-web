@@ -20,7 +20,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
-import { localeFormat } from '@/lib/utils';
+import { getIsMobile, localeFormat } from '@/lib/utils';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
 import { Cart, Product } from '@/types';
@@ -34,6 +34,7 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { isLogin } = useLoginStore();
+  const isMobile = getIsMobile();
   const { setCart, addCart, cart } = useCartStore();
   const { useAddToCartMutation } = useCartService();
 
@@ -314,12 +315,12 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
 
       {/* 상세정보 섹션 */}
       {!isFetching && (
-        <div className="max-w-[800px] mx-auto px-4 pt-0 pb-8 lg:py-16 mb-[200px]">
+        <div className="max-w-[800px] pt-0 lg:py-16 lg:mx-auto lg:px-20 mb-[200px]">
           {/* 상세정보 타이틀 */}
           <div className="relative flex items-center justify-center mb-8 lg:mb-12">
             {/* 양쪽 라인 */}
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
+            <div className="absolute inset-0 flex items-center px-8">
+              <div className="w-full border-t border-gray-400" />
             </div>
 
             {/* 타이틀 영역 */}
@@ -335,7 +336,7 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
           </div>
 
           {/* 상세 이미지 영역 */}
-          <div className="w-full space-y-0 px-2 md:px-12 lg:px-20">
+          <div className={`w-full space-y-0 ${isMobile ? '' : 'md:px-12'}`}>
             {product.infos.map((image, index) => (
               <div key={index} className="relative w-full">
                 <Image

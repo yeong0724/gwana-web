@@ -39,24 +39,41 @@ const ProductContainer = () => {
   }, [category, pathname]);
 
   // 선택된 탭이 보이도록 자동 스크롤
-useEffect(() => {
-  console.log('effect 실행', pathname, categoryId); // 디버깅용
-  
-  const scrollContainer = categoryTabScroll.scrollRef.current;
-  if (!scrollContainer) return;
+  useEffect(() => {
+    const scrollToSelectedTab = () => {
+      const scrollContainer = categoryTabScroll.scrollRef.current;
+      if (!scrollContainer) return;
 
-  const selectedTab = scrollContainer.querySelector(
-    `[data-category-id="${categoryId}"]`
-  ) as HTMLElement;
-  if (!selectedTab) return;
+      const selectedTab = scrollContainer.querySelector(
+        `[data-category-id="${categoryId}"]`
+      ) as HTMLElement;
+      if (!selectedTab) return;
 
-  const containerRect = scrollContainer.getBoundingClientRect();
-  const tabRect = selectedTab.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const tabRect = selectedTab.getBoundingClientRect();
 
-  if (tabRect.left < containerRect.left || tabRect.right > containerRect.right) {
-    selectedTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }
-}, [categoryId, categoryTabScroll.scrollRef, pathname, searchParams]);
+      if (tabRect.left < containerRect.left || tabRect.right > containerRect.right) {
+        categoryTabScroll.scrollToElement(selectedTab);
+      }
+    };
+
+    // 일반적인 경우 (새로고침 등)
+    scrollToSelectedTab();
+
+    // View Transition 완료 후에도 실행
+    const handleTransitionComplete = () => {
+      // 약간의 딜레이를 줘서 DOM이 완전히 안정화된 후 실행
+      requestAnimationFrame(() => {
+        scrollToSelectedTab();
+      });
+    };
+
+    window.addEventListener('viewTransitionComplete', handleTransitionComplete);
+
+    return () => {
+      window.removeEventListener('viewTransitionComplete', handleTransitionComplete);
+    };
+  }, [categoryId, categoryTabScroll]);
 
   // URL의 categoryId가 변경되면 동시 슬라이드 애니메이션 시작
   useEffect(() => {
