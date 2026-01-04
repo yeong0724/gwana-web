@@ -313,7 +313,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
               className="relative py-2 hover:bg-gray-100/20 rounded-md transition-colors"
               onClick={() => router.push('/cart')}
             >
-              <ShoppingBag size={24} className={isHomePage ? 'text-white' : 'text-gray-700'} />
+              <ShoppingBag
+                size={24}
+                className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-gray-700'}`}
+              />
               {cartCount > 0 && (
                 <span
                   className={`absolute top-[0px] flex items-center justify-center min-w-[20px] h-[20px] px-1 bg-red-500 text-white text-[12px] font-bold rounded-full ${cartCount > 99 ? 'right-[-5px]' : 'right-[-10px]'}`}
@@ -326,7 +329,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
               className="relative py-1 hover:bg-gray-100/20 rounded-md transition-colors"
               onClick={toggleMenu}
             >
-              <MenuIcon size={24} className={isHomePage ? 'text-white' : 'text-gray-700'} />
+              <MenuIcon
+                size={24}
+                className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-gray-700'}`}
+              />
             </button>
           </div>
         </div>

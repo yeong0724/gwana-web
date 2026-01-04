@@ -8,8 +8,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
 
@@ -57,7 +55,7 @@ const MainContainer = () => {
                 muted
                 loop
                 playsInline
-                className="w-full h-auto max-h-[70vh]"
+                className="w-full h-auto max-h-[78vh]"
               />
             </CarouselItem>
           ))}
