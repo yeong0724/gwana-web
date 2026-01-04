@@ -32,7 +32,7 @@ const Footer = () => {
             </div>
             <div>
               <span className="text-gray-500">
-                Copyright © Ganna Tea House. All rights reserved.
+                Copyright © Gwana Tea House. All rights reserved.
               </span>
             </div>
           </div>
@@ -58,7 +58,7 @@ const Footer = () => {
               <span className="font-bold">사업자등록번호: 613-19-89889</span>
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-gray-500">Copyright © Ganna Tea House.</span>
+              <span className="text-gray-500">Copyright © Gwana Tea House.</span>
               <span className="text-gray-500">All rights reserved.</span>
             </div>
           </div>

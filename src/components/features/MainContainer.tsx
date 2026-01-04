@@ -4,7 +4,7 @@ const MainContainer = () => {
   return (
     <div>
       <video
-        src="/videos/tea_drip.mp4"
+        src="/videos/gwana_intro_2.mp4"
         autoPlay
         muted
         loop
