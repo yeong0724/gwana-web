@@ -40,14 +40,16 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
     if (!price) return '0원';
     return new Intl.NumberFormat('ko-KR').format(price) + '원';
   };
-
   return (
     <div
-      className="bg-white cursor-pointer group"
+      className="bg-white cursor-pointer group rounded-lg"
       onClick={() => onClickProduct(product.productId)}
     >
       {/* 이미지 슬라이더 영역 */}
-      <div className="relative w-full bg-gray-50 overflow-hidden" style={{ aspectRatio: '1' }}>
+      <div
+        className="relative w-full bg-gray-50 overflow-hidde shadow-md hover:shadow-lg transition-shadow duration-300"
+        style={{ aspectRatio: '1' }}
+      >
         <Carousel
           setApi={setApi}
           opts={{
