@@ -109,7 +109,7 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
     if (isLogin) {
       addToCartMutate(payload, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['cartList'] });
+          queryClient.invalidateQueries({ queryKey: ['cartList'], refetchType: 'all' });
           handleSuccessToast();
         },
         /* eslint-disable @typescript-eslint/no-unused-vars */
