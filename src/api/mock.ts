@@ -138,6 +138,7 @@ export const productMockData = [
       '/images/product/substituteTea/info/autumnRadishTea_6.webp',
       '/images/product/substituteTea/info/autumnRadishTea_7.webp',
       '/images/product/substituteTea/info/autumnRadishTea_8.webp',
+      '/images/product/substituteTea/info/autumnRadishTea_9.webp',
     ],
     price: 25000,
     shippingPrice: 4000,
