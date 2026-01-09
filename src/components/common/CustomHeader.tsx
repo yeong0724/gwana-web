@@ -31,10 +31,10 @@ const CustomHeader = () => {
 
   return (
     <header
-      className="relative h-[64px] flex items-center justify-center p-4 border-b border-gray-200 w-full flex-shrink-0 bg-white"
+      className="relative h-[50px] flex items-center justify-center p-4 border-b border-gray-200 w-full flex-shrink-0 bg-white"
       style={{ viewTransitionName: 'header' }}
     >
-      <h1 className="text-[18px] sm:text-[19px] md:text-[20px] lg:text-[22px] font-semibold text-gray-900">
+      <h1 className="text-[16px] sm:text-[19px] md:text-[20px] lg:text-[22px] font-semibold text-gray-900">
         {title}
       </h1>
       <button

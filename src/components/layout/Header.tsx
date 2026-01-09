@@ -265,13 +265,13 @@ const Header = ({ menuGroup }: HeaderProps) => {
       </header>
       {/* Side - Header (Mobile) */}
       <header
-        className={`h-[70px] lg:hidden top-0 z-40 ${
+        className={`h-[50px] lg:hidden top-0 z-40 ${
           isHomePage
             ? 'absolute left-0 right-0 bg-transparent'
             : 'relative bg-white border-b border-gray-200'
         }`}
       >
-        <div className="relative flex items-center justify-between px-4 py-3">
+        <div className="relative flex items-center justify-between px-4 h-full">
           {/* 왼쪽 - 뒤로가기 */}
           {!isHomePage ? (
             <button
@@ -290,8 +290,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
               <Image
                 src="/images/gwana_logo_2.webp"
                 alt="gwana_logo"
-                width={140}
-                height={140}
+                width={120}
+                height={120}
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
               />
@@ -299,8 +299,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
               <Image
                 src="/images/gwana_logo.webp"
                 alt="gwana_logo"
-                width={100}
-                height={100}
+                width={80}
+                height={80}
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
               />
@@ -314,12 +314,12 @@ const Header = ({ menuGroup }: HeaderProps) => {
               onClick={() => router.push('/cart')}
             >
               <ShoppingBag
-                size={24}
+                size={20}
                 className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-gray-700'}`}
               />
               {cartCount > 0 && (
                 <span
-                  className={`absolute top-[0px] flex items-center justify-center min-w-[20px] h-[20px] px-1 bg-red-500 text-white text-[12px] font-bold rounded-full ${cartCount > 99 ? 'right-[-5px]' : 'right-[-10px]'}`}
+                  className={`absolute top-[1px] flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full ${cartCount > 99 ? 'right-[-5px]' : 'right-[-8px]'}`}
                 >
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
@@ -330,7 +330,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
               onClick={toggleMenu}
             >
               <MenuIcon
-                size={24}
+                size={20}
                 className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-gray-700'}`}
               />
             </button>
