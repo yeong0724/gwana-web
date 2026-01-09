@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { concat, filter, find, forEach } from 'lodash-es';
 
@@ -13,10 +13,11 @@ import { useMenuStore } from '@/stores';
 // 카테고리 전환용 애니메이션 duration (ms)
 const CATEGORY_ANIMATION_DURATION = 600;
 
-const ProductContainer = () => {
-  const searchParams = useSearchParams();
-  const categoryId = searchParams.get('category') ?? 'all';
+type Props = {
+  categoryId: string;
+};
 
+const ProductContainer = ({ categoryId }: Props) => {
   // 드래그 스크롤 훅들
   const categoryTabScroll = useDragScroll();
   const pathname = usePathname();

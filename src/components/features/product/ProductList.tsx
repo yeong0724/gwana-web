@@ -15,7 +15,7 @@ type Props = {
 
 const ProductList = ({ categoryId }: Props) => {
   const { forward } = useNativeRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const productList = useMemo(() => {
     return categoryId === 'all' ? productMockData : filter(productMockData, { categoryId });
   }, [categoryId]);
