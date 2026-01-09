@@ -163,14 +163,14 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
   return (
     <>
       {/* 모바일에서 하단 버튼 영역 높이만큼 여백 추가 */}
-      <div className="max-w-[1000px] mx-auto px-4 py-8 pb-2 lg:pb-10">
+      <div className="max-w-[1000px] mx-auto pb-2 lg:pb-10">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
           {/* 좌측: 이미지 캐러셀 */}
-          <div className="flex-1 lg:flex-[0_0_50%] px-6 lg:px-0">
+          <div className="flex-1 lg:flex-[0_0_50%] lg:px-0">
             {product?.images && product.images.length > 0 ? (
               <div className="w-full group">
                 <Carousel
-                  className="w-full"
+                  className="w-full relative"
                   setApi={setApi}
                   opts={{
                     align: 'start',
@@ -199,20 +199,20 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
                       <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
                     </>
                   )}
-                </Carousel>
-                {/* 페이지 인디케이터 - 프로그레스 바 스타일 */}
-                {product.images.length > 1 && (
-                  <div className="flex justify-center mt-4">
-                    <div className="w-1/3 relative h-1 bg-gray-200 overflow-hidden">
-                      <div
-                        className="absolute left-0 h-full bg-black/80 transition-all duration-300 ease-out"
-                        style={{
-                          width: `${((current + 1) / product.images.length) * 100}%`,
-                        }}
-                      />
+                  {/* 페이지 인디케이터 - 캐러셀 안쪽 하단 */}
+                  {product.images.length > 1 && (
+                    <div className="absolute bottom-4 left-4 right-4 flex justify-center">
+                      <div className="w-3/4 relative h-[3px] bg-black/30 overflow-hidden">
+                        <div
+                          className="absolute left-0 h-full bg-black transition-all duration-300 ease-out"
+                          style={{
+                            width: `${((current + 1) / product.images.length) * 100}%`,
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </Carousel>
               </div>
             ) : (
               <div className="w-full aspect-square bg-gray-200 relative overflow-hidden">
@@ -222,7 +222,7 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
           </div>
 
           {/* 우측: 상품 정보 */}
-          <div className="flex-1 lg:flex-[0_0_50%] flex flex-col">
+          <div className="flex-1 lg:flex-[0_0_50%] px-5 flex flex-col">
             {/* 브레드크럼과 공유 아이콘 */}
             <div className="flex items-center justify-between text-[18px] font-medium text-gray-400 mb-[24px]">
               <div>
@@ -315,7 +315,7 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
 
       {/* 상세정보 섹션 */}
       {!isFetching && (
-        <div className="max-w-[800px] pt-0 lg:py-16 lg:mx-auto lg:px-20 mb-[200px]">
+        <div className="max-w-[800px] pt-2 lg:py-16 lg:mx-auto lg:px-20 mb-[200px] px-4">
           {/* 상세정보 타이틀 */}
           <div className="relative flex items-center justify-center mb-8 lg:mb-12">
             {/* 양쪽 라인 */}

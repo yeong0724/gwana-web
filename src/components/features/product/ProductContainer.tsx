@@ -1,13 +1,12 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { concat, filter, find, forEach } from 'lodash-es';
 
 import { productMockData } from '@/api/mock';
 import ProductList from '@/components/features/product/ProductList';
-import ProductSkeleton from '@/components/features/product/ProductSkeleton';
 import { useDragScroll } from '@/hooks/useDragScroll';
 import { useMenuStore } from '@/stores';
 
@@ -178,18 +177,14 @@ const ProductContainer = () => {
           {/* 나가는 리스트 (이전 카테고리) */}
           {prevCategory && (
             <div className="absolute inset-0 animate-tab-slide-left-out">
-              <Suspense fallback={<ProductSkeleton />}>
-                <ProductList key={prevCategory} categoryId={prevCategory} />
-              </Suspense>
+              <ProductList key={prevCategory} categoryId={prevCategory} />
             </div>
           )}
 
           {/* 들어오는 리스트 (현재 카테고리) */}
           {currentCategory && (
             <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
-              <Suspense fallback={<ProductSkeleton />}>
-                <ProductList key={currentCategory} categoryId={currentCategory} />
-              </Suspense>
+              <ProductList key={currentCategory} categoryId={currentCategory} />
             </div>
           )}
         </div>

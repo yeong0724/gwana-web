@@ -4,10 +4,10 @@ const ProductSkeleton = () => {
       {Array.from({ length: 4 }, (_, index) => (
         <div
           key={index}
-          className="bg-white rounded-lg p-5 shadow-sm border border-gray-100 h-80 animate-pulse"
+          className="bg-white rounded-lg p-5 shadow-sm border border-gray-100 h-64 animate-pulse"
         >
           {/* 상품 이미지 스켈레톤 */}
-          <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 relative overflow-hidden">
+          <div className="w-full aspect-square bg-gray-200 rounded-lg mb-4 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
           </div>
 
