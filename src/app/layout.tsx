@@ -6,6 +6,7 @@ import localFont from 'next/font/local';
 
 import { GlobalAlert, GlobalLoading } from '@/components/common';
 import MainLayout from '@/components/layout/MainLayout';
+import KakaoScript from '@/components/script/KakaoScript';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Toaster } from '@/components/ui/sonner';
@@ -49,6 +50,7 @@ export default function Layout({ children }: RootLayoutProps) {
           <GlobalAlert />
           <Toaster />
           <GlobalLoading />
+          <KakaoScript />
         </ReactQueryProvider>
       </body>
     </html>

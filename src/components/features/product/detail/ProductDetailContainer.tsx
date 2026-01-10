@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { clone, findIndex } from 'lodash-es';
@@ -32,6 +32,7 @@ type Props = {
 
 const ProductDetailContainer = ({ product, productId }: Props) => {
   const queryClient = useQueryClient();
+  const pathname = usePathname();
   const router = useRouter();
   const { isLogin } = useLoginStore();
   const isMobile = getIsMobile();
@@ -86,8 +87,28 @@ const ProductDetailContainer = ({ product, productId }: Props) => {
   };
 
   const handleShare = () => {
-    // TODO: 공유하기 로직 구현
-    console.log('공유하기', { productId });
+    const { Kakao, location } = window;
+    Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: product.productName,
+        description: '차를 마셔보세요 ~ !',
+        imageUrl: `${process.env.NEXT_PUBLIC_APP_BASE_URL}${product.images[0]}`,
+        link: {
+          mobileWebUrl: location.href,
+          webUrl: location.href,
+        },
+      },
+      buttons: [
+        {
+          title: '관아수제차 방문하기',
+          link: {
+            mobileWebUrl: `${process.env.NEXT_PUBLIC_APP_BASE_URL}${pathname}`,
+            webUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL}${pathname}`,
+          },
+        },
+      ],
+    });
   };
 
   /**
