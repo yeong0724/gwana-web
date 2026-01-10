@@ -10,7 +10,7 @@ export type HandleChange<T, V> = (
   }
 ) => void;
 
-export type FormatEnum = 'number' | 'text' | 'all' | '';
+export type FormatEnum = 'number' | 'text' | 'tel' | 'all' | '';
 
 export type ReactHookFormEventType<T extends FieldValues> = {
   name: FieldPath<T>;

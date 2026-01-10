@@ -209,7 +209,7 @@ const PaymentContainer = ({ sessionId }: Props) => {
                   className={inputClassName}
                 />
                 <ControllerInput
-                  type="number"
+                  type="tel"
                   name="senderPhone"
                   placeholder="휴대폰 ('-' 없이 숫자만 입력)"
                   className={inputClassName}
@@ -239,7 +239,7 @@ const PaymentContainer = ({ sessionId }: Props) => {
                   className={inputClassName}
                 />
                 <ControllerInput
-                  type="number"
+                  type="tel"
                   name="recipientPhone"
                   placeholder="휴대폰 ('-' 없이 숫자만 입력)"
                   className={inputClassName}
