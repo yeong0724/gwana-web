@@ -86,8 +86,6 @@ const PaymentContainer = ({ sessionId }: Props) => {
   };
 
   const onSubmit = async (data: PaymentForm) => {
-    console.log('결제 데이터:', data);
-
     const repProductName = first(paymentSession.items)?.productName ?? '';
     const orderCount = size(paymentSession.items);
     const orderName = orderCount > 1 ? `${repProductName} 외 ${orderCount - 1}건` : repProductName;

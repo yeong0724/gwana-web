@@ -19,7 +19,6 @@ interface Props {
 const MainLayout = ({ children }: Props) => {
   const pathname = usePathname();
   const isNoMainHeaderPage = noMainHeaderPage(pathname);
-  console.log('isNoMainHeaderPage', isNoMainHeaderPage);
   const { setLoginInfo, loginInfo, _hasHydrated } = useLoginStore();
 
   const onCheckLoginStatus = async () => {
