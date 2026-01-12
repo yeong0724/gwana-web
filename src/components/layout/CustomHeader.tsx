@@ -13,7 +13,7 @@ const CustomHeader = () => {
   const { backward } = useNativeRouter();
 
   const title = useMemo(() => {
-    if (pathname.startsWith('/cart')) return '장바구니';
+    if (pathname.startsWith('/cart')) return 'SHOP';
     if (pathname.startsWith('/payment')) return '주문/결제';
     if (pathname.startsWith('/login')) return '로그인';
     return '';

@@ -38,16 +38,20 @@ const CartContainer = () => {
 
   const [cart, setCart] = useState<Array<Cart & { checked: boolean }>>([]);
 
-  const { totalProductPrice, totalShippingPrice } = useMemo(
-    () => ({
-      totalProductPrice: sumBy(
-        filter(cart, { checked: true }),
-        ({ price, quantity }) => price * quantity
-      ),
-      totalShippingPrice: sumBy(filter(cart, { checked: true }), 'shippingPrice'),
-    }),
-    [cart]
-  );
+  const { totalProductPrice, totalShippingPrice } = useMemo(() => {
+    const totalProductPrice = sumBy(
+      filter(cart, { checked: true }),
+      ({ price, quantity }) => price * quantity
+    );
+
+    const totalShippingPrice =
+      totalProductPrice >= 50000 ? 0 : sumBy(filter(cart, { checked: true }), 'shippingPrice');
+
+    return {
+      totalProductPrice,
+      totalShippingPrice,
+    };
+  }, [cart]);
 
   const isNoSelect = useMemo(() => !some(cart, { checked: true }), [cart]);
 
@@ -134,8 +138,171 @@ const CartContainer = () => {
 
   return (
     <>
+      {/* lg 이상의 웹뷰 */}
+      <div className="hidden lg:flex flex-col w-full mx-auto flex-1 px-16 py-8">
+        {/* 장바구니 타이틀 */}
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">장바구니 ({size(cart)})</h1>
+
+        {cart.length === 0 ? (
+          <div className="flex flex-col items-center justify-center flex-1 gap-4 bg-gray-50 rounded-lg py-20">
+            <ShoppingCart size={80} className="text-gray-300" strokeWidth={1.5} />
+            <span className="text-gray-500 text-[16px]">장바구니가 비어있습니다</span>
+          </div>
+        ) : (
+          <div className="flex flex-col flex-1">
+            {/* 테이블 헤더 */}
+            <div className="grid grid-cols-[40px_1fr_140px_140px_180px] gap-8 items-center py-3 border-b-[1.5px] border-gray-900">
+              <div className="flex justify-center">
+                <Checkbox
+                  checked={cart.length > 0 && !some(cart, { checked: false })}
+                  onCheckedChange={(checked: boolean) => onAllCheckboxHandler(checked)}
+                  disabled={cart.length === 0}
+                />
+              </div>
+              <span className="text-[14px] font-medium text-gray-700">상품 정보</span>
+              <span className="text-[14px] font-medium text-gray-700 text-center">수량</span>
+              <span className="text-[14px] font-medium text-gray-700 text-center">가격</span>
+              <span className="text-[14px] font-medium text-gray-700 text-center">배송비</span>
+            </div>
+
+            {/* 테이블 바디 */}
+            <div className="flex flex-col divide-y divide-gray-300">
+              {map(cart, (item, index) => (
+                <div
+                  key={`desktop-${item.cartId}-${index}`}
+                  className="grid grid-cols-[40px_1fr_140px_140px_180px] gap-8 items-center py-10"
+                >
+                  {/* 체크박스 */}
+                  <div className="flex justify-center">
+                    <Checkbox
+                      checked={item.checked}
+                      onCheckedChange={(checked: boolean) => onCheckboxHandler(checked, index)}
+                    />
+                  </div>
+
+                  {/* 상품 정보 */}
+                  <div className="flex gap-4 items-center">
+                    <div className="relative flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+                      {item.images && !isEmpty(item.images) ? (
+                        <Image
+                          src={first(item.images)!}
+                          alt={item.productName}
+                          width={80}
+                          height={80}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200" />
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[15px] font-medium text-gray-900">{item.productName}</p>
+                      <button
+                        className="text-[13px] text-gray-600 hover:text-gray-900 text-left"
+                        onClick={() => onDeleteCart(item)}
+                      >
+                        삭제하기
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 수량 */}
+                  <div className="flex items-center justify-center">
+                    <div className="flex items-center border border-gray-300 rounded overflow-hidden">
+                      <button
+                        className="w-8 h-8 hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center disabled:opacity-50"
+                        onClick={() => onUpdateCartQuantity(item, item.quantity - 1, index)}
+                        disabled={item.quantity <= 1}
+                      >
+                        <Minus size={14} className="text-gray-600" />
+                      </button>
+                      <span className="w-10 h-8 text-[14px] text-gray-900 flex items-center justify-center">
+                        {item.quantity}
+                      </span>
+                      <button
+                        className="w-8 h-8 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center"
+                        onClick={() => onUpdateCartQuantity(item, item.quantity + 1, index)}
+                      >
+                        <Plus size={14} className="text-gray-600" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 가격 */}
+                  <div className="text-center">
+                    <span className="text-[15px] font-medium text-black">
+                      {localeFormat(item.price * item.quantity)}원
+                    </span>
+                  </div>
+
+                  {/* 배송비 */}
+                  <div className="text-center">
+                    {item.shippingPrice === 0 ? (
+                      <span className="text-[14px] text-teal-600 font-medium">무료 배송</span>
+                    ) : (
+                      <span className="text-[14px] text-gray-500 font-medium">
+                        {localeFormat(item.shippingPrice)}원
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 테이블 하단 구분선 */}
+            <div className="border-t-[1.5px] border-gray-900 mt-2" />
+
+            {/* 하단 영역: 삭제 버튼 + 무료배송 안내 */}
+            <div className="flex justify-between items-center mt-6">
+              {/* 좌측: 삭제 버튼 */}
+              <button
+                disabled={isNoSelect}
+                className="text-[13px] text-gray-600 hover:text-gray-900 disabled:text-gray-300 disabled:cursor-not-allowed"
+                onClick={onDeleteCartList}
+              >
+                선택 상품 삭제
+              </button>
+
+              {/* 우측: 무료배송 안내 */}
+              <p className="text-[13px] text-gray-600">* 50,000원 이상 구매 시 무료배송</p>
+            </div>
+
+            {/* 비용 섹션 */}
+            <div className="flex justify-end mt-6">
+              <div className="flex flex-col gap-2 min-w-[350px]">
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-gray-700">상품 합계</span>
+                  <span className="text-gray-900">{localeFormat(totalProductPrice)}원</span>
+                </div>
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-gray-700">배송비</span>
+                  <span className="text-gray-900">{localeFormat(totalShippingPrice)}원</span>
+                </div>
+                <div className="h-px bg-gray-300 my-2" />
+                <div className="flex justify-between items-center text-[16px] font-bold">
+                  <span className="text-gray-900">합계</span>
+                  <span className="text-gray-900">
+                    {localeFormat(totalProductPrice + totalShippingPrice)}원
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 구매하기 버튼 */}
+            <div className="flex justify-end mt-8">
+              <button
+                disabled={isNoSelect}
+                className="bg-gray-900 text-white hover:bg-gray-800 rounded-md px-12 py-3 text-[15px] font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300 transition-colors"
+                onClick={moveToOrderPage}
+              >
+                구매하기
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* lg 미만의 모바일뷰 */}
-      <div className="flex flex-col w-full max-w-[500px] mx-auto flex-1 border-x border-gray-100 overflow-hidden">
+      <div className="flex flex-col w-full max-w-[500px] mx-auto flex-1 border-x border-gray-100 overflow-hidden lg:hidden">
         {/* 전체선택 헤더 */}
         <div className="flex items-center justify-between p-3 bg-white border-b border-gray-200 flex-shrink-0">
           <label className="flex items-center gap-2 cursor-pointer select-none">
