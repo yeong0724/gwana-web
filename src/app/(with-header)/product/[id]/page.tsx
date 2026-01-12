@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 
-import { productMockData } from '@/api/mock';
 import ProductDetailContainer from '@/components/features/product/detail/ProductDetailContainer';
 import ProductDetailSkeleton from '@/components/features/product/detail/ProductDetailSkeleton';
 
@@ -18,11 +17,9 @@ type PageProps = {
 const Page = async ({ params }: PageProps) => {
   const { id } = await params;
 
-  const product = productMockData[Number(id) - 1];
-
   return (
     <Suspense fallback={<ProductDetailSkeleton />}>
-      <ProductDetailContainer productId={id} product={product} />
+      <ProductDetailContainer productId={id} />
     </Suspense>
   );
 };
