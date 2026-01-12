@@ -31,7 +31,9 @@ const SuccessContainer = ({ paymentKey, orderId, amount }: SuccessContainerProps
       { paymentKey, orderId, amount: amountNumber },
       {
         onSuccess: (data) => {
-          if (data.code !== ResultCode.SUCCESS) {
+          if (data.code === ResultCode.SUCCESS) {
+            setIsPaymentComplete(true);
+          } else {
             showAlert({
               title: '에러',
               description: data.message || '',
