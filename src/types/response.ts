@@ -110,7 +110,7 @@ export type CartOption = {
 };
 
 export type Cart = {
-  cartId?: string;
+  cartId: string;
   productId: string;
   productName: string;
   quantity: number;

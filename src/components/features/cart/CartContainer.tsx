@@ -85,15 +85,15 @@ const CartContainer = () => {
   };
 
   const onDeleteCartList = async () => {
-    // const selectedCart = filter(cart, { checked: true });
-    // if (isLogin) {
-    //   await deleteCartListAsync(map(selectedCart, 'cartId'));
-    // } else {
-    //   setCartStore(
-    //     cloneDeep(cartStore).filter((item) => !some(selectedCart, { productId: item.productId }))
-    //   );
-    // }
-    // setCart(filter(cart, { checked: false }));
+    const selectedCart = filter(cart, { checked: true });
+    if (isLogin) {
+      await deleteCartListAsync(map(selectedCart, 'cartId'));
+    } else {
+      setCartStore(
+        cloneDeep(cartStore).filter((item) => !some(selectedCart, { productId: item.productId }))
+      );
+    }
+    setCart(filter(cart, { checked: false }));
   };
 
   const onUpdateCartQuantity = async (
@@ -361,7 +361,7 @@ const CartContainer = () => {
               {/* 장바구니 아이템 리스트 */}
               <div className="flex flex-col bg-white">
                 {map(cart, (item, index) => (
-                  <>
+                  <React.Fragment key={`${item.cartId}-${index}`}>
                     <div key={`${item.cartId}-${index}`} className="bg-white px-2">
                       {/* 상단 영역: 체크박스 + 상품 정보 */}
                       <div className="flex gap-2 px-1 pt-[24px]">
@@ -557,7 +557,7 @@ const CartContainer = () => {
                     {cart.length - 1 !== index && (
                       <div className="border-b border-gray-300 mx-5 mb-3" />
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
 
