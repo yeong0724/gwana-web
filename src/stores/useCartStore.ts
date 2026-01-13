@@ -37,6 +37,7 @@ const cartStore = create<StoreType>()(
 
 export const cartActions = {
   clearCart: () => cartStore.getState().clearCart(),
+  cart: () => cartStore.getState().cart,
 };
 
 const useAlertStore = () =>

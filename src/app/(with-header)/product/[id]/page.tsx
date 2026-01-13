@@ -3,9 +3,9 @@ import { Suspense } from 'react';
 import ProductDetailContainer from '@/components/features/product/detail/ProductDetailContainer';
 import ProductDetailSkeleton from '@/components/features/product/detail/ProductDetailSkeleton';
 
-// 빌드 시 정적 생성할 경로들 (1 ~ 9까지의 상품 ID)
+// 빌드 시 정적 생성할 경로들 (1 ~ 8까지의 상품 ID)
 export async function generateStaticParams() {
-  return Array.from({ length: 9 }, (_, i) => ({
+  return Array.from({ length: 8 }, (_, i) => ({
     id: String(i + 1),
   }));
 }

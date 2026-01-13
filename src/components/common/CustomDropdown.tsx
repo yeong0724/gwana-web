@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { map } from 'lodash-es';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import { ProductOption } from '@/types';
+
 interface Props {
-  options: { optionId: string; optionName: string }[];
-  onOptionSelect: (optionId: string, optionName: string) => void;
+  options: ProductOption[];
+  onOptionSelect: (option: ProductOption) => void;
   placeholder?: string;
 }
 
@@ -18,8 +20,8 @@ const CustomDropdown = ({
 }: Props) => {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
 
-  const handleSelect = (optionId: string, optionName: string) => {
-    onOptionSelect?.(optionId, optionName);
+  const handleSelect = (option: ProductOption) => {
+    onOptionSelect?.(option);
     setIsOptionOpen(false);
   };
 
@@ -46,14 +48,14 @@ const CustomDropdown = ({
         }`}
       >
         <div className="border-t border-gray-200">
-          {map(options, ({ optionId, optionName }) => (
+          {map(options, (option) => (
             <button
-              key={optionId}
+              key={option.optionId}
               type="button"
-              onClick={() => handleSelect(optionId, optionName)}
+              onClick={() => handleSelect(option)}
               className="w-full px-3 py-3 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
             >
-              {optionName}
+              {option.optionName}
             </button>
           ))}
         </div>

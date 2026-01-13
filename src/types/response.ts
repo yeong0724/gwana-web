@@ -29,19 +29,6 @@ export type Product = {
   shippingPrice: number;
 };
 
-export type Cart = {
-  cartId: string;
-  productId: string;
-  productName: string;
-  quantity: number;
-  categoryName: string;
-  price: number;
-  shippingPrice: number;
-  images: string[];
-  optionId: string | null;
-  optionName: string;
-};
-
 export type PaymentSession = {
   productId: string;
   productName: string;
@@ -85,7 +72,7 @@ export interface ProductOption {
   optionId: string;
   optionName: string;
   productId: string;
-  additionalPrice: number;
+  optionPrice: number;
 }
 
 export interface ProductDetailResponse {
@@ -97,5 +84,40 @@ export interface ProductDetailResponse {
   infos: string[];
   price: number;
   shippingPrice: number;
+  optionRequired: boolean;
   options: ProductOption[];
 }
+
+export type PurchaseList = {
+  productId: string;
+  productName: string;
+  categoryName: string;
+  optionRequired: boolean;
+  price: number;
+  shippingPrice: number;
+  images: string[];
+  quantity: number;
+  optionId: string | null;
+  optionName: string;
+  optionPrice: number;
+};
+
+export type CartOption = {
+  optionId: string;
+  optionName: string;
+  quantity: number;
+  optionPrice: number;
+};
+
+export type Cart = {
+  cartId?: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  categoryName: string;
+  price: number;
+  shippingPrice: number;
+  images: string[];
+  optionRequired: boolean;
+  options: CartOption[];
+};

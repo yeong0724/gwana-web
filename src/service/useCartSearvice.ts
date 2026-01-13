@@ -7,17 +7,17 @@ import {
   updateCartList,
   updateCartQuantity,
 } from '@/api/cart';
-import { AddToCartRequest, Cart, UseQueryOptionsType } from '@/types';
+import { AddToCartRequest, UpdateCartRequest, UseQueryOptionsType } from '@/types';
 
 const useCartService = () => {
   const useAddToCartMutation = () =>
     useMutation({
-      mutationFn: (param: AddToCartRequest[]) => addToCart(param),
+      mutationFn: (param: AddToCartRequest) => addToCart(param),
     });
 
   const useUpdateCartListMutation = () =>
     useMutation({
-      mutationFn: (param: Cart[]) => updateCartList(param),
+      mutationFn: (param: UpdateCartRequest[]) => updateCartList(param),
     });
 
   const useDeleteCartListMutation = () =>

@@ -4,7 +4,18 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import { cloneDeep, filter, first, isEmpty, map, reject, size, some, sumBy } from 'lodash-es';
+import {
+  cloneDeep,
+  filter,
+  findIndex,
+  first,
+  isEmpty,
+  map,
+  reject,
+  size,
+  some,
+  sumBy,
+} from 'lodash-es';
 import { Info, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { PurchaseGuideModal } from '@/components/common/modal';
@@ -13,7 +24,7 @@ import useNativeRouter from '@/hooks/useNativeRouter';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, usePaymentService } from '@/service';
 import { useCartStore, useLoginStore } from '@/stores';
-import { Cart } from '@/types';
+import { AddToCartRequest, Cart } from '@/types';
 
 const CartContainer = () => {
   const router = useRouter();
@@ -23,8 +34,7 @@ const CartContainer = () => {
 
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
 
-  const { useDeleteCartListMutation, useGetCartListQuery, useUpdateCartQuantityMutation } =
-    useCartService();
+  const { useDeleteCartListMutation, useGetCartListQuery, useAddToCartMutation } = useCartService();
 
   const { useCreatePaymentSessionMutation } = usePaymentService();
 
@@ -33,7 +43,7 @@ const CartContainer = () => {
   });
 
   const { mutateAsync: deleteCartListAsync } = useDeleteCartListMutation();
-  const { mutateAsync: updateCartQuantityAsync } = useUpdateCartQuantityMutation();
+  const { mutateAsync: addToCartAsync } = useAddToCartMutation();
   const { mutateAsync: createPaymentSessionAsync } = useCreatePaymentSessionMutation();
 
   const [cart, setCart] = useState<Array<Cart & { checked: boolean }>>([]);
@@ -66,41 +76,56 @@ const CartContainer = () => {
   };
 
   const onDeleteCart = async (deleteCart: Cart) => {
-    if (isLogin) {
-      await deleteCartListAsync([deleteCart.cartId]);
-    } else {
-      setCartStore(cloneDeep(cartStore).filter((item) => item.productId !== deleteCart.productId));
-    }
-
-    setCart(reject(cloneDeep(cart), { productId: deleteCart.productId }));
+    // if (isLogin) {
+    //   await deleteCartListAsync([deleteCart.cartId]);
+    // } else {
+    //   setCartStore(cloneDeep(cartStore).filter((item) => item.productId !== deleteCart.productId));
+    // }
+    // setCart(reject(cloneDeep(cart), { productId: deleteCart.productId }));
   };
 
   const onDeleteCartList = async () => {
-    const selectedCart = filter(cart, { checked: true });
-    if (isLogin) {
-      await deleteCartListAsync(map(selectedCart, 'cartId'));
-    } else {
-      setCartStore(
-        cloneDeep(cartStore).filter((item) => !some(selectedCart, { productId: item.productId }))
-      );
-    }
-
-    setCart(filter(cart, { checked: false }));
+    // const selectedCart = filter(cart, { checked: true });
+    // if (isLogin) {
+    //   await deleteCartListAsync(map(selectedCart, 'cartId'));
+    // } else {
+    //   setCartStore(
+    //     cloneDeep(cartStore).filter((item) => !some(selectedCart, { productId: item.productId }))
+    //   );
+    // }
+    // setCart(filter(cart, { checked: false }));
   };
 
-  const onUpdateCartQuantity = async (item: Cart, quantity: number, index: number) => {
-    const payload: Cart = { ...item, quantity };
+  const onUpdateCartQuantity = async (
+    productId: string,
+    optionId: string,
+    quantity: number,
+    index: number,
+    optionRequired: boolean
+  ) => {
+    const payload: AddToCartRequest = { productId, optionId, quantity };
 
     if (isLogin) {
-      await updateCartQuantityAsync(payload);
+      await addToCartAsync(payload);
     } else {
       const cloneCartStore = cloneDeep(cartStore);
-      cloneCartStore[index] = payload;
+      if (optionRequired) {
+        const optionIndex = findIndex(cloneCartStore[index].options, { optionId });
+        cartStore[index].options[optionIndex].quantity = quantity;
+      } else {
+        cloneCartStore[index].quantity = quantity;
+      }
       setCartStore(cloneCartStore);
     }
 
     const cloneCart = cloneDeep(cart);
-    cloneCart[index].quantity = quantity;
+    if (optionRequired) {
+      const optionIndex = findIndex(cloneCart[index].options, { optionId });
+      cloneCart[index].options[optionIndex].quantity = quantity;
+    } else {
+      cloneCart[index].quantity = quantity;
+    }
+
     setCart(cloneCart);
   };
 
@@ -210,7 +235,7 @@ const CartContainer = () => {
                     <div className="flex items-center border border-gray-300 rounded overflow-hidden">
                       <button
                         className="w-8 h-8 hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center disabled:opacity-50"
-                        onClick={() => onUpdateCartQuantity(item, item.quantity - 1, index)}
+                        // onClick={() => onUpdateCartQuantity(item, item.quantity - 1, index)}
                         disabled={item.quantity <= 1}
                       >
                         <Minus size={14} className="text-gray-600" />
@@ -220,7 +245,7 @@ const CartContainer = () => {
                       </span>
                       <button
                         className="w-8 h-8 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center"
-                        onClick={() => onUpdateCartQuantity(item, item.quantity + 1, index)}
+                        // onClick={() => onUpdateCartQuantity(item, item.quantity + 1, index)}
                       >
                         <Plus size={14} className="text-gray-600" />
                       </button>
@@ -352,7 +377,7 @@ const CartContainer = () => {
 
                       {/* 나머지 콘텐츠 */}
                       <div className="flex-1 flex flex-col gap-2">
-                        {/* 상단 영역: 이미지 + 상품정보 + X버튼 */}
+                        {/* 상단 영역: 이미지 + 상품정보 */}
                         <div className="flex gap-2">
                           {/* 상품 이미지 */}
                           <div className="relative w-14 h-14 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
@@ -370,61 +395,158 @@ const CartContainer = () => {
 
                           {/* 상품명 */}
                           <div className="flex-1">
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <p className="text-[13px] font-semibold text-gray-900">
-                                  {item.categoryName}
-                                </p>
-                                <p className="text-[11px] text-gray-700 mt-1 line-clamp-2">
-                                  {item.productName}
-                                </p>
-                              </div>
-                              {/* 삭제 버튼 */}
-                              <button
-                                className="p-1 hover:bg-gray-100 rounded ml-2 active:scale-70 transition-transform"
-                                onClick={() => onDeleteCart(item)}
-                              >
-                                <X size={16} className="text-gray-500" />
-                              </button>
-                            </div>
+                            <p className="text-[13px] font-semibold text-gray-900">
+                              {item.categoryName}
+                            </p>
+                            <p className="text-[11px] text-gray-700 mt-1 line-clamp-2">
+                              {item.productName}
+                            </p>
                           </div>
                         </div>
 
-                        {/* 상품 금액 (좌우 정렬) */}
-                        <div className="flex justify-between items-center mt-3">
-                          <span className="text-[12px] text-gray-600">상품 금액</span>
-                          <span className="text-[14px] font-semibold text-gray-900">
-                            {localeFormat(item.price * item.quantity)}원
-                          </span>
-                        </div>
+                        {/* 메인 상품 영역 - optionRequired가 false일 때만 표시 */}
+                        {!item.optionRequired && (
+                          <div className="flex flex-col gap-2 mt-3 py-2 border-t border-gray-100">
+                            <div className="flex items-center gap-1">
+                              <span className="text-[11px] text-teal-600 font-medium">
+                                메인 상품
+                              </span>
+                              <span className="text-[11px] text-gray-400">|</span>
+                              <span className="text-[12px] text-gray-700">{item.productName}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              {/* 수량 조절 */}
+                              <div className="flex items-center border border-gray-300 rounded overflow-hidden">
+                                <button
+                                  className="w-7 h-6 hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center disabled:opacity-50"
+                                  disabled={item.quantity <= 1}
+                                  onClick={() =>
+                                    onUpdateCartQuantity(
+                                      item.productId,
+                                      '',
+                                      item.quantity - 1,
+                                      index,
+                                      item.optionRequired
+                                    )
+                                  }
+                                >
+                                  <Minus size={12} className="text-gray-600" />
+                                </button>
+                                <span className="w-8 h-6 text-[12px] text-gray-900 flex items-center justify-center">
+                                  {item.quantity}
+                                </span>
+                                <button className="w-7 h-6 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center">
+                                  <Plus
+                                    size={12}
+                                    className="text-gray-600"
+                                    onClick={() =>
+                                      onUpdateCartQuantity(
+                                        item.productId,
+                                        '',
+                                        item.quantity + 1,
+                                        index,
+                                        item.optionRequired
+                                      )
+                                    }
+                                  />
+                                </button>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {/* 금액 */}
+                                <span className="text-[13px] font-semibold text-gray-900">
+                                  {localeFormat(item.price * item.quantity)}원
+                                </span>
+                                {/* 삭제 버튼 */}
+                                <button className="p-1 hover:bg-gray-100 rounded active:scale-90 transition-transform">
+                                  <X size={14} className="text-gray-400" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
-                        {/* 수량 조절 버튼 (좌우 꽉차게) */}
-                        <div className="flex items-center border border-gray-300 rounded overflow-hidden w-full">
-                          <button
-                            className="w-[15%] py-1  hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center"
-                            onClick={() => onUpdateCartQuantity(item, item.quantity - 1, index)}
-                            disabled={item.quantity <= 1}
-                          >
-                            <Minus size={12} className="text-gray-600" />
-                          </button>
-                          <span className="w-[70%] py-1 text-[13px] text-gray-900 text-center">
-                            {`${item.quantity} 개`}
-                          </span>
-                          <button
-                            className="w-[15%] py-1 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center"
-                            onClick={() => onUpdateCartQuantity(item, item.quantity + 1, index)}
-                          >
-                            <Plus size={12} className="text-gray-600" />
-                          </button>
-                        </div>
+                        {/* 옵션 상품 영역 */}
+                        {item.options && item.options.length > 0 && (
+                          <div className="flex flex-col">
+                            {map(item.options, (option, optionIndex) => (
+                              <div
+                                key={`${item.cartId}-option-${optionIndex}`}
+                                className="flex flex-col gap-2 py-2 border-t border-gray-100"
+                              >
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[11px] text-teal-600 font-medium">
+                                    옵션
+                                  </span>
+                                  <span className="text-[11px] text-gray-400">|</span>
+                                  <span className="text-[12px] text-gray-700">
+                                    {option.optionName}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  {/* 수량 조절 */}
+                                  <div className="flex items-center border border-gray-300 rounded overflow-hidden">
+                                    <button
+                                      className="w-7 h-6 hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center disabled:opacity-50"
+                                      disabled={option.quantity <= 1}
+                                      onClick={() =>
+                                        onUpdateCartQuantity(
+                                          item.productId,
+                                          option.optionId,
+                                          option.quantity - 1,
+                                          index,
+                                          item.optionRequired
+                                        )
+                                      }
+                                    >
+                                      <Minus size={12} className="text-gray-600" />
+                                    </button>
+                                    <span className="w-8 h-6 text-[12px] text-gray-900 flex items-center justify-center">
+                                      {option.quantity}
+                                    </span>
+                                    <button className="w-7 h-6 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center">
+                                      <Plus
+                                        size={12}
+                                        className="text-gray-600"
+                                        onClick={() =>
+                                          onUpdateCartQuantity(
+                                            item.productId,
+                                            option.optionId,
+                                            option.quantity + 1,
+                                            index,
+                                            item.optionRequired
+                                          )
+                                        }
+                                      />
+                                    </button>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {/* 금액 */}
+                                    <span className="text-[13px] font-semibold text-gray-900">
+                                      {localeFormat(option.optionPrice * option.quantity)}원
+                                    </span>
+                                    {/* 삭제 버튼 */}
+                                    <button className="p-1 hover:bg-gray-100 rounded active:scale-90 transition-transform">
+                                      <X size={14} className="text-gray-400" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* 하단 가격 산정 영역 */}
                     <div className="text-center text-[11px] text-gray-600 py-3 border-t border-gray-200 bg-white">
-                      {`상품 ${localeFormat(item.price * item.quantity)}원 + 배송비 ${localeFormat(item.shippingPrice)}원 = `}
+                      {`상품 ${localeFormat(item.price * item.quantity + sumBy(item.options, (opt) => opt.optionPrice * opt.quantity))}원 + 배송비 ${localeFormat(item.shippingPrice)}원 = `}
                       <span className="font-semibold text-gray-900">
-                        {localeFormat(item.price * item.quantity + item.shippingPrice)}원
+                        {localeFormat(
+                          item.price * item.quantity +
+                            sumBy(item.options, (opt) => opt.optionPrice * opt.quantity) +
+                            item.shippingPrice
+                        )}
+                        원
                       </span>
                     </div>
                   </div>

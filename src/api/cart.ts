@@ -1,14 +1,14 @@
 import { getAxios, postAxios } from '@/lib/api';
-import { AddToCartRequest, ApiResponse, Cart } from '@/types';
+import { AddToCartRequest, ApiResponse, Cart, UpdateCartRequest } from '@/types';
 
-const addToCart = async (params: AddToCartRequest[]) => {
+const addToCart = async (params: AddToCartRequest) => {
   return postAxios<ApiResponse<void>>({
     url: '/cart/add',
     params,
   });
 };
 
-const updateCartList = async (params: Cart[]) => {
+const updateCartList = async (params: UpdateCartRequest[]) => {
   return postAxios<ApiResponse<void>>({
     url: '/cart/update',
     params,

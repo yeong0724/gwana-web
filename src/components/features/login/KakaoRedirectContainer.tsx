@@ -3,12 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { isEmpty } from 'lodash-es';
+import { forEach, isEmpty, reduce } from 'lodash-es';
 
 import { useCartService, useLoginService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
 import { loginActions } from '@/stores/useLoginStore';
-import { ResultCode } from '@/types';
+import { ResultCode, UpdateCartRequest } from '@/types';
 
 interface Props {
   code: string;
@@ -44,7 +44,32 @@ const KakaoRedirectContainer = ({ code }: Props) => {
             });
 
             if (!isEmpty(cart)) {
-              await updateCartListAsync(cart);
+              const updateCartList = reduce(
+                cart,
+                (acc, cur) => {
+                  const { productId, quantity, optionRequired, options } = cur;
+                  if (!optionRequired) {
+                    acc.push({
+                      productId,
+                      quantity,
+                      optionId: null,
+                    });
+                  }
+
+                  forEach(options, (option) => {
+                    acc.push({
+                      productId,
+                      optionId: option.optionId,
+                      quantity: option.quantity,
+                    });
+                  });
+
+                  return acc;
+                },
+                [] as UpdateCartRequest[]
+              );
+
+              await updateCartListAsync(updateCartList);
             }
 
             router.replace(url);
