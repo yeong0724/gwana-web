@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function AboutPage() {
+const AboutContainer = () => {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -67,10 +69,10 @@ export default function AboutPage() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: heroRef.current,
-          start: window.innerWidth >= 1024 ? 'top 94px' : 'top 58px',
+          start: window.innerWidth >= 1024 ? 'top 94px' : '',
           end: '+=400%', // 더 길게 (순차 등장 시간 확보)
           pin: true,
-          scrub: 1,
+          scrub: 0.5,
           // markers: true,
         },
       });
@@ -138,8 +140,8 @@ export default function AboutPage() {
           duration: 0.5,
         });
 
-      // 잠시 유지
-      tl.to({}, { duration: 0.3 });
+      // 페이즈 2 유지 시간 (내용을 보고 버튼을 클릭할 시간 확보)
+      tl.to({}, { duration: 2 });
 
       // ===== Phase 2 → 3: 한꺼번에 페이드아웃 =====
       tl.to(content2Ref.current, {
@@ -181,7 +183,7 @@ export default function AboutPage() {
       {/* ===== 히어로 섹션 ===== */}
       <div
         ref={heroRef}
-        className="relative h-[calc(100dvh-58px)] lg:h-[calc(100dvh-94px)] w-full overflow-hidden"
+        className="relative h-screen lg:h-[calc(100dvh-94px)] w-full overflow-hidden"
       >
         {/* 배경 이미지 */}
         <div
@@ -209,10 +211,7 @@ export default function AboutPage() {
             하동의 자연과 계절의 흐름을
             <br />차 한 잔에 담았습니다.
           </p>
-          <div
-            ref={phase1LogoRef}
-            className="w-20 h-20 border-2 border-emerald-400 flex items-center justify-center mb-8"
-          >
+          <div ref={phase1LogoRef} className="flex items-center justify-center mb-8">
             <span className="text-emerald-400 text-3xl">🦚</span>
           </div>
         </div>
@@ -233,10 +232,7 @@ export default function AboutPage() {
           </p>
 
           <div ref={phase2IconsRef} className="flex gap-4 mb-6">
-            <div
-              className="w-16 h-16 rounded-full border-4 flex items-center justify-center"
-              style={{ borderColor: '#00A651' }}
-            >
+            <div className="flex items-center justify-center">
               <span className="text-2xl">🦚</span>
             </div>
           </div>
@@ -259,9 +255,28 @@ export default function AboutPage() {
 
           <button
             ref={phase2ButtonRef}
-            className="px-6 py-3 border border-white/50 rounded-full text-sm hover:bg-white/10 transition-colors"
+            className="flex items-center gap-3 group"
+            onClick={(e) => {
+              const button = e.currentTarget;
+              gsap.to(button, {
+                scale: 0.8,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                  router.push('/product?category=all');
+                },
+              });
+            }}
           >
-            Go to Shop
+            <span className="text-[18px] relative">
+              <div className="absolute -z-10 top-1/2 left-[-18px] -translate-y-1/2 w-10 h-10 rounded-full bg-zinc-700/80" />
+              Go to Shop
+            </span>
+            <div className="">
+              <ArrowRight className="w-5 h-5 text-white" />
+            </div>
           </button>
         </div>
 
@@ -298,4 +313,6 @@ export default function AboutPage() {
       </div>
     </div>
   );
-}
+};
+
+export default AboutContainer;
