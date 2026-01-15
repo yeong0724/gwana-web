@@ -6,8 +6,19 @@ import { useRouter } from 'next/navigation';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import { aboutCarousel1Img, aboutCarousel2Img, aboutCarousel3Img, aboutCarousel4Img, aboutCarousel5Img, aboutGwanaImg } from '@/static/images';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const brandImages = [
+  aboutCarousel1Img, // 로고 스타일 1
+  aboutCarousel2Img, // 로고 스타일 2
+  aboutCarousel3Img, // 로고 스타일 3
+  aboutCarousel4Img, // 로고 스타일 4
+  aboutCarousel5Img, // 로고 스타일 5
+];
+
 
 const AboutContainer = () => {
   const router = useRouter();
@@ -22,6 +33,7 @@ const AboutContainer = () => {
   const phase1Text1Ref = useRef<HTMLParagraphElement>(null);
   const phase1LogoRef = useRef<HTMLDivElement>(null);
   const phase1Text2Ref = useRef<HTMLParagraphElement>(null);
+  const phase1CarouselRef = useRef(null); // 캐러셀 컨테이너
 
   // Phase 2 개별 요소들
   const phase2TitleRef = useRef<HTMLHeadingElement>(null);
@@ -30,6 +42,8 @@ const AboutContainer = () => {
   const phase2HeadingRef = useRef<HTMLHeadingElement>(null);
   const phase2TextRef = useRef<HTMLParagraphElement>(null);
   const phase2ButtonRef = useRef<HTMLButtonElement>(null);
+
+  const carouselTrackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -41,6 +55,7 @@ const AboutContainer = () => {
           phase1Text1Ref.current,
           phase1LogoRef.current,
           phase1Text2Ref.current,
+          phase1CarouselRef.current,
         ],
         {
           opacity: 0,
@@ -55,6 +70,7 @@ const AboutContainer = () => {
           phase1Text1Ref.current,
           phase1LogoRef.current,
           phase1Text2Ref.current,
+          phase1CarouselRef.current,
         ],
         {
           opacity: 1,
@@ -65,6 +81,23 @@ const AboutContainer = () => {
           delay: 0.3,
         }
       );
+
+      const track = carouselTrackRef.current;
+
+      if (track) {
+        // 트랙 너비의 절반만큼 이동 (복제된 이미지들 때문에)
+        const totalWidth = track.scrollWidth / 4;
+        gsap.fromTo(
+          track,
+          { x: 0 },
+          {
+            x: -totalWidth,
+            duration: 45,
+            ease: "none",
+            repeat: -1,
+          }
+        );
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -141,7 +174,7 @@ const AboutContainer = () => {
         });
 
       // 페이즈 2 유지 시간 (내용을 보고 버튼을 클릭할 시간 확보)
-      tl.to({}, { duration: 2 });
+      tl.to({}, { duration: 1 });
 
       // ===== Phase 2 → 3: 한꺼번에 페이드아웃 =====
       tl.to(content2Ref.current, {
@@ -167,8 +200,8 @@ const AboutContainer = () => {
           ease: 'power2.out',
           scrollTrigger: {
             trigger: section,
-            start: 'top 85%',
-            end: 'top 20%', // 이 지점을 벗어나면 reverse
+            start: 'top 65%',
+            end: 'top 35%', // 이 지점을 벗어나면 reverse
             toggleActions: 'play none none reverse',
           },
         });
@@ -177,6 +210,21 @@ const AboutContainer = () => {
 
     return () => ctx.revert();
   }, []);
+
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    window.scrollTo(0, 0);
+  }, [])
+
+  const carouselImages = [
+    ...brandImages,
+    ...brandImages,
+    ...brandImages,
+    ...brandImages,
+  ];
 
   return (
     <div ref={containerRef} className="">
@@ -189,7 +237,7 @@ const AboutContainer = () => {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('/images/gwana_about_01.webp')`,
+            backgroundImage: `url('/images/about/gwana_about_01.webp')`,
           }}
         />
 
@@ -199,36 +247,55 @@ const AboutContainer = () => {
         {/* 첫 번째 컨텐츠 */}
         <div
           ref={content1Ref}
-          className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-6 mt-12"
+          className="absolute inset-0 flex flex-col items-center justify-center text-white text-center"
         >
-          <h1
-            ref={phase1TitleRef}
-            className="text-5xl md:text-7xl font-bold text-emerald-500"
-            style={{ opacity: 0 }}
-          >
-            관아수제차
-          </h1>
-          <p
-            ref={phase1Text1Ref}
-            className="text-[22px] md:text-xl max-w-xl leading-relaxed mt-56 mb-8 font-semibold"
-            style={{ opacity: 0 }}
-          >
-            Tea from Hadong, calmly brewed
-          </p>
+          <div ref={phase1TitleRef} style={{ opacity: 0 }}>
+            <Image
+              src={aboutGwanaImg}
+              alt="관아수제차"
+              className="w-[280px] lg:w-[350px] mb-[80px]"
+              style={{
+                filter:
+                  "drop-shadow(1px 0 0 white) drop-shadow(0 1px 0 white) drop-shadow(0 0 1px white)",
+              }}
+              width={100}
+              height={100}
+            />
+          </div>
           <p
             ref={phase1Text2Ref}
-            className="text-[20px] md:text-xl max-w-xl leading-relaxed mb-4"
+            className="text-[20px] md:text-xl max-w-xl leading-relaxed mb-10"
             style={{ opacity: 0 }}
           >
             하동의 자연과 계절의 흐름을
             <br />차 한 잔에 담았습니다.
           </p>
+          {/* 무한 루프 이미지 캐러셀 */}
           <div
-            ref={phase1LogoRef}
-            className="flex items-center justify-center mb-8"
+            ref={phase1CarouselRef}
+            className="w-full overflow-hidden mb-8 min-h-[100px] mt-10"
             style={{ opacity: 0 }}
           >
-            <span className="text-emerald-400 text-3xl">🍵</span>
+            <div
+              ref={carouselTrackRef}
+              className="flex gap-8 lg:gap-12 xl:gap-20 items-center"
+              style={{ width: "fit-content" }}
+            >
+              {carouselImages.map((src, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 rounded-lg flex items-center justify-center backdrop-blur-sm border-[1px] border-gray-600"
+                >
+                  <Image
+                    src={src}
+                    alt={`Brand ${(index % brandImages.length) + 1}`}
+                    className={`w-[240px] md:w-[300px] lg:w-[380px] xl:w-[480px] aspect-[5/3] object-cover rounded hover:opacity-100 transition-opacity`}
+                    width={100}
+                    height={100}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -246,14 +313,6 @@ const AboutContainer = () => {
             <br />
             시작된 관아수제차
           </h2>
-
-          <p
-            ref={phase2SubtitleRef}
-            className="text-xl italic mb-8 opacity-70"
-            style={{ opacity: 0 }}
-          >
-            What we can do
-          </p>
 
           <div ref={phase2IconsRef} className="flex gap-4 mb-6" style={{ opacity: 0 }}>
             <div className="flex items-center justify-center">
