@@ -331,6 +331,10 @@ const AboutContainer = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    router.prefetch('/product?category=all');
+  }, [router]);
+
   return (
     <div ref={containerRef} className="">
       {/* ===== 히어로 섹션 ===== */}
