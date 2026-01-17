@@ -174,7 +174,7 @@ const ProductDetailMobileView = () => {
       {/* 모바일 하단 고정 버튼 영역 - Portal로 body에 직접 렌더링 */}
       {isMounted &&
         createPortal(
-          <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+          <div className="fixed bottom-0 left-0 right-0 z-70 lg:hidden">
             {/* 메인 패널 */}
             <div
               className={`bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out ${isBottomPanelOpen ? 'rounded-t-2xl' : ''}`}

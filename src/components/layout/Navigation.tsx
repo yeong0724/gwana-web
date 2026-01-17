@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-import { concat, filter, isEmpty } from 'lodash-es';
-import { ChevronDown, ChevronRight, LogOut, User, X } from 'lucide-react';
-import { createPortal } from 'react-dom';
-
 import { useLoginStore } from '@/stores';
 import { MenuGroup } from '@/types';
+import { concat, filter, isEmpty } from 'lodash-es';
+import { ChevronDown, ChevronRight, LogOut, User, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 type Props = {
   isMenuOpen: boolean;
@@ -23,6 +21,19 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
   const { isLogin, user } = useLoginStore();
 
   const [currentMenu, setCurrentMenu] = useState<string>('');
+
+  // 사이드바 열릴 때 배경 스크롤 방지
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   const getFilteredCategory = (menuId: string) => {
     const init =
