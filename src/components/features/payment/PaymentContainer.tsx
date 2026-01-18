@@ -399,7 +399,7 @@ const PaymentContainer = ({ sessionId }: Props) => {
           </div>
 
           {/* 하단 고정 결제 버튼 */}
-          <div className="sticky bottom-0 p-4 bg-white border-t border-gray-200">
+          {/* <div className="sticky bottom-0 p-4 bg-white border-t border-gray-200">
             <button
               type="submit"
               className="w-full py-4 bg-black text-white text-[16px] sm:text-[17px] md:text-[18px] lg:text-[19px] font-bold rounded-lg hover:bg-gray-800 transition-colors"
@@ -407,7 +407,19 @@ const PaymentContainer = ({ sessionId }: Props) => {
             >
               {`${localeFormat(paymentSession.totalPrice + paymentSession.totalShippingPrice)}원 결제하기`}
             </button>
+          </div> */}
+          <div className="flex-shrink-0 bg-white p-4 z-10 border-t border-gray-200">
+            <button
+              type="submit"
+              disabled={!ready}
+              className="w-full bg-gray-900 text-white hover:bg-gray-800 rounded-full py-3 flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300"
+            >
+              <span className="text-[15px] font-semibold">
+                {`${localeFormat(paymentSession.totalPrice + paymentSession.totalShippingPrice)}원 결제하기`}
+              </span>
+            </button>
           </div>
+
         </form>
       </FormProvider>
       {/* 모바일: 바텀 시트 */}

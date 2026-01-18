@@ -36,7 +36,7 @@ const ProductList = ({ categoryId }: Props) => {
       {isLoading ? (
         <ProductSkeleton />
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-5 md:gap-y-10">
+        <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-[25px] gap-y-10 md:gap-x-5 md:gap-y-10">
           {map(productList, (product) => (
             <ProductCard
               key={product.productId}

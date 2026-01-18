@@ -4,7 +4,7 @@ import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { useCartService } from '@/service';
-import { mainLogoImg } from '@/static/images';
+import { headerLogoImg, mainLogoImg } from '@/static/images';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
 import type { Menu, MenuGroup } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -73,12 +73,12 @@ const Header = ({ menuGroup }: HeaderProps) => {
   /**
    * 마이페이지 이동
    */
-  const moveToMyPage = () => {};
+  const moveToMyPage = () => { };
 
   /**
    * 주문조회 이동
    */
-  const moveToOrderHistory = () => {};
+  const moveToOrderHistory = () => { };
 
   /**
    * 장바구니 이동
@@ -144,9 +144,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
     <div className="sticky top-0 z-50" style={{ viewTransitionName: 'header' }}>
       {/* Main Bar Header */}
       <header
-        className={`hidden lg:block sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-lg' : 'bg-white/30'
-        } hover:bg-white hover:shadow-lg`}
+        className={`hidden lg:block sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-white/30'
+          } hover:bg-white hover:shadow-lg`}
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => {
           setIsHeaderHovered(false);
@@ -155,11 +154,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
       >
         {/* 카테고리 배경 영역 - 카테고리가 있는 메뉴에 마우스를 올렸을 때만 표시 */}
         <div
-          className={`absolute left-0 right-0 top-full bg-white border-t border-gray-100 shadow-xl transition-all duration-500 ease-in-out origin-top z-10 ${
-            isHeaderHovered && isMainHovered
-              ? 'scale-y-100 opacity-100 visible'
-              : 'scale-y-0 opacity-0 invisible'
-          }`}
+          className={`absolute left-0 right-0 top-full bg-white border-t border-gray-100 shadow-xl transition-all duration-500 ease-in-out origin-top z-10 ${isHeaderHovered && isMainHovered
+            ? 'scale-y-100 opacity-100 visible'
+            : 'scale-y-0 opacity-0 invisible'
+            }`}
           style={{ height: '180px' }}
         />
 
@@ -205,11 +203,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
 
                       {/* 카테고리 드롭다운 - 해당 메인 메뉴에 호버시에만 표시 */}
                       <div
-                        className={`absolute top-full pt-8 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${
-                          isHeaderHovered && isMainHovered
-                            ? 'scale-y-100 opacity-100 visible'
-                            : 'scale-y-0 opacity-0 invisible'
-                        }`}
+                        className={`absolute top-full pt-8 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${isHeaderHovered && isMainHovered
+                          ? 'scale-y-100 opacity-100 visible'
+                          : 'scale-y-0 opacity-0 invisible'
+                          }`}
                         onMouseEnter={() => setIsMainHovered(true)}
                       >
                         {categories.map((category) => (
@@ -266,11 +263,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
       </header>
       {/* Side - Header (Mobile) */}
       <header
-        className={`h-[58px] lg:hidden top-0 z-40 ${
-          isHomePage
-            ? 'absolute left-0 right-0 bg-transparent'
-            : 'relative bg-white border-b border-gray-200'
-        }`}
+        className={`h-[58px] lg:hidden top-0 z-40 ${isHomePage
+          ? 'absolute left-0 right-0 bg-transparent'
+          : `relative ${isScrolled ? 'bg-white border-b border-gray-200' : ''}`
+          }`}
       >
         <div className="relative flex items-center justify-between px-4 h-full">
           {/* 왼쪽 - 뒤로가기 */}
@@ -298,10 +294,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
               />
             ) : (
               <Image
-                src="/images/gwana_logo_3.webp"
+                src={mainLogoImg}
                 alt="gwana_logo"
-                width={100}
-                height={100}
+                width={140}
+                height={150}
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
               />

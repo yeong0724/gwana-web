@@ -104,10 +104,10 @@ const ProductDetailWebView = () => {
             </div>
 
             {/* 상품명 */}
-            <h1 className="text-[20px] font-bold mb-[30px]">{product.productName}</h1>
+            <h1 className="text-[24px] font-bold mb-[15px]">{product.productName}</h1>
 
             {/* 가격 */}
-            <div className="text-[30px] mb-6">{localeFormat(product.price)}원</div>
+            <div className="text-[22px] mb-6">{localeFormat(product.price)}원</div>
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">

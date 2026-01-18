@@ -1,9 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-
-import { Truck } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import {
   Carousel,
@@ -42,7 +40,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
   };
   return (
     <div
-      className="bg-white cursor-pointer group rounded-lg"
+      className="bg-white cursor-pointer group"
       onClick={() => onClickProduct(product.productId)}
     >
       {/* 이미지 슬라이더 영역 */}
@@ -99,20 +97,20 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
       </div>
 
       {/* 상품 정보 */}
-      <div className="pt-4 space-y-2">
-        <h3 className="text-[12px] md:text-[15px] font-medium text-gray-900 line-clamp-2 leading-snug">
+      <div className="flex flex-col pt-4 space-y-2 justify-center items-center">
+        <h3 className="text-[15px] lg:text-[17px] font-semibold text-gray-900 leading-snug text-center break-keep">
           {product.productName}
         </h3>
         <div className="space-y-1">
-          <p className="text-[15px] md:text-[16px] font-bold text-gray-900">
+          <p className="text-[13px] lg:text-[15px] font-medium text-gray-900">
             {formatPrice(product.price || 25000)}
           </p>
-          <div className="flex items-center gap-1 text-[12px] text-gray-500">
+          {/* <div className="flex items-center gap-1 text-[12px] text-gray-500">
             <Truck className="w-3 h-3" />
             <span>
               {product.shippingPrice ? `배송비 ${formatPrice(product.shippingPrice)}` : '무료배송'}
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

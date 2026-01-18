@@ -31,7 +31,7 @@ const ProductDetailMobileView = () => {
 
   return (
     <div className="lg:hidden">
-      <div className="max-w-[1000px] mx-auto pb-2">
+      <div className="max-w-[1000px] mx-auto pb-2 px-7 pt-3">
         <div className="flex flex-col gap-12">
           {/* 이미지 캐러셀 */}
           <div className="flex-1">
@@ -90,7 +90,7 @@ const ProductDetailMobileView = () => {
           </div>
 
           {/* 상품 정보 */}
-          <div className="flex-1 px-5 flex flex-col">
+          <div className="flex-1 flex flex-col">
             {/* 브레드크럼과 공유 아이콘 */}
             <div className="flex items-center justify-between text-[18px] font-medium text-gray-400 mb-[24px]">
               <div>
@@ -108,10 +108,10 @@ const ProductDetailMobileView = () => {
             </div>
 
             {/* 상품명 */}
-            <h1 className="text-xl font-bold mb-[30px]">{product.productName}</h1>
+            <h1 className="text-[20px] font-bold mb-[10px]">{product.productName}</h1>
 
             {/* 가격 */}
-            <div className="text-[30px] mb-6">{localeFormat(product.price)}원</div>
+            <div className="text-[20px] mb-6">{localeFormat(product.price)}원</div>
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">
@@ -136,11 +136,11 @@ const ProductDetailMobileView = () => {
       </div>
 
       {/* 상세정보 섹션 - 모바일뷰 */}
-      <div className="max-w-[800px] pt-2 mb-[200px] px-4">
+      <div className="max-w-[800px] pt-10 mb-[200px] px-5">
         {/* 상세정보 타이틀 */}
-        <div className="relative flex items-center justify-center mb-8">
+        <div className="relative flex items-center justify-center mb-15">
           {/* 양쪽 라인 */}
-          <div className="absolute inset-0 flex items-center px-8">
+          <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-400" />
           </div>
 
@@ -181,9 +181,8 @@ const ProductDetailMobileView = () => {
             >
               {/* 확장 패널: 구매수량 + 상품금액 합계 (옵션 없는 경우) */}
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  isBottomPanelOpen ? 'max-h-[500px]' : 'max-h-0'
-                }`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isBottomPanelOpen ? 'max-h-[500px]' : 'max-h-0'
+                  }`}
               >
                 {/* 닫기 버튼 */}
                 <button

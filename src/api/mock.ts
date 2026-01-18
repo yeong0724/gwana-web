@@ -1,7 +1,7 @@
 export const productMockData = [
   {
     productId: '1',
-    productName: '세작(녹차) 유기농 하동녹차(80g)',
+    productName: '관아수제차 세작(녹차) 유기농 하동녹차(80g)',
     categoryId: 'greenTea',
     categoryName: '녹차',
     images: [
@@ -31,7 +31,7 @@ export const productMockData = [
   },
   {
     productId: '2',
-    productName: '우전 유기농 하동녹차(80g)',
+    productName: '관아수제차 우전 유기농 하동녹차(80g)',
     categoryId: 'greenTea',
     categoryName: '녹차',
     images: [

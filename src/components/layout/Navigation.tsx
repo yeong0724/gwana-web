@@ -99,7 +99,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
         style={{ viewTransitionName: 'navigation-sidebar' }}
         className={`fixed top-0 left-0 h-full w-[90%] bg-white z-[1000] transform transition-transform duration-600 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } shadow-2xl flex flex-col`}
+        } flex flex-col`}
       >
         {/* 사이드바 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
