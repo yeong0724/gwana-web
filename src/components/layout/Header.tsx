@@ -294,10 +294,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
               />
             ) : (
               <Image
-                src={mainLogoImg}
+                src={headerLogoImg}
                 alt="gwana_logo"
-                width={140}
-                height={150}
+                width={95}
+                height={95}
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
               />

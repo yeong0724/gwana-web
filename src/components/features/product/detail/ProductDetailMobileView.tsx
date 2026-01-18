@@ -31,7 +31,7 @@ const ProductDetailMobileView = () => {
 
   return (
     <div className="lg:hidden">
-      <div className="max-w-[1000px] mx-auto pb-2 px-7 pt-3">
+      <div className="max-w-[1000px] mx-auto pb-2 px-6 pt-6">
         <div className="flex flex-col gap-12">
           {/* 이미지 캐러셀 */}
           <div className="flex-1">
@@ -92,7 +92,7 @@ const ProductDetailMobileView = () => {
           {/* 상품 정보 */}
           <div className="flex-1 flex flex-col">
             {/* 브레드크럼과 공유 아이콘 */}
-            <div className="flex items-center justify-between text-[18px] font-medium text-gray-400 mb-[24px]">
+            <div className="flex items-center justify-between text-[18px] font-medium text-gray-900 mb-[20px]">
               <div>
                 <span>티 제품</span>
                 <span className="mx-2">{'>'}</span>
@@ -108,17 +108,17 @@ const ProductDetailMobileView = () => {
             </div>
 
             {/* 상품명 */}
-            <h1 className="text-[20px] font-bold mb-[10px]">{product.productName}</h1>
+            <h1 className="text-[20px] font-sans mb-[10px]">{product.productName}</h1>
 
             {/* 가격 */}
-            <div className="text-[20px] mb-6">{localeFormat(product.price)}원</div>
+            <div className="text-[15px] text-gray-600 font-normal mb-6">{localeFormat(product.price)}원</div>
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">
-              <div className="text-[14px] text-gray-400">
+              <div className="text-[14px] text-gray-700">
                 <span>배송비</span>
                 <span className="ml-2">
-                  <span className="text-gray-900">
+                  <span className="text-gray-700">
                     {product.shippingPrice ? (
                       `${localeFormat(product.shippingPrice)}원`
                     ) : (

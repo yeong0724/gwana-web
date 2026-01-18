@@ -102,7 +102,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
           {product.productName}
         </h3>
         <div className="space-y-1">
-          <p className="text-[13px] lg:text-[15px] font-medium text-gray-900">
+          <p className="text-[13px] lg:text-[15px] text-gray-700">
             {formatPrice(product.price || 25000)}
           </p>
           {/* <div className="flex items-center gap-1 text-[12px] text-gray-500">
