@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { ChevronLeft, ChevronRight, ArrowRight, Volume2, VolumeX, Check } from 'lucide-react';
 import { filter, forEach, map, shuffle, take } from 'lodash-es';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 
 import { productMockData } from '@/api/mock';
 import ProductCard from '@/components/features/product/ProductCard';
@@ -120,7 +120,7 @@ const MainContainer = () => {
                   muted
                   loop
                   playsInline
-                  className="w-full h-auto"
+                  className="w-full h-auto aspect-[9/16]"
                 />
               </CarouselItem>
             ))}
@@ -219,9 +219,7 @@ const MainContainer = () => {
         </div>
 
         <div className="bg-white px-4 pt-20 pb-30">
-          {/* 타이틀 */}
           <h2 className="text-[21px] font-medium text-gray-900 mb-8">대용차 (논카페인)</h2>
-          {/* 상품 그리드 (2x2) */}
           <div className="grid grid-cols-2 gap-x-[25px] gap-y-10">
             {filter(productMockData, { categoryId: 'substituteTea' }).map((product) => (
               <ProductCard
