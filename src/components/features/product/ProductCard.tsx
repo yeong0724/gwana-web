@@ -62,7 +62,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
                 <div className="relative w-full h-full">
                   <Image
                     src={image}
-                    alt={`${image}`}
+                    alt={`image-${index}`}
                     width={600}
                     height={600}
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
