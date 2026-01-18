@@ -1,10 +1,8 @@
-import { useState } from 'react';
-import Image from 'next/image';
-
-import { Check } from 'lucide-react';
-import { toast } from 'sonner';
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Check } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
   modalOpen: boolean;

@@ -1,6 +1,5 @@
-import { Viewport } from 'next';
-
 import PaymentContainer from '@/components/features/payment/PaymentContainer';
+import { Viewport } from 'next';
 
 export const viewport: Viewport = {
   width: 'device-width',

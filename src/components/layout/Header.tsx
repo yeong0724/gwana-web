@@ -10,11 +10,10 @@ import type { Menu, MenuGroup } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { filter, size } from 'lodash-es';
 import { ChevronLeft, Menu as MenuIcon, ShoppingBag, ShoppingCart, User } from 'lucide-react';
-// Header.tsx
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // SSR 비활성화로 import
 const Navigation = dynamic(() => import('@/components/layout/Navigation'), {
@@ -144,8 +143,14 @@ const Header = ({ menuGroup }: HeaderProps) => {
     <div className="sticky top-0 z-50" style={{ viewTransitionName: 'header' }}>
       {/* Main Bar Header */}
       <header
-        className={`hidden lg:block sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-white/30'
-          } hover:bg-white hover:shadow-lg`}
+        className="hidden md:block sticky h-[70px] top-0 left-0 right-0 z-50 transition-all duration-300"
+        style={{
+          background:
+            isScrolled || isHeaderHovered
+              ? 'white'
+              : 'linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)',
+          boxShadow: isScrolled || isHeaderHovered ? '0 10px 15px -3px rgb(0 0 0 / 0.1)' : 'none',
+        }}
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => {
           setIsHeaderHovered(false);
@@ -161,17 +166,18 @@ const Header = ({ menuGroup }: HeaderProps) => {
           style={{ height: '180px' }}
         />
 
-        <div className="mx-auto px-6 relative z-20">
-          <div className="flex items-center justify-between h-25">
+        <div className="mx-auto px-6 relative z-20 h-full">
+          <div className="flex items-center justify-between h-full">
             <div className="flex flex-1 min-w-0">
-              <div className="flex items-center flex-shrink-0 cursor-pointer">
+              <div className="flex items-center flex-shrink-0 cursor-pointer pl-8"
+                style={{ filter: 'drop-shadow(1px 0 0 white) drop-shadow(0 0 1px white)' }}
+              >
                 <Image
-                  src="/images/gwana_logo.webp"
+                  src={'/images/gwana_logo_1-cutout.webp'}
                   alt="gwana_logo"
-                  width={180}
-                  height={100}
+                  width={140}
+                  height={80}
                   onClick={() => router.push('/')}
-                  className="w-[180px] h-auto"
                   priority
                 />
               </div>
@@ -195,15 +201,17 @@ const Header = ({ menuGroup }: HeaderProps) => {
                     >
                       {/* 메인 메뉴 버튼 */}
                       <button
-                        className="cursor-pointer flex items-center justify-center text-[24px] space-x-1 py-6 text-sm font-bold text-gray-800 hover:text-green-600 transition-colors duration-500 w-full"
+                        className={`cursor-pointer flex items-center justify-center text-[21px] font-semibold text-black space-x-1 py-6 font-mediu hover:text-green-600 transition-all duration-500 w-full`}
                         onClick={() => onClickMain(menuId)}
                       >
-                        <span>{menuName}</span>
+                        <span className="[text-shadow:_-0.4px_0_white,_0.4px_0_white,_0_-0.4px_white,_0_0.4px_white]">
+                          {menuName}
+                        </span>
                       </button>
 
                       {/* 카테고리 드롭다운 - 해당 메인 메뉴에 호버시에만 표시 */}
                       <div
-                        className={`absolute top-full pt-8 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${isHeaderHovered && isMainHovered
+                        className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${isHeaderHovered && isMainHovered
                           ? 'scale-y-100 opacity-100 visible'
                           : 'scale-y-0 opacity-0 invisible'
                           }`}
@@ -226,10 +234,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
             </div>
             <div className="flex items-center flex-shrink-0 space-x-1 lg:space-x-2">
               <button
-                className="relative text-gray-800 cursor-pointer hover:text-green-600 transition-colors p-3 lg:p-4 xl:p-5 duration-500 mr-[30px]"
+                className="relative text-black cursor-pointer hover:text-green-600 transition-all p-3 lg:p-4 xl:p-5 duration-500 mr-[30px]"
                 onClick={moveToCartPage}
               >
-                <ShoppingCart className="w-4 h-4 lg:w-5 lg:h-5 scale-[1.5]" />
+                <ShoppingCart className="w-4 h-4 lg:w-5 lg:h-5 scale-[1.2]" />
                 <span
                   className={`absolute top-[6px] flex items-center justify-center min-w-[20px] h-[20px] px-1 bg-red-500 text-white text-[12px] font-bold rounded-full ${cartCount > 99 ? 'right-[-5px]' : 'right-[5px]'}`}
                 >
@@ -239,8 +247,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
               {isLogin ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-gray-800 cursor-pointer hover:text-green-600 transition-colors p-3 lg:p-4 xl:p-5 duration-500">
-                      <User className="w-4 h-4 lg:w-5 lg:h-5 scale-[1.5]" />
+                    <button className="text-black cursor-pointer hover:text-green-600 transition-all p-3 lg:p-4 xl:p-5 duration-500">
+                      <User className="w-4 h-4 lg:w-5 lg:h-5 scale-[1.2]" />
                     </button>
                   </DropdownMenuTrigger>
                   <UserDropdownContent
@@ -251,7 +259,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
                 </DropdownMenu>
               ) : (
                 <button
-                  className="text-gray-800 cursor-pointer hover:bg-gray-100 p-2 lg:p-3 transition-colors duration-500 rounded-2xl whitespace-nowrap"
+                  className="text-black cursor-pointer hover:bg-gray-100 p-2 lg:p-3 transition-all duration-500 rounded-2xl whitespace-nowrap"
                   onClick={() => router.push('/login')}
                 >
                   <span className="font-bold text-sm lg:text-base">로그인</span>
@@ -260,10 +268,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
             </div>
           </div>
         </div>
-      </header>
+      </header >
       {/* Side - Header (Mobile) */}
       <header
-        className={`h-[58px] lg:hidden top-0 z-40 ${isHomePage
+        className={`h-[58px] md:hidden top-0 z-40 ${isHomePage
           ? 'absolute left-0 right-0 bg-transparent'
           : `relative ${isScrolled ? 'bg-white border-b border-gray-200' : ''}`
           }`}
@@ -333,14 +341,14 @@ const Header = ({ menuGroup }: HeaderProps) => {
             </button>
           </div>
         </div>
-      </header>
+      </header >
       <Navigation
         isMenuOpen={isMenuOpen}
         moveToLoginPage={moveToLoginPage}
         toggleMenu={toggleMenu}
         menuGroup={menuGroup}
       />
-    </div>
+    </div >
   );
 };
 

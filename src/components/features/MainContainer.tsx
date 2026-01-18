@@ -1,10 +1,5 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-
-import { filter, forEach, map, shuffle, take } from 'lodash-es';
-import { ArrowRight, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
-
 import { productMockData } from '@/api/mock';
 import ProductCard from '@/components/features/product/ProductCard';
 import {
@@ -14,7 +9,10 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel';
 import useNativeRouter from '@/hooks/useNativeRouter';
+import { filter, forEach, map, shuffle, take } from 'lodash-es';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 type RankingTab = 'realtime' | 'monthly';
 

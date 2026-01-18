@@ -1,8 +1,5 @@
 'use client';
 
-import { XIcon } from 'lucide-react';
-import DaumPostcode, { Address } from 'react-daum-postcode';
-
 import {
   Dialog,
   DialogClose,
@@ -10,6 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { XIcon } from 'lucide-react';
+import DaumPostcode, { Address } from 'react-daum-postcode';
 
 interface SearchPostcodeModalProps {
   open: boolean;

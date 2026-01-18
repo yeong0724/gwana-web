@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
 import { allClearPersistStore } from '@/lib/utils';
 import { useLoginService } from '@/service';
 import { useLoginStore } from '@/stores';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 const KakaoLogoutRedirect = () => {
   const router = useRouter();

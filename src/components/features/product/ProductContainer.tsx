@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-
-import { concat, filter, find, forEach } from 'lodash-es';
-
 import { productMockData } from '@/api/mock';
 import ProductList from '@/components/features/product/ProductList';
 import { useDragScroll } from '@/hooks/useDragScroll';
 import { useMenuStore } from '@/stores';
+import { concat, filter, find, forEach } from 'lodash-es';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 // 카테고리 전환용 애니메이션 duration (ms)
 const CATEGORY_ANIMATION_DURATION = 600;
@@ -107,7 +105,7 @@ const ProductContainer = ({ categoryId }: Props) => {
     <div className="flex min-h-screen bg-gray-50 max-w-[1800px] mx-auto">
       {/* 사이드 네비게이션 - 데스크톱용 */}
       <nav
-        className="w-80 bg-white fixed top-25 overflow-y-auto flex-shrink-0 hidden lg:block"
+        className="w-80 bg-white fixed top-[70px] overflow-y-auto flex-shrink-0 hidden lg:block"
         style={{ height: 'calc(100vh - 80px)' }}
       >
         {/* 네비 헤더 - 스티키 */}
@@ -147,9 +145,8 @@ const ProductContainer = ({ categoryId }: Props) => {
                 <button
                   key={menuId}
                   data-category-id={menuId}
-                  className={`pb-4 px-1 cursor-pointer text-lg min-w-[80px] font-medium transition-colors duration-200 relative flex-shrink-0 ${
-                    categoryId === menuId ? 'text-black' : 'text-gray-500 hover:text-gray-700'
-                  }`}
+                  className={`pb-4 px-1 cursor-pointer text-lg min-w-[80px] font-medium transition-colors duration-200 relative flex-shrink-0 ${categoryId === menuId ? 'text-black' : 'text-gray-500 hover:text-gray-700'
+                    }`}
                   onClick={() => onClickCategory(menuId)}
                 >
                   {menuName}

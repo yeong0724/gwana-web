@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
-
-import { loadTossPayments, TossPaymentsWidgets } from '@tosspayments/tosspayments-sdk';
-
 import { useLoginStore } from '@/stores';
+import { loadTossPayments, TossPaymentsWidgets } from '@tosspayments/tosspayments-sdk';
+import { useEffect } from 'react';
 
 type TossPaymentsProps = {
   widgets: TossPaymentsWidgets | null;

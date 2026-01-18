@@ -1,15 +1,12 @@
-import type { Metadata } from 'next';
-
 import '@/app/globals.css';
-
-import localFont from 'next/font/local';
-
 import { GlobalAlert, GlobalLoading } from '@/components/common';
 import KakaoScript from '@/components/script/KakaoScript';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
 
 export const metadata: Metadata = {
   title: 'Gwana Tea House',

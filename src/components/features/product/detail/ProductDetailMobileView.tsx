@@ -15,8 +15,7 @@ import Image from 'next/image';
 import { createPortal } from 'react-dom';
 
 const ProductDetailMobileView = () => {
-  const { product, current, isMounted, isBottomPanelOpen, purchaseList, totalPrice } =
-    useStateContext();
+  const { product, current, isMounted, isBottomPanelOpen, purchaseList, totalPrice } = useStateContext();
 
   const {
     setApi,
@@ -111,7 +110,9 @@ const ProductDetailMobileView = () => {
             <h1 className="text-[20px] font-sans mb-[10px]">{product.productName}</h1>
 
             {/* 가격 */}
-            <div className="text-[15px] text-gray-600 font-normal mb-6">{localeFormat(product.price)}원</div>
+            <div className="text-[15px] text-gray-600 font-normal mb-6">
+              {localeFormat(product.price)}원
+            </div>
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">

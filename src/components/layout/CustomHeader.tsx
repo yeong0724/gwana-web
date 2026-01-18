@@ -1,11 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-
-import { ChevronLeft, Home } from 'lucide-react';
-
 import useNativeRouter from '@/hooks/useNativeRouter';
+import { ChevronLeft, Home } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
 const CustomHeader = () => {
   const pathname = usePathname();

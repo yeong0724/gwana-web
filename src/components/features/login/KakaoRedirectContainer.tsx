@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-import { forEach, isEmpty, reduce } from 'lodash-es';
-
 import { useCartService, useLoginService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
 import { loginActions } from '@/stores/useLoginStore';
 import { ResultCode, UpdateCartRequest } from '@/types';
+import { forEach, isEmpty, reduce } from 'lodash-es';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface Props {
   code: string;

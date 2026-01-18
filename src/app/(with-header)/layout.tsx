@@ -1,8 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
-
 import MainLayout from '@/components/layout/MainLayout';
+import { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;

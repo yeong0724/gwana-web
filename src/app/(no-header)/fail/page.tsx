@@ -1,6 +1,5 @@
-import React from 'react';
-
 import FailContainer from '@/components/features/fail/FailContainer';
+import React from 'react';
 
 type PageProps = {
   searchParams: Promise<{ code?: string; message?: string; orderId?: string }>;

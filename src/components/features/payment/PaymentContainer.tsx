@@ -1,15 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-
-import { TossPaymentsWidgets } from '@tosspayments/tosspayments-sdk';
-import { cloneDeep, first, isEmpty, pick, size } from 'lodash-es';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import DaumPostcode, { Address } from 'react-daum-postcode';
-import { FieldErrors, FormProvider } from 'react-hook-form';
-
 import ControllerInput from '@/components/common/ControllerInput';
 import ControllerSelect from '@/components/common/ControllerSelect';
 import { SearchPostcodeModal } from '@/components/common/modal';
@@ -22,6 +12,14 @@ import { getIsMobile, localeFormat } from '@/lib/utils';
 import { usePaymentService } from '@/service';
 import { useAlertStore, useLoginStore } from '@/stores';
 import { PaymentForm, PaymentSessionResponse, SavePaymentInfoRequest } from '@/types';
+import { TossPaymentsWidgets } from '@tosspayments/tosspayments-sdk';
+import { cloneDeep, first, isEmpty, pick, size } from 'lodash-es';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import DaumPostcode, { Address } from 'react-daum-postcode';
+import { FieldErrors, FormProvider } from 'react-hook-form';
 
 const inputClassName =
   'w-full px-4 py-2 bg-white rounded-lg border border-gray-200 text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500';
@@ -419,7 +417,6 @@ const PaymentContainer = ({ sessionId }: Props) => {
               </span>
             </button>
           </div>
-
         </form>
       </FormProvider>
       {/* 모바일: 바텀 시트 */}

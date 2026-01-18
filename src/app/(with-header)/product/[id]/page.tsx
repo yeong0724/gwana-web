@@ -1,7 +1,6 @@
-import { Suspense } from 'react';
-
 import ProductDetailContainer from '@/components/features/product/detail/ProductDetailContainer';
 import ProductDetailSkeleton from '@/components/features/product/detail/ProductDetailSkeleton';
+import { Suspense } from 'react';
 
 // 빌드 시 정적 생성할 경로들 (1 ~ 8까지의 상품 ID)
 export async function generateStaticParams() {

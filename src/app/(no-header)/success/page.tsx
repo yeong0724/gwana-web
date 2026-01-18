@@ -1,6 +1,5 @@
-import React from 'react';
-
 import SuccessContainer from '@/components/features/success/SuccessContainer';
+import React from 'react';
 
 type PageProps = {
   searchParams: Promise<{

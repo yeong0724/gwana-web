@@ -1,11 +1,10 @@
 'use client';
 
-import { Suspense, useRef } from 'react';
-
 import { Edges } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useIsMutating } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
+import { Suspense, useRef } from 'react';
 import * as THREE from 'three';
 
 // WebGL 미지원 시 보여줄 Fallback 스피너

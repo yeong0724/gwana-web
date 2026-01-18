@@ -1,5 +1,6 @@
 'use client';
 
+import CartWebView from './CartWebView';
 import { PurchaseGuideModal } from '@/components/common/modal';
 import CartModileView from '@/components/features/cart/CartModileView';
 import { Provider } from '@/context/cartContext';
@@ -11,7 +12,6 @@ import { cloneDeep, filter, findIndex, isEmpty, map, reject, some, sumBy } from 
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import CartWebView from './CartWebView';
 
 const FREE_SHIPPING_THRESHOLD = 50000;
 

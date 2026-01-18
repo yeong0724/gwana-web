@@ -1,6 +1,7 @@
-import { ChangeEvent, useMemo } from 'react';
-
+import { getRegexpByType } from '@/lib/utils';
+import type { FormatEnum, HandleChange, ReactHookFormEventType } from '@/types/type';
 import { isEmpty } from 'lodash-es';
+import { ChangeEvent, useMemo } from 'react';
 import {
   FieldPath,
   FieldPathValue,
@@ -8,9 +9,6 @@ import {
   useController,
   useFormContext,
 } from 'react-hook-form';
-
-import { getRegexpByType } from '@/lib/utils';
-import type { FormatEnum, HandleChange, ReactHookFormEventType } from '@/types/type';
 
 const ControllerInput = <T extends FieldValues>({
   required = false,
