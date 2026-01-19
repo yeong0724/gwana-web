@@ -553,18 +553,17 @@ const AboutWebView = () => {
       </section>
 
       {/* ===== 섹션 6: 마무리 히어로 ===== */}
-      <section className="relative z-10 flex flex-col items-center justify-center bg-white">
+      <section className="relative z-10 flex min-h-screen flex-col items-center justify-center bg-white">
         <div className="relative">
           <Image
             src={aboutWebImg6}
             alt="From Hadong, with Care"
-            width={1000}
+            width={3000}
             height={1080}
-            quality={100}
-            sizes="100vw"
+            unoptimized={true}
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-black/25" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center tracking-widest">
             <h1 className="text-[45px] tracking-wider mb-16 font-family-cormorant">
               From Hadong, with Care
@@ -581,26 +580,6 @@ const AboutWebView = () => {
             </div>
           </div>
         </div>
-      </section>
-      <section className="relative z-10 flex flex-col items-center justify-center h-[300px] bg-white">
-        {/* <Image
-          src={aboutWebImg7}
-          alt="From Hadong, with Care"
-          width={1920}
-          height={1080}
-          quality={100}
-          sizes="100vw"
-          className="w-full object-cover"
-        />
-        <Image
-          src={aboutWebImg8}
-          alt="From Hadong, with Care"
-          width={1920}
-          height={1080}
-          quality={100}
-          sizes="100vw"
-          className="w-full object-cover"
-        /> */}
       </section>
     </div>
   );
