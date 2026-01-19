@@ -328,6 +328,7 @@ const AboutWebView = () => {
             alt="From Hadong, with Care"
             fill
             className="object-cover"
+            unoptimized={true}
             priority
           />
           {/* 이미지 위 음영 오버레이 */}
