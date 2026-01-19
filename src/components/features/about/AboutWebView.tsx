@@ -553,15 +553,15 @@ const AboutWebView = () => {
       </section>
 
       {/* ===== 섹션 6: 마무리 히어로 ===== */}
-      <section className="relative z-10 flex min-h-screen flex-col items-center justify-center bg-white">
-        <div className="relative">
+      <section className="relative z-10 flex flex-col items-center justify-center bg-white">
+        <div className="relative w-full">
           <Image
             src={aboutWebImg6}
             alt="From Hadong, with Care"
             width={3000}
             height={1080}
             unoptimized={true}
-            className="object-cover"
+            className="w-full h-auto"
           />
           <div className="absolute inset-0 bg-black/25" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center tracking-widest">
