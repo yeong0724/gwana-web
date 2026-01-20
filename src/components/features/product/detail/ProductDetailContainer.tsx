@@ -1,6 +1,5 @@
 'use client';
 
-import ProductDetailWebView from './ProductDetailWebView';
 import { PurchaseGuideModal, ShareModal } from '@/components/common/modal';
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import { type CarouselApi } from '@/components/ui/carousel';
@@ -14,6 +13,7 @@ import { clone, findIndex, forEach, isEmpty, pick, sumBy } from 'lodash-es';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import ProductDetailWebView from './ProductDetailWebView';
 
 const purchasePick = [
   'productId',
@@ -83,8 +83,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
   useEffect(() => {
     if (!api) return;
 
-    setCurrent(api.selectedScrollSnap());
-    api.on('select', () => setCurrent(api.selectedScrollSnap()));
+    setCurrent(() => api.selectedScrollSnap());
+    api.on('select', () => setCurrent(() => api.selectedScrollSnap()));
   }, [api]);
 
   useEffect(() => {

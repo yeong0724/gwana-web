@@ -1,14 +1,5 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-
-import { useQueryClient } from '@tanstack/react-query';
-import { filter, isEmpty, size } from 'lodash-es';
-import { ChevronLeft, Menu as MenuIcon, ShoppingBag, ShoppingCart, User } from 'lucide-react';
-
 import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import useNativeRouter from '@/hooks/useNativeRouter';
@@ -16,6 +7,13 @@ import { useCartService } from '@/service';
 import { gwanaLogoCutoutImg, headerLogoImg, mainLogoImg } from '@/static/images';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
 import type { Menu, MenuGroup } from '@/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { filter, isEmpty, size } from 'lodash-es';
+import { ChevronLeft, Menu as MenuIcon, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 // SSR 비활성화로 import
 const Navigation = dynamic(() => import('@/components/layout/Navigation'), {
@@ -28,7 +26,7 @@ type HeaderProps = {
 
 const Header = ({ menuGroup }: HeaderProps) => {
   const pathname = usePathname();
-  const isHomePage = pathname === '/' || pathname === '/about';
+  const isHomePage = pathname === '/about';
 
   const { main, category } = menuGroup;
   const queryClient = useQueryClient();
@@ -74,12 +72,12 @@ const Header = ({ menuGroup }: HeaderProps) => {
   /**
    * 마이페이지 이동
    */
-  const moveToMyPage = () => { };
+  const moveToMyPage = () => {};
 
   /**
    * 주문조회 이동
    */
-  const moveToOrderHistory = () => { };
+  const moveToOrderHistory = () => {};
 
   /**
    * 장바구니 이동
@@ -125,6 +123,19 @@ const Header = ({ menuGroup }: HeaderProps) => {
     backward();
   };
 
+  // `h-[58px] md:hidden top-0 z-40 ${isHomePage ? 'absolute left-0 right-0 bg-transparent' : `relative ${isScrolled ? 'bg-white border-b border-gray-200' : ''}`}`
+
+  const modileHeaderStyle = useMemo(() => {
+    switch (pathname) {
+      case '/':
+        return `h-[48px] md:hidden top-0 z-40 absolute left-0 right-0 ${isScrolled ? 'bg-white border-b border-gray-200' : 'linear-gradient(to bottom, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0) 100%)'}`;
+      case '/about':
+        return 'h-[58px] md:hidden top-0 z-40 absolute left-0 right-0 bg-transparent';
+      default:
+        return `h-[48px] md:hidden top-0 z-40 relative ${isScrolled ? 'bg-white border-b border-gray-200' : ''}`;
+    }
+  }, [pathname, isScrolled]);
+
   /**
    * Menu 정보 Store 저장
    */
@@ -161,10 +172,11 @@ const Header = ({ menuGroup }: HeaderProps) => {
       >
         {/* 카테고리 배경 영역 - 카테고리가 있는 메뉴에 마우스를 올렸을 때만 표시 */}
         <div
-          className={`absolute left-0 right-0 top-full bg-white border-t border-gray-100 shadow-xl transition-all duration-500 ease-in-out origin-top z-10 ${isHeaderHovered && isMainHovered
-            ? 'scale-y-100 opacity-100 visible'
-            : 'scale-y-0 opacity-0 invisible'
-            }`}
+          className={`absolute left-0 right-0 top-full bg-white border-t border-gray-100 shadow-xl transition-all duration-500 ease-in-out origin-top z-10 ${
+            isHeaderHovered && isMainHovered
+              ? 'scale-y-100 opacity-100 visible'
+              : 'scale-y-0 opacity-0 invisible'
+          }`}
           style={{ height: '180px' }}
         />
 
@@ -174,7 +186,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
               <div
                 className="flex items-center flex-shrink-0 cursor-pointer pl-8"
                 style={{ filter: 'drop-shadow(0.5px 0 0 black) ' }}
-              // drop-shadow(0 0 0.5px black)
+                // drop-shadow(0 0 0.5px black)
               >
                 <Image
                   src={gwanaLogoCutoutImg}
@@ -220,10 +232,11 @@ const Header = ({ menuGroup }: HeaderProps) => {
 
                       {/* 카테고리 드롭다운 - 해당 메인 메뉴에 호버시에만 표시 */}
                       <div
-                        className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${isHeaderHovered && isMainHovered
-                          ? 'scale-y-100 opacity-100 visible'
-                          : 'scale-y-0 opacity-0 invisible'
-                          }`}
+                        className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${
+                          isHeaderHovered && isMainHovered
+                            ? 'scale-y-100 opacity-100 visible'
+                            : 'scale-y-0 opacity-0 invisible'
+                        }`}
                         onMouseEnter={() => setIsMainHovered(true)}
                       >
                         {categories.map((category) => (
@@ -280,10 +293,13 @@ const Header = ({ menuGroup }: HeaderProps) => {
       </header>
       {/* Side - Header (Mobile) */}
       <header
-        className={`h-[58px] md:hidden top-0 z-40 ${isHomePage
-          ? 'absolute left-0 right-0 bg-transparent'
-          : `relative ${isScrolled ? 'bg-white border-b border-gray-200' : ''}`
-          }`}
+        className={modileHeaderStyle}
+        style={{
+          background:
+            isHomePage || isScrolled || isHeaderHovered
+              ? ''
+              : 'linear-gradient(to bottom, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0) 100%)',
+        }}
       >
         <div className="relative flex items-center justify-between px-4 h-full">
           {/* 왼쪽 - 뒤로가기 */}
@@ -311,7 +327,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
               />
             ) : (
               <Image
-                src={headerLogoImg}
+                src={mainLogoImg}
                 alt="gwana_logo"
                 width={100}
                 height={100}
@@ -328,8 +344,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
               onClick={() => router.push('/cart')}
             >
               <ShoppingBag
-                size={22}
-                className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-gray-700'}`}
+                size={20}
+                className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-black'}`}
               />
               {cartCount > 0 && (
                 <span
@@ -344,8 +360,8 @@ const Header = ({ menuGroup }: HeaderProps) => {
               onClick={toggleMenu}
             >
               <MenuIcon
-                size={24}
-                className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-gray-700'}`}
+                size={22}
+                className={`${isHomePage ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-black'}`}
               />
             </button>
           </div>

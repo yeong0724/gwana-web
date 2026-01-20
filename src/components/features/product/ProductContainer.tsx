@@ -131,22 +131,23 @@ const ProductContainer = ({ categoryId }: Props) => {
       </nav>
 
       {/* 메인 컨텐츠 영역 - 나머지 공간 차지 */}
-      <div className="flex-1 px-[15px] pt-7 pb-40 min-w-0 lg:ml-80 bg-white">
+      <div className="flex-1 px-[15px] pt-2 pb-40 min-w-0 lg:ml-80 bg-white">
         {/* 모바일/태블릿용 탭 네비게이션 */}
         <div className="lg:hidden mb-6 -mx-4 md:-mx-8">
           {/* 카테고리 탭들 */}
           <div className="border-b border-gray-200 mb-4">
             <nav
               ref={categoryTabScroll.scrollRef}
-              className="flex space-x-8 overflow-x-auto scrollbar-hide px-8 cursor-grab active:cursor-grabbing"
+              className="flex space-x-2 overflow-x-auto scrollbar-hide px-8 cursor-grab active:cursor-grabbing"
               {...categoryTabScroll.dragHandlers}
             >
               {productCategory.map(({ menuId, menuName }) => (
                 <button
                   key={menuId}
                   data-category-id={menuId}
-                  className={`pb-4 px-1 cursor-pointer text-lg min-w-[80px] font-medium transition-colors duration-200 relative flex-shrink-0 ${categoryId === menuId ? 'text-black' : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                  className={`pb-2 px-1 cursor-pointer text-[13px] min-w-[80px] font-medium transition-colors duration-200 relative flex-shrink-0 ${
+                    categoryId === menuId ? 'text-black' : 'text-gray-500 hover:text-gray-700'
+                  }`}
                   onClick={() => onClickCategory(menuId)}
                 >
                   {menuName}
@@ -161,10 +162,10 @@ const ProductContainer = ({ categoryId }: Props) => {
         </div>
         {/* 컨텐츠 헤더 */}
         <div className="mb-8">
-          <div className="text-gray-700 pl-[5px] mb-2 text-[16px]">
+          <div className="text-gray-700 pl-[5px] mb-2 text-[15px]">
             <span className="mr-[10px]">티 제품</span>
             {`>`}
-            <span className="mx-[10px] font-bold text-[18px]">
+            <span className="mx-[10px] font-bold text-[15px]">
               {find(productCategory, { menuId: categoryId })?.menuName}
             </span>
           </div>
