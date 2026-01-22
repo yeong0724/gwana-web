@@ -1,26 +1,28 @@
 'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
-import Image from '@tiptap/extension-image';
-import { TextStyle } from '@tiptap/extension-text-style';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { Color } from '@tiptap/extension-color';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { TextStyle } from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import {
   Bold,
+  ChevronDown,
+  ImagePlus,
   Italic,
-  Underline as UnderlineIcon,
+  Link2,
   List,
   ListOrdered,
-  ImagePlus,
-  Link2,
-  Unlink,
   Palette,
-  ChevronDown,
+  Underline as UnderlineIcon,
+  Unlink,
 } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -119,7 +121,7 @@ function ColorPicker({ currentColor, onColorChange, isMobile = false }: ColorPic
       >
         <Palette className={isMobile ? 'size-5' : 'size-4'} />
         <div
-          className={cn('rounded-sm', isMobile ? 'h-1 w-4' : 'h-0.5 w-3')}
+          className={cn('rounded-sm', isMobile ? 'h-4 w-4' : 'h-0.5 w-3')}
           style={{ backgroundColor: currentColor || '#000000' }}
         />
         {!isMobile && <ChevronDown className="size-3" />}
@@ -128,11 +130,11 @@ function ColorPicker({ currentColor, onColorChange, isMobile = false }: ColorPic
       {isOpen && (
         <div
           className={cn(
-            'absolute z-50 mt-1 rounded-lg border border-gray-200 bg-white p-2 shadow-lg',
-            isMobile ? 'right-0' : 'left-0'
+            'absolute z-50 mt-1 rounded-lg border border-gray-200 bg-white p-2 shadow-lg w-[180px]',
+            'left-0'
           )}
         >
-          <div className="grid grid-cols-5 gap-1">
+          <div className="grid grid-cols-5 gap-2">
             {COLOR_PALETTE.map((color) => (
               <button
                 key={color.value}
@@ -345,11 +347,7 @@ export default function TiptapEditor({
           <ToolbarDivider />
 
           {/* 링크 & 이미지 */}
-          <ToolbarButton
-            onClick={addLink}
-            isActive={editor.isActive('link')}
-            title="링크 추가"
-          >
+          <ToolbarButton onClick={addLink} isActive={editor.isActive('link')} title="링크 추가">
             <Link2 className="size-4" />
           </ToolbarButton>
           {editor.isActive('link') && (
@@ -357,10 +355,7 @@ export default function TiptapEditor({
               <Unlink className="size-4" />
             </ToolbarButton>
           )}
-          <ToolbarButton
-            onClick={() => fileInputRef.current?.click()}
-            title="이미지 첨부"
-          >
+          <ToolbarButton onClick={() => fileInputRef.current?.click()} title="이미지 첨부">
             <ImagePlus className="size-4" />
           </ToolbarButton>
         </div>
@@ -418,11 +413,7 @@ export default function TiptapEditor({
 
         <div className="flex items-center gap-0.5">
           {/* 링크 & 이미지 */}
-          <ToolbarButton
-            onClick={addLink}
-            isActive={editor.isActive('link')}
-            title="링크"
-          >
+          <ToolbarButton onClick={addLink} isActive={editor.isActive('link')} title="링크">
             <Link2 className="size-5" />
           </ToolbarButton>
           {editor.isActive('link') && (

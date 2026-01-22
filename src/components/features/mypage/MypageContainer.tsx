@@ -16,8 +16,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useAlertStore, useLoginStore } from '@/stores';
 import useNativeRouter from '@/hooks/useNativeRouter';
+import { useAlertStore, useLoginStore } from '@/stores';
 
 // 하드코딩된 유저 데이터
 const userData = {
@@ -68,19 +68,17 @@ const MypageContainer = () => {
   } = useLoginStore();
 
   useEffect(() => {
-    if (!_hasHydrated) return;
-
-    if (!isLogin) {
-      (async () => {
-        await showConfirmAlert({
-          title: '안내',
-          description: '로그인이 만료되었습니다. 다시 로그인해 주세요.',
-          confirmText: '확인',
-        });
-        router.push('/login');
-      })();
-
-    }
+    // if (!_hasHydrated) return;
+    // if (!isLogin) {
+    //   (async () => {
+    //     await showConfirmAlert({
+    //       title: '안내',
+    //       description: '로그인이 만료되었습니다. 다시 로그인해 주세요.',
+    //       confirmText: '확인',
+    //     });
+    //     router.push('/login');
+    //   })();
+    // }
   }, [_hasHydrated, isLogin]);
 
   const handleMenuClick = (url: string) => {
@@ -89,8 +87,8 @@ const MypageContainer = () => {
   };
 
   return (
-    <div className="bg-white py-6 px-4 flex flex-col">
-      <div className="max-w-md mx-auto space-y-4 flex-1 w-full">
+    <div className="bg-white py-6 px-4 flex flex-col overflow-y-auto flex-1">
+      <div className="max-w-md mx-auto space-y-3 flex-1 w-full">
         {/* 섹션 1: 유저 정보 */}
         <Card className="py-0 overflow-hidden">
           <div className="bg-[#A8BF6A] p-6">
