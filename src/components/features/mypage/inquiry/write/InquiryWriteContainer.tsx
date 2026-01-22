@@ -16,7 +16,7 @@ const InquiryWriteContainer = () => {
     if (!title || title.trim().length < 2) {
       showAlert({
         title: '안내',
-        description: '제목을 20자 이상 입력해주세요.',
+        description: '제목을 2자 이상 입력해주세요.',
       });
       return;
     }
@@ -40,9 +40,9 @@ const InquiryWriteContainer = () => {
   };
 
   return (
-    <div className="mt-4 flex flex-col">
+    <div className="flex h-[calc(100dvh-60px)] flex-col overflow-hidden">
       {/* 제목 입력 영역 */}
-      <div className="flex items-center gap-2 border-x border-t border-gray-200 bg-white px-4 py-2.5">
+      <div className="flex shrink-0 items-center gap-2 border-x border-t border-gray-200 bg-white px-4 py-2.5">
         <Input
           type="text"
           placeholder="제목 (20자 이내)"
@@ -53,14 +53,16 @@ const InquiryWriteContainer = () => {
         <button
           type="button"
           onClick={handleSubmit}
-          className="shrink-0 rounded-md border border-gray-300 bg-transparent px-4 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          className="shrink-0 rounded-md border border-gray-300 bg-transparent px-4 py-1.5 text-sm lg:text-[17px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
         >
           제출
         </button>
       </div>
 
-      {/* 에디터 */}
-      <TiptapEditor value={content} onChange={setContent} />
+      {/* 에디터 - 남은 공간을 채움 */}
+      <div className="min-h-0 flex-1">
+        <TiptapEditor value={content} onChange={setContent} />
+      </div>
     </div>
   );
 };

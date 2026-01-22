@@ -397,11 +397,11 @@
 
 /* 애니메이션 클래스 */
 .animate-slide-left-out {
-  animation: slide-left-out 0.3s linear forwards;
+  animation: slide-left-out 1s linear forwards;
 }
 
 .animate-slide-left-in {
-  animation: slide-left-in 0.3s linear forwards;
+  animation: slide-left-in 1s linear forwards;
 }
 
 .animate-slide-right-out {
@@ -417,7 +417,7 @@
 }
 
 .animate-tab-slide-left-in {
-  animation: slide-left-in 0.8s linear forwards;
+  animation: slide-left-in 0.4s linear forwards;
 }
 
 /* globals.css */

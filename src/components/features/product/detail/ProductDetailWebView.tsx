@@ -27,7 +27,7 @@ const ProductDetailWebView = () => {
 
   return (
     <div className="hidden lg:block">
-      <div className="max-w-[1000px] mx-auto pb-10">
+      <div className="max-w-[1000px] mx-auto py-10">
         <div className="flex flex-row gap-20">
           {/* 좌측: 이미지 캐러셀 */}
           <div className="flex-[0_0_50%]">

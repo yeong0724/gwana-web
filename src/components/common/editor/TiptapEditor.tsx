@@ -33,7 +33,6 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  minHeight?: string;
 }
 
 interface ToolbarButtonProps {
@@ -256,9 +255,9 @@ function FontSizePicker({ currentSize, onSizeChange, isMobile = false }: FontSiz
           'hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200'
         )}
       >
-        <ALargeSmall className={isMobile ? 'size-5' : 'size-4'} />
-        <span className="min-w-[28px] text-center text-[14px] px-[4px]">{displaySize}</span>
-        <ChevronDown className="size-3" />
+        <ALargeSmall className={isMobile ? 'size-5' : 'size-7'} />
+        <span className="min-w-[28px] text-center text-[18px] px-[4px]">{displaySize}</span>
+        <ChevronDown className={isMobile ? 'size-3' : 'size-5'} />
       </button>
 
       {isOpen && (
@@ -340,7 +339,6 @@ export default function TiptapEditor({
   value,
   onChange,
   placeholder = '문의 내용을 상세하게 작성해 주세요.',
-  minHeight = '200px',
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showConfirmAlert } = useAlertStore();
@@ -383,8 +381,10 @@ export default function TiptapEditor({
         },
       }),
       Image.configure({
+        inline: false,
+        allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto my-3',
+          style: 'max-width: 100%; height: auto; display: block; margin: 12px 0;',
         },
       }),
       Placeholder.configure({
@@ -428,7 +428,37 @@ export default function TiptapEditor({
         const reader = new FileReader();
         reader.onload = () => {
           const url = reader.result as string;
-          editor.chain().focus().setImage({ src: url }).run();
+
+          // 이미지 원본 크기를 가져와서 25%로 축소
+          const img = new window.Image();
+          img.onload = () => {
+            const scaledWidth = Math.round(img.naturalWidth * 0.25);
+            editor
+              .chain()
+              .focus()
+              .setImage({
+                src: url,
+                alt: file.name,
+                title: file.name,
+              })
+              .run();
+
+            // 삽입된 이미지에 width 스타일 적용
+            const { view } = editor;
+            // 바로 직전에 삽입된 이미지 노드를 찾아서 width 적용
+            setTimeout(() => {
+              const imgElements = view.dom.querySelectorAll('img');
+              const lastImg = imgElements[imgElements.length - 1];
+              if (lastImg) {
+                lastImg.style.width = `${scaledWidth}px`;
+                lastImg.style.maxWidth = '100%';
+                lastImg.style.height = 'auto';
+                lastImg.style.margin = '12px 0';
+                lastImg.style.display = 'block';
+              }
+            }, 0);
+          };
+          img.src = url;
         };
         reader.readAsDataURL(file);
         e.target.value = '';
@@ -492,7 +522,7 @@ export default function TiptapEditor({
   const currentFontSize = selectedFontSize || editorFontSize;
 
   return (
-    <div className="tiptap-editor flex max-h-dvh flex-col overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20">
+    <div className="tiptap-editor flex h-full flex-col overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20">
       {/* 툴바 - PC 버전 */}
       <div className="hidden shrink-0 border-b border-gray-100 bg-gray-50/80 px-3 py-2 lg:block overflow-x-auto">
         <div className="flex items-center gap-0.5">
@@ -640,14 +670,13 @@ export default function TiptapEditor({
           // 스크롤 가능하도록 설정 (flex-1로 남은 공간 채우고, min-h-0으로 shrink 허용)
           'min-h-0 flex-1 overflow-y-auto',
           // 기본 스타일
-          '[&_.ProseMirror]:min-h-[200px] [&_.ProseMirror]:px-4 [&_.ProseMirror]:py-3 [&_.ProseMirror]:text-sm [&_.ProseMirror]:leading-relaxed [&_.ProseMirror]:outline-none',
+          '[&_.ProseMirror]:h-full [&_.ProseMirror]:px-4 [&_.ProseMirror]:py-3 [&_.ProseMirror]:text-sm [&_.ProseMirror]:leading-relaxed [&_.ProseMirror]:outline-none',
           'lg:[&_.ProseMirror]:px-5 lg:[&_.ProseMirror]:py-4 lg:[&_.ProseMirror]:text-base',
           // 리스트 스타일 - 강제 적용
           '[&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-6 [&_.ProseMirror_ul]:my-2',
           '[&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-6 [&_.ProseMirror_ol]:my-2',
           '[&_.ProseMirror_li]:my-1'
         )}
-        style={{ minHeight }}
       />
 
       {/* 숨겨진 파일 입력 */}
