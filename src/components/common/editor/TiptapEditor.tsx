@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Extension } from '@tiptap/core';
 import { Color } from '@tiptap/extension-color';
-import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { TextStyle } from '@tiptap/extension-text-style';
@@ -25,6 +24,7 @@ import {
   Unlink,
 } from 'lucide-react';
 import FontSize from 'tiptap-extension-font-size';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import { cn } from '@/lib/utils';
 import { useAlertStore } from '@/stores';
@@ -225,7 +225,8 @@ function FontSizePicker({ currentSize, onSizeChange, isMobile = false }: FontSiz
 
   const handleCustomSizeSubmit = () => {
     const size = parseInt(customSize);
-    const fontSize = size > MAX_FONT_SIZE ? MAX_FONT_SIZE : size < MIN_FONT_SIZE ? MIN_FONT_SIZE : size;
+    const fontSize =
+      size > MAX_FONT_SIZE ? MAX_FONT_SIZE : size < MIN_FONT_SIZE ? MIN_FONT_SIZE : size;
     onSizeChange(`${fontSize}px`);
     setIsOpen(false);
     setCustomSize('');
@@ -333,7 +334,7 @@ function FontSizePicker({ currentSize, onSizeChange, isMobile = false }: FontSiz
 }
 
 // 이미지 최대 용량 (2MB)
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 export default function TiptapEditor({
   value,
@@ -380,7 +381,7 @@ export default function TiptapEditor({
           class: 'text-primary underline underline-offset-2 hover:text-primary/80',
         },
       }),
-      Image.configure({
+      ImageResize.configure({
         inline: false,
         allowBase64: true,
         HTMLAttributes: {
@@ -690,7 +691,7 @@ export default function TiptapEditor({
 
       {/* 하단 안내 - 모바일에서만 표시 */}
       <div className="flex shrink-0 items-center justify-between border-t border-gray-100 bg-gray-50/50 px-3 py-2 lg:hidden">
-        <p className="text-xs text-gray-400">이미지는 최대 2MB까지 첨부 가능합니다</p>
+        <p className="text-xs text-gray-400">이미지는 최대 5MB까지 첨부 가능합니다</p>
       </div>
     </div>
   );

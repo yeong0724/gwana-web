@@ -23,6 +23,8 @@ const CustomHeader = () => {
       case '/mypage/inquiry':
       case '/mypage/inquiry/write':
         return '1:1 문의하기';
+      case '/mypage/myinfo':
+        return '개인 정보 수정';
       default:
         return '';
     }
@@ -30,7 +32,7 @@ const CustomHeader = () => {
 
   const goBack = () => {
     if (pathname.startsWith('/cart')) {
-      router.push('/');
+      router.back();
     } else {
       backward();
     }

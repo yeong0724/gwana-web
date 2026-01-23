@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { filter, isEmpty, size } from 'lodash-es';
-import { ChevronLeft, Menu as MenuIcon, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import { ChevronLeft, Menu as MenuIcon, ShoppingCart, User } from 'lucide-react';
 
 import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -74,12 +74,14 @@ const Header = ({ menuGroup }: HeaderProps) => {
   /**
    * 마이페이지 이동
    */
-  const moveToMyPage = () => {};
+  const moveToMyPage = () => {
+    router.push('/mypage');
+  };
 
   /**
    * 주문조회 이동
    */
-  const moveToOrderHistory = () => {};
+  const moveToOrderHistory = () => { };
 
   /**
    * 장바구니 이동
@@ -174,11 +176,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
       >
         {/* 카테고리 배경 영역 - 카테고리가 있는 메뉴에 마우스를 올렸을 때만 표시 */}
         <div
-          className={`absolute left-0 right-0 top-full bg-white border-t border-gray-100 shadow-xl transition-all duration-500 ease-in-out origin-top z-10 ${
-            isHeaderHovered && isMainHovered
+          className={`absolute left-0 right-0 top-full bg-white border-t border-gray-100 shadow-xl transition-all duration-500 ease-in-out origin-top z-10 ${isHeaderHovered && isMainHovered
               ? 'scale-y-100 opacity-100 visible'
               : 'scale-y-0 opacity-0 invisible'
-          }`}
+            }`}
           style={{ height: '180px' }}
         />
 
@@ -188,7 +189,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
               <div
                 className="flex items-center flex-shrink-0 cursor-pointer pl-8"
                 style={{ filter: 'drop-shadow(0.5px 0 0 black) ' }}
-                // drop-shadow(0 0 0.5px black)
+              // drop-shadow(0 0 0.5px black)
               >
                 <Image
                   src={headerLogoImg}
@@ -234,11 +235,10 @@ const Header = ({ menuGroup }: HeaderProps) => {
 
                       {/* 카테고리 드롭다운 - 해당 메인 메뉴에 호버시에만 표시 */}
                       <div
-                        className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${
-                          isHeaderHovered && isMainHovered
+                        className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-500 ease-in-out origin-top ${isHeaderHovered && isMainHovered
                             ? 'scale-y-100 opacity-100 visible'
                             : 'scale-y-0 opacity-0 invisible'
-                        }`}
+                          }`}
                         onMouseEnter={() => setIsMainHovered(true)}
                       >
                         {categories.map((category) => (

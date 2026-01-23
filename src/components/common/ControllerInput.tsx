@@ -20,6 +20,8 @@ const ControllerInput = <T extends FieldValues>({
   callbackFn = null,
   readOnly = false,
   disabled = false,
+  disableErrorMessage = false,
+  maxLength,
 }: {
   required?: boolean;
   name: FieldPath<T>;
@@ -29,6 +31,8 @@ const ControllerInput = <T extends FieldValues>({
   type?: FormatEnum;
   readOnly?: boolean;
   disabled?: boolean;
+  disableErrorMessage?: boolean;
+  maxLength?: number;
   callbackFn?: HandleChange<HTMLInputElement, FieldPathValue<T, FieldPath<T>>> | null;
 }) => {
   const { setValue, control, clearErrors } = useFormContext<T>();
@@ -49,7 +53,11 @@ const ControllerInput = <T extends FieldValues>({
   };
 
   const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
-    const value = onFilterValue(event);
+    let value = onFilterValue(event);
+
+    if (maxLength && (type === 'tel' || type === 'text')) {
+      value = value.slice(0, maxLength);
+    }
 
     if (callbackFn) {
       callbackFn(null, { name, value });
@@ -76,12 +84,12 @@ const ControllerInput = <T extends FieldValues>({
         value={field.value}
         onChange={onChangeHandler}
         onFocus={handleFocus}
-        className={`${className} ${error?.message ? 'border-red-500' : ''}`}
+        className={`${className} ${error?.message ? 'border-red-500' : ''} ${disabled ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : ''}`}
         readOnly={readOnly}
         disabled={disabled}
         type={type}
       />
-      {error?.message && (
+      {!disableErrorMessage && error?.message && (
         <div className="text-red-500 pt-1 pl-2 text-[12px] sm:text-[8px]">{error.message}</div>
       )}
     </div>

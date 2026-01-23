@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { useAlertStore, useLoginStore } from '@/stores';
+import { forEach } from 'lodash-es';
 
 // 하드코딩된 유저 데이터
 const userData = {
@@ -52,7 +53,7 @@ const statsData = [
 
 // 메뉴 데이터
 const menuItems = [
-  { icon: User, label: '개인 정보 수정', url: '/mypage/profile' },
+  { icon: User, label: '개인 정보 수정', url: '/mypage/myinfo' },
   { icon: Truck, label: '주문 조회', url: '/mypage/orders' },
   { icon: MessageCircleQuestion, label: '문의 하기', url: '/mypage/inquiry' },
   { icon: ShoppingCart, label: '장바구니', url: '/cart' },
@@ -82,7 +83,9 @@ const MypageContainer = () => {
   }, [_hasHydrated, isLogin]);
 
   useEffect(() => {
-    router.prefetch('/mypage/inquiry');
+    forEach(menuItems, ({ url }) => {
+      router.prefetch(url);
+    });
   }, []);
 
   const handleMenuClick = (url: string) => {
@@ -95,16 +98,16 @@ const MypageContainer = () => {
       <div className="max-w-md mx-auto space-y-3 flex-1 w-full">
         {/* 섹션 1: 유저 정보 */}
         <Card className="py-0 overflow-hidden">
-          <div className="bg-[#A8BF6A] p-6">
+          <div className="p-6">
             <div className="flex items-center gap-4">
-              <Avatar className="size-20 border-2 border-white shadow-md">
-                <AvatarImage src={userData.profileImage} alt={user.username} />
+              <Avatar className="size-20 border-2 border-gray-200 shadow-md mr-[10px]">
+                <AvatarImage src='images/myinfo/leg_profile.png' alt={user.username} />
                 <AvatarFallback className="bg-white text-black text-xl font-bold">
                   {user.username.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="text-white">
-                <p className="text-[20px] font-bold opacity-90 tracking-widest">WELCOME</p>
+              <div className="text-gray-600 tracking-wider">
+                <p className="text-[20px] font-bold opacity-90">WELCOME</p>
                 <p className="text-xl font-medium">{user.username} 님</p>
               </div>
             </div>
