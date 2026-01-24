@@ -12,22 +12,27 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import useMyinfoForm from '@/hooks/useMyinfoForm';
 import { getIsMobile } from '@/lib/utils';
 import { useMypageService } from '@/service';
-import { useAlertStore } from '@/stores';
-import { MyinfoForm, ResultCode } from '@/types';
+import { useAlertStore, useUserStore } from '@/stores';
+import { MyinfoForm, ResultCode, UpdateMyinfoRequest } from '@/types';
+import { toast } from 'sonner';
 
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
 const MyinfoContainer = () => {
+  const awsS3Domain = process.env.NEXT_PUBLIC_AWS_S3_DOMAIN || '';
   const isMobile = getIsMobile();
+
   const { showAlert } = useAlertStore();
+  const { setUser } = useUserStore();
 
   const { form, setValue, handleSubmit, clearErrors, errors, watch } = useMyinfoForm();
   const profileImage = watch('profileImage');
   // const profileImage = '/images/myinfo/leg_profile.png';
 
-  const { useProfileImageUploadMutation } = useMypageService();
-  const { mutate: uploadProfileImage } = useProfileImageUploadMutation();
+  const { useProfileImageUploadMutation, useUpdateMyinfoMutation } = useMypageService();
+  const { mutateAsync: uploadProfileImage } = useProfileImageUploadMutation();
+  const { mutate: updateMyinfo } = useUpdateMyinfoMutation();
 
   const [addressOpen, setAddressOpen] = useState<boolean>(false);
   const [previewImg, setPreviewImg] = useState<string | null>(null);
@@ -35,6 +40,7 @@ const MyinfoContainer = () => {
   // input refs
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedProfileImageFile, setSelectedProfileImageFile] = useState<File | null>(null);
 
   const setInputRef = (name: string) => (el: HTMLInputElement | null) => {
     inputRefs.current[name] = el;
@@ -85,21 +91,9 @@ const MyinfoContainer = () => {
       setPreviewImg(reader.result as string);
     };
 
-    const formData = new FormData();
-    formData.append('profileImage', file);
-
     reader.readAsDataURL(file);
 
-    uploadProfileImage(formData, {
-      onSuccess: ({ code, data }) => {
-        if (code === ResultCode.SUCCESS) {
-          showAlert({ title: '알림', description: data });
-        }
-      },
-      onError: (error) => {
-        console.log('uploadProfileImage error:', error);
-      },
-    });
+    setSelectedProfileImageFile(file);
 
     e.target.value = '';
   };
@@ -111,8 +105,36 @@ const MyinfoContainer = () => {
     }
   };
 
-  const onSubmit = (formData: MyinfoForm) => {
-    console.log('수정하기:', formData);
+  const onSubmit = async (values: MyinfoForm) => {
+    const { email, phoneFirst, phoneMiddle, phoneLast, zonecode, roadAddress, detailAddress } = values;
+    const payload: UpdateMyinfoRequest = {
+      email,
+      zonecode,
+      roadAddress,
+      detailAddress,
+      profileImage,
+      phone: `${phoneFirst}${phoneMiddle}${phoneLast}`,
+    };
+
+    if (selectedProfileImageFile) {
+      const formData = new FormData();
+      formData.append('profileImage', selectedProfileImageFile);
+      const { code, data } = await uploadProfileImage(formData);
+      if (code === ResultCode.SUCCESS) {
+        payload.profileImage = data;
+      }
+    }
+
+    console.log('payload: ', payload);
+
+    updateMyinfo(payload, {
+      onSuccess: ({ code, data }) => {
+        if (code === ResultCode.SUCCESS) {
+          toast.success('회원정보가 수정되었습니다.');
+          setUser(data)
+        }
+      },
+    })
   };
 
   const onError = (errors: FieldErrors<MyinfoForm>) => {
@@ -158,7 +180,7 @@ const MyinfoContainer = () => {
                       ) : (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={previewImg || profileImage || ''}
+                          src={`${previewImg || awsS3Domain + profileImage || ''}`}
                           alt="프로필 미리보기"
                           className="w-full h-full object-cover"
                         />

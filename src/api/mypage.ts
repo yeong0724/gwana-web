@@ -1,5 +1,5 @@
 import { postAxios } from "@/lib/api";
-import { ApiResponse } from "@/types";
+import { ApiResponse, UpdateMyinfoRequest, UpdateMyinfoResponse } from "@/types";
 
 const uploadProfileImage = async (params: FormData) => {
   return postAxios<ApiResponse<string>>({
@@ -11,4 +11,11 @@ const uploadProfileImage = async (params: FormData) => {
   });
 };
 
-export { uploadProfileImage };
+const updateMyinfo = async (params: UpdateMyinfoRequest) => {
+  return postAxios<ApiResponse<UpdateMyinfoResponse>>({
+    url: '/mypage/update/myinfo',
+    params,
+  });
+};
+
+export { uploadProfileImage, updateMyinfo };

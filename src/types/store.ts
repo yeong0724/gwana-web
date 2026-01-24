@@ -6,13 +6,11 @@ export type UserStore = {
   clearUser: () => void;
 };
 
-export type LoginStoreState = Omit<LoginStore, 'clearLogout' | 'setLogin' | 'setRedirectUrl'>;
+export type LoginStoreState = Omit<LoginStore, 'clearLogout' | 'setLogin'>;
 
 export type LoginStore = {
   isLoggedIn: boolean;
   provider: SocialProviderEnum;
-  redirectUrl: string;
   setLogin: (loginInfo: LoginStoreState) => void;
   clearLogout: () => void;
-  setRedirectUrl: (redirectUrl: string) => void;
 };

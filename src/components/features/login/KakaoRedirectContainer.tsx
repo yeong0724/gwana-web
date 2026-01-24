@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 
 import { forEach, isEmpty, reduce } from 'lodash-es';
 
-import { renewLoginInfo } from '@/lib/utils';
+import { getRedirectUrl, renewLoginInfo, setRedirectUrl } from '@/lib/utils';
 import { useCartService, useLoginService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
-import { loginActions } from '@/stores/useLoginStore';
 import { ResultCode, UpdateCartRequest } from '@/types';
 
 interface Props {
@@ -33,8 +32,6 @@ const KakaoRedirectContainer = ({ code }: Props) => {
       {
         onSuccess: async ({ code, data }) => {
           if (code === ResultCode.SUCCESS) {
-            const redirectUrl = loginActions.getRedirectUrl() || '/';
-
             renewLoginInfo(data);
 
             if (!isEmpty(cart)) {
@@ -66,7 +63,9 @@ const KakaoRedirectContainer = ({ code }: Props) => {
               await updateCartListAsync(updateCartList);
             }
 
+            const redirectUrl = getRedirectUrl();
             router.replace(redirectUrl);
+            setRedirectUrl('/');
           }
         },
         onError: async () => {

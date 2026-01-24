@@ -114,6 +114,14 @@ const removeAccessToken = () => {
   localStorage.removeItem('accessToken');
 };
 
+const getRedirectUrl = () => {
+  return localStorage.getItem('redirectUrl') || '/';
+};
+
+const setRedirectUrl = (redirectUrl: string) => {
+  localStorage.setItem('redirectUrl', redirectUrl);
+};
+
 const renewLoginInfo = (refreshResponse: LoginResponse) => {
   const {
     accessToken,
@@ -130,6 +138,7 @@ const renewLoginInfo = (refreshResponse: LoginResponse) => {
   } = refreshResponse;
 
   setAccessToken(accessToken);
+
   userActions.setUser({
     customerKey,
     email,
@@ -141,11 +150,8 @@ const renewLoginInfo = (refreshResponse: LoginResponse) => {
     detailAddress,
     role,
   });
-  loginActions.setLogin({
-    isLoggedIn: true,
-    provider,
-    redirectUrl: '/',
-  });
+
+  loginActions.setLogin({ isLoggedIn: true, provider });
 };
 
 export {
@@ -162,5 +168,7 @@ export {
   setAccessToken,
   getAccessToken,
   removeAccessToken,
-  renewLoginInfo
+  renewLoginInfo,
+  getRedirectUrl,
+  setRedirectUrl,
 };

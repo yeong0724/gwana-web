@@ -144,3 +144,12 @@ export type Cart = {
 };
 
 export type CartState = Cart & { checked: boolean };
+
+
+export interface UpdateMyinfoResponse {
+  phone: string;
+  profileImage: string | null;
+  zonecode: string | null;
+  roadAddress: string | null;
+  detailAddress: string | null;
+}

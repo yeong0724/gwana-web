@@ -1,17 +1,20 @@
 'use client';
 
-import CartWebView from './CartWebView';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { cloneDeep, filter, findIndex, isEmpty, map, reject, some, sumBy } from 'lodash-es';
+import { toast } from 'sonner';
+
 import { PurchaseGuideModal } from '@/components/common/modal';
 import CartModileView from '@/components/features/cart/CartModileView';
+import CartWebView from '@/components/features/cart/CartWebView';
 import { Provider } from '@/context/cartContext';
 import useNativeRouter from '@/hooks/useNativeRouter';
+import { setRedirectUrl } from '@/lib/utils';
 import { useCartService, usePaymentService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
 import { AddToCartRequest, Cart, CartState } from '@/types';
-import { cloneDeep, filter, findIndex, isEmpty, map, reject, some, sumBy } from 'lodash-es';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { toast } from 'sonner';
 
 const FREE_SHIPPING_THRESHOLD = 50000;
 
@@ -19,7 +22,7 @@ const CartContainer = () => {
   const router = useRouter();
   const { forward } = useNativeRouter();
   const { cart: cartStore, setCart: setCartStore, _hasHydrated } = useCartStore();
-  const { isLoggedIn, setRedirectUrl } = useLoginStore();
+  const { isLoggedIn } = useLoginStore();
   const { showConfirmAlert } = useAlertStore();
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
 

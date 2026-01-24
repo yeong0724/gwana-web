@@ -78,3 +78,11 @@ export interface RefreshAccessTokenRequest {
 }
 
 
+export interface UpdateMyinfoRequest {
+  email: string;
+  phone: string;
+  profileImage: string | null;
+  zonecode: string | null;
+  roadAddress: string | null;
+  detailAddress: string | null;
+}

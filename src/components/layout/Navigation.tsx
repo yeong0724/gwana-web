@@ -104,7 +104,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
           {isLoggedIn ? (
             <button
-              onClick={moveToHome}
+              onClick={moveToMyPage}
               className="flex items-center hover:bg-gray-100 rounded-md transition-colors cursor-pointer p-2"
               aria-label="홈으로 이동"
             >
@@ -187,15 +187,16 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
                 >
                   Home
                 </button>
-                <span className="text-gray-300 mx-5">|</span>
-                <button
-                  onClick={moveToMyPage}
-                  className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium"
-                >
-                  마이페이지
-                </button>
+
                 {isLoggedIn && (
                   <>
+                    <span className="text-gray-300 mx-5">|</span>
+                    <button
+                      onClick={moveToMyPage}
+                      className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium"
+                    >
+                      마이페이지
+                    </button>
                     <span className="text-gray-300 mx-5">|</span>
                     <button
                       onClick={handleLogout}
