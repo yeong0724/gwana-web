@@ -57,7 +57,7 @@ const useNativeRouter = () => {
     }
 
     const transition = document.startViewTransition(() => {
-      window.history.back();
+      router.back();
     });
 
     transition.ready.then(() => slideAnimation('backward'));

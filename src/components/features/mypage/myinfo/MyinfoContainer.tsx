@@ -126,8 +126,6 @@ const MyinfoContainer = () => {
       }
     }
 
-    console.log('payload: ', payload);
-
     updateMyinfo(payload, {
       onSuccess: ({ code, data }) => {
         if (code === ResultCode.SUCCESS) {

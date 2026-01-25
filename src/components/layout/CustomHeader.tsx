@@ -31,11 +31,13 @@ const CustomHeader = () => {
   }, [pathname]);
 
   const goBack = () => {
-    if (pathname.startsWith('/cart')) {
-      router.back();
-    } else {
-      backward();
-    }
+    // if (pathname.startsWith('/cart')) {
+    //   router.back();
+    // } else {
+    //   backward();
+    // }
+
+    backward();
   };
 
   return (

@@ -14,7 +14,6 @@ import {
   UserX2Icon,
 } from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { AWS_S3_DOMAIN } from '@/constants';
@@ -50,8 +49,8 @@ const statsData = [
 // 메뉴 데이터
 const menuItems = [
   { icon: User, label: '개인 정보 수정', url: '/mypage/myinfo' },
-  { icon: Truck, label: '주문 내역 조회', url: '/mypage/orders' },
-  { icon: MessageCircleQuestion, label: '문의 하기', url: '/mypage/inquiry' },
+  { icon: MessageCircleQuestion, label: '문의 내역', url: '/mypage/inquiry' },
+  { icon: Truck, label: '주문 내역', url: '/mypage/orders' },
   { icon: ShoppingCart, label: '장바구니', url: '/cart' },
 ];
 
@@ -80,12 +79,22 @@ const MypageContainer = () => {
         <Card className="py-0 overflow-hidden">
           <div className="p-6">
             <div className="flex items-center gap-4">
-              <Avatar className="size-20 border-2 border-gray-200 shadow-md mr-[10px]">
-                <AvatarImage src={`${AWS_S3_DOMAIN}${user.profileImage}`} alt={user.username} />
-                <AvatarFallback className="bg-white text-black text-xl font-bold">
-                  {user.username.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200 mr-[10px]">
+                {!user.profileImage ? (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                    <span className="text-gray-400 text-2xl font-bold">
+                      {user.username?.substring(0, 2)}
+                    </span>
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={`${AWS_S3_DOMAIN}${user.profileImage}`}
+                    alt={user.username}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
               <div className="text-gray-600 tracking-wider">
                 <p className="text-[20px] font-bold opacity-90">WELCOME</p>
                 <p className="text-xl font-medium">{user.username} 님</p>
