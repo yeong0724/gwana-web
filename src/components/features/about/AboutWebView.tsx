@@ -6,18 +6,7 @@ import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import {
-  aboutWebImg1,
-  aboutWebImg2_1,
-  aboutWebImg2_2,
-  aboutWebImg3_1,
-  aboutWebImg3_2,
-  aboutWebImg4_1,
-  aboutWebImg4_2,
-  aboutWebImg4_3,
-  aboutWebImg5_1,
-  aboutWebImg5_2, aboutWebImg6,
-} from '@/static/images';
+import { AWS_S3_DOMAIN } from '@/constants';
 
 // GSAP 플러그인 등록
 gsap.registerPlugin(ScrollTrigger);
@@ -323,11 +312,10 @@ const AboutWebView = () => {
       <section ref={heroSectionRef} className="sticky top-0 w-full h-screen min-h-[600px] z-0">
         <div ref={heroImageRef} className="absolute inset-0" style={{ opacity: 0 }}>
           <Image
-            src={aboutWebImg1}
+            src={`${AWS_S3_DOMAIN}images/about/web/about_web_1.png`}
             alt="From Hadong, with Care"
             fill
             className="object-cover"
-            unoptimized={true}
             priority
           />
           {/* 이미지 위 음영 오버레이 */}
@@ -378,7 +366,7 @@ const AboutWebView = () => {
           >
             <div ref={section2Img1Ref} className="relative w-[30vw]">
               <Image
-                src={aboutWebImg2_1}
+                src={`${AWS_S3_DOMAIN}images/about/web/about_web_2_1.webp`}
                 alt="계절의 차"
                 width={480}
                 height={580}
@@ -387,7 +375,7 @@ const AboutWebView = () => {
               {/* 원형 이미지 - 이미지1의 오른쪽 하단 꼭지점에 원의 정중앙 배치 */}
               <div ref={section2Img2Ref} className="absolute w-[12vw] -bottom-[6vw] -right-[6vw]">
                 <Image
-                  src={aboutWebImg2_2}
+                  src={`${AWS_S3_DOMAIN}images/about/web/about_web_2_2.webp`}
                   alt="찻잎 클로즈업"
                   width={220}
                   height={220}
@@ -432,7 +420,7 @@ const AboutWebView = () => {
         <div className="flex justify-center gap-20 py-20 px-12">
           <div ref={section3Img1Ref}>
             <Image
-              src={aboutWebImg3_1}
+              src={`${AWS_S3_DOMAIN}images/about/web/about_web_3_1.webp`}
               alt="차를 마시는 사람"
               width={500}
               height={350}
@@ -441,7 +429,7 @@ const AboutWebView = () => {
           </div>
           <div ref={section3Img2Ref}>
             <Image
-              src={aboutWebImg3_2}
+              src={`${AWS_S3_DOMAIN}images/about/web/about_web_3_2.webp`}
               alt="차를 따르는 모습"
               width={500}
               height={350}
@@ -471,23 +459,23 @@ const AboutWebView = () => {
         className="relative w-full min-h-screen bg-white z-10 flex flex-col justify-center"
       >
         {/* 이미지 3개 */}
-        <div ref={section4ImgRef} className="flex justify-center gap-12 px-12 mb-16">
+        <div ref={section4ImgRef} className="flex justify-center pt-10 gap-12 px-12 mb-16">
           <Image
-            src={aboutWebImg4_1}
+            src={`${AWS_S3_DOMAIN}images/about/web/about_web_4_1.webp`}
             alt="티코스 1"
             width={360}
             height={280}
             className="object-cover rounded-md"
           />
           <Image
-            src={aboutWebImg4_2}
+            src={`${AWS_S3_DOMAIN}images/about/web/about_web_4_2.webp`}
             alt="티코스 2"
             width={360}
             height={280}
             className="object-cover rounded-md"
           />
           <Image
-            src={aboutWebImg4_3}
+            src={`${AWS_S3_DOMAIN}images/about/web/about_web_4_3.webp`}
             alt="티코스 3"
             width={360}
             height={280}
@@ -515,10 +503,10 @@ const AboutWebView = () => {
         className="relative w-full min-h-screen bg-white z-10 overflow-hidden flex flex-col justify-center"
       >
         {/* 이미지 영역 */}
-        <div className="flex justify-center gap-20 pb-10 px-12">
+        <div className="flex justify-center gap-20 py-10 px-12">
           <div ref={section5Img1Ref}>
             <Image
-              src={aboutWebImg5_1}
+              src={`${AWS_S3_DOMAIN}images/about/web/about_web_5_1.webp`}
               alt="차밭 풍경"
               width={500}
               height={350}
@@ -527,7 +515,7 @@ const AboutWebView = () => {
           </div>
           <div ref={section5Img2Ref}>
             <Image
-              src={aboutWebImg5_2}
+              src={`${AWS_S3_DOMAIN}images/about/web/about_web_5_2.webp`}
               alt="차밭 소풍"
               width={500}
               height={350}
@@ -552,10 +540,10 @@ const AboutWebView = () => {
       </section>
 
       {/* ===== 섹션 6: 마무리 히어로 ===== */}
-      <section className="relative z-10 flex flex-col items-center justify-center bg-white">
+      <section className="relative z-10 flex flex-col items-center justify-center bg-white py-10">
         <div className="relative w-full">
           <Image
-            src={aboutWebImg6}
+            src={`${AWS_S3_DOMAIN}images/about/web/about_web_6.webp`}
             alt="From Hadong, with Care"
             width={3000}
             height={1080}

@@ -7,6 +7,8 @@ import { loginActions } from '@/stores/useLoginStore';
 import { userActions } from '@/stores/useUserStore';
 import { LoginResponse } from '@/types';
 import { DecodedToken, FormatEnum } from '@/types/type';
+import { ko } from 'date-fns/locale';
+import { format } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -73,12 +75,15 @@ const localeFormat = (price: number) => {
   return price.toLocaleString();
 };
 
-const allClearPersistStore = () => {
-  cartActions.clearCart();
+const clearLoginInfo = () => {
   loginActions.clearLogout();
   userActions.clearUser();
-
   removeAccessToken();
+};
+
+const allClearPersistStore = () => {
+  cartActions.clearCart();
+  clearLoginInfo();
 };
 
 const delayAsync = (delay: number = 1000): Promise<number> => {
@@ -153,7 +158,14 @@ const renewLoginInfo = (refreshResponse: LoginResponse) => {
   loginActions.setLogin({ isLoggedIn: true, provider });
 };
 
+const formatDate = (date: Date | undefined, dateFormat: string = 'yyyy-MM-dd') => {
+  if (!date) return '';
+
+  return format(date, dateFormat, { locale: ko });
+};
+
 export {
+  clearLoginInfo,
   allClearPersistStore,
   getRegexpByType,
   validateByType,
@@ -170,4 +182,5 @@ export {
   renewLoginInfo,
   getRedirectUrl,
   setRedirectUrl,
+  formatDate
 };

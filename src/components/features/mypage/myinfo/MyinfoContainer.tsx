@@ -17,7 +17,7 @@ import { MyinfoForm, ResultCode, UpdateMyinfoRequest } from '@/types';
 import { toast } from 'sonner';
 
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+const MAX_FILE_SIZE = 2;
 
 const MyinfoContainer = () => {
   const awsS3Domain = process.env.NEXT_PUBLIC_AWS_S3_DOMAIN || '';
@@ -28,7 +28,6 @@ const MyinfoContainer = () => {
 
   const { form, setValue, handleSubmit, clearErrors, errors, watch } = useMyinfoForm();
   const profileImage = watch('profileImage');
-  // const profileImage = '/images/myinfo/leg_profile.png';
 
   const { useProfileImageUploadMutation, useUpdateMyinfoMutation } = useMypageService();
   const { mutateAsync: uploadProfileImage } = useProfileImageUploadMutation();
@@ -76,10 +75,10 @@ const MyinfoContainer = () => {
     }
 
     // 용량 검사
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > MAX_FILE_SIZE * 1024 * 1024) {
       showAlert({
         title: '업로드 불가',
-        description: '업로드 가능한 용량은 1MB 이하입니다.',
+        description: `업로드 가능한 용량은 ${MAX_FILE_SIZE}MB 이하입니다.`,
       });
       e.target.value = '';
       return;
@@ -118,7 +117,9 @@ const MyinfoContainer = () => {
 
     if (selectedProfileImageFile) {
       const formData = new FormData();
+      formData.append('prevProfileImage', profileImage || '');
       formData.append('profileImage', selectedProfileImageFile);
+
       const { code, data } = await uploadProfileImage(formData);
       if (code === ResultCode.SUCCESS) {
         payload.profileImage = data;
@@ -235,6 +236,7 @@ const MyinfoContainer = () => {
                     name="username"
                     placeholder="이름"
                     className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                    disabled
                     inputRef={setInputRef('username')}
                   />
                 </div>

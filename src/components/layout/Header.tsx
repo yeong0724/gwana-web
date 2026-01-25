@@ -13,9 +13,9 @@ import UserDropdownContent from '@/components/layout/UserDropdownContent';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { useCartService } from '@/service';
-import { headerLogoImg, mainLogoImg } from '@/static/images';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
 import type { Menu, MenuGroup } from '@/types';
+import { AWS_S3_DOMAIN } from '@/constants';
 
 // SSR 비활성화로 import
 const Navigation = dynamic(() => import('@/components/layout/Navigation'), {
@@ -192,7 +192,7 @@ const Header = ({ menuGroup }: HeaderProps) => {
               // drop-shadow(0 0 0.5px black)
               >
                 <Image
-                  src={headerLogoImg}
+                  src={`${AWS_S3_DOMAIN}images/logo/gwana_logo_2.webp`}
                   alt="gwana_logo"
                   width={120}
                   height={80}
@@ -320,22 +320,24 @@ const Header = ({ menuGroup }: HeaderProps) => {
           <div className="absolute left-1/2 -translate-x-1/2 pt-1">
             {pathname === '/about' && (
               <Image
-                src={mainLogoImg}
+                src={`${AWS_S3_DOMAIN}images/logo/gwana_logo_1.webp`}
                 alt="gwana_logo"
                 width={120}
                 height={120}
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
+                priority
               />
             )}
             {pathname !== '/about' && (
               <Image
-                src={headerLogoImg}
+                src={`${AWS_S3_DOMAIN}images/logo/gwana_logo_2.webp`}
                 alt="gwana_logo"
                 width={80}
                 height={80}
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
+                priority
               />
             )}
           </div>

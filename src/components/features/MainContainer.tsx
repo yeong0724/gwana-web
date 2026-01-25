@@ -8,6 +8,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from '@/components/ui/carousel';
+import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { filter, forEach, map, shuffle, take } from 'lodash-es';
 import { ArrowRight, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
@@ -27,13 +28,13 @@ const MainContainer = () => {
 
   const videos = [
     {
-      src: '/videos/gwana_intro_2.mp4',
-      alt: 'gwana_intro_2',
+      src: 'videos/main/gwana_main_video_1.mp4',
+      alt: 'gwana_main_video_1',
       isSound: true,
     },
     {
-      src: '/videos/tea_drip.mp4',
-      alt: 'tea_drip',
+      src: 'videos/main/gwana_main_video_2.mp4',
+      alt: 'gwana_main_video_2',
       isSound: true,
     },
   ];
@@ -68,8 +69,17 @@ const MainContainer = () => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
         if (index === current) {
-          video.play();
           video.muted = videos[index].isSound ? !isSoundOn : true;
+
+          const playVideo = () => {
+            video.play().catch(() => { });
+          };
+
+          if (video.readyState >= 3) {
+            playVideo();
+          } else {
+            video.addEventListener('canplay', playVideo, { once: true });
+          }
         } else {
           video.pause();
           video.muted = true;
@@ -113,7 +123,7 @@ const MainContainer = () => {
                   ref={(el) => {
                     videoRefs.current[index] = el;
                   }}
-                  src={src}
+                  src={`${AWS_S3_DOMAIN}${src}`}
                   autoPlay
                   muted
                   loop

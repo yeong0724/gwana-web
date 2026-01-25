@@ -28,6 +28,9 @@ import ImageResize from 'tiptap-extension-resize-image';
 
 import { cn } from '@/lib/utils';
 import { useAlertStore } from '@/stores';
+import { useMypageService } from '@/service';
+import { ResultCode } from '@/types';
+import { AWS_S3_DOMAIN } from '@/constants';
 
 interface Props {
   value: string;
@@ -334,7 +337,26 @@ function FontSizePicker({ currentSize, onSizeChange, isMobile = false }: FontSiz
 }
 
 // 이미지 최대 용량 (2MB)
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 5;
+const MAX_TOTAL_IMAGE_SIZE = 10;
+
+// Base64 문자열의 바이트 크기 계산
+const getBase64Size = (base64String: string): number => {
+  const base64Data = base64String.split(',')[1] || base64String;
+  const padding = (base64Data.match(/=/g) || []).length;
+  return Math.floor((base64Data.length * 3) / 4) - padding;
+};
+
+// 에디터 HTML에서 모든 Base64 이미지의 총 용량 계산
+const calculateTotalImageSize = (html: string): number => {
+  const imgRegex = /<img[^>]+src="(data:image[^"]+)"[^>]*>/g;
+  let totalSize = 0;
+  let match;
+  while ((match = imgRegex.exec(html)) !== null) {
+    totalSize += getBase64Size(match[1]);
+  }
+  return totalSize;
+};
 
 export default function TiptapEditor({
   value,
@@ -342,9 +364,13 @@ export default function TiptapEditor({
   placeholder = '문의 내용을 상세하게 작성해 주세요.',
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { showConfirmAlert } = useAlertStore();
+  const { showConfirmAlert, showAlert } = useAlertStore();
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedFontSize, setSelectedFontSize] = useState<string>('');
+  const [totalImageSize, setTotalImageSize] = useState<number>(0);
+
+  const { useTempImageUploadMutation } = useMypageService();
+  const { mutateAsync: uploadTempImage } = useTempImageUploadMutation();
 
   const editor = useEditor({
     extensions: [
@@ -396,7 +422,11 @@ export default function TiptapEditor({
     content: value,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      const html = editor.getHTML();
+      onChange(html);
+      // 이미지 추가/삭제 시 총 용량 재계산
+      const newTotalSize = calculateTotalImageSize(html);
+      setTotalImageSize(newTotalSize);
     },
     editorProps: {
       attributes: {
@@ -415,57 +445,75 @@ export default function TiptapEditor({
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file && editor) {
-        // 이미지 용량 체크 (2MB 초과 시 alert)
-        if (file.size > MAX_IMAGE_SIZE) {
+        // 이미지 용량 체크
+        if (file.size > MAX_IMAGE_SIZE * 1024 * 1024) {
           await showConfirmAlert({
             title: '안내',
-            description: '이미지는 최대 5MB까지 첨부 가능합니다',
+            description: `이미지는 장당 ${MAX_IMAGE_SIZE}MB까지 첨부 가능합니다`,
           });
           e.target.value = '';
           return;
         }
 
-        // 파일을 Base64로 변환하여 삽입 (실제 서비스에서는 서버 업로드 후 URL 사용)
-        const reader = new FileReader();
-        reader.onload = () => {
-          const url = reader.result as string;
+        // 누적 이미지 총 용량 체크
+        if (totalImageSize + file.size > MAX_TOTAL_IMAGE_SIZE * 1024 * 1024) {
+          await showConfirmAlert({
+            title: '안내',
+            description: `문의글 이미지 총 용량은 ${MAX_TOTAL_IMAGE_SIZE}MB를 초과할 수 없습니다`,
+          });
+          e.target.value = '';
+          return;
+        }
 
-          // 이미지 원본 크기를 가져와서 25%로 축소
-          const img = new window.Image();
-          img.onload = () => {
-            const scaledWidth = Math.round(img.naturalWidth * 0.25);
-            editor
-              .chain()
-              .focus()
-              .setImage({
-                src: url,
-                alt: file.name,
-                title: file.name,
-              })
-              .run();
+        // S3 업로드
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('folderPath', 'temp/inquiry');
 
-            // 삽입된 이미지에 width 스타일 적용
-            const { view } = editor;
-            // 바로 직전에 삽입된 이미지 노드를 찾아서 width 적용
-            setTimeout(() => {
-              const imgElements = view.dom.querySelectorAll('img');
-              const lastImg = imgElements[imgElements.length - 1];
-              if (lastImg) {
-                lastImg.style.width = `${scaledWidth}px`;
-                lastImg.style.maxWidth = '100%';
-                lastImg.style.height = 'auto';
-                lastImg.style.margin = '12px 0';
-                lastImg.style.display = 'block';
-              }
-            }, 0);
-          };
-          img.src = url;
+        const { data, code, message } = await uploadTempImage(formData);
+        if (code !== ResultCode.SUCCESS) {
+          showAlert({
+            title: '안내',
+            description: message || '이미지 업로드 중 오류가 발생하였습니다.',
+          });
+          e.target.value = '';
+          return;
+        }
+
+        const imageUrl = `${AWS_S3_DOMAIN}${data}`;
+
+        // 이미지 원본 크기 가져와서 25%로 축소
+        const img = new window.Image();
+        img.onload = () => {
+          const scaledWidth = Math.round(img.naturalWidth * 0.25);
+          editor
+            .chain()
+            .focus()
+            .setImage({
+              src: imageUrl,
+              alt: file.name,
+              title: file.name,
+            })
+            .run();
+
+          setTimeout(() => {
+            const imgElements = editor.view.dom.querySelectorAll('img');
+            const lastImg = imgElements[imgElements.length - 1];
+            if (lastImg) {
+              lastImg.style.width = `${scaledWidth}px`;
+              lastImg.style.maxWidth = '100%';
+              lastImg.style.height = 'auto';
+              lastImg.style.margin = '12px 0';
+              lastImg.style.display = 'block';
+            }
+          }, 0);
         };
-        reader.readAsDataURL(file);
+
+        img.src = imageUrl;
         e.target.value = '';
       }
     },
-    [editor, showConfirmAlert]
+    [editor, showConfirmAlert, totalImageSize]
   );
 
   const addLink = useCallback(() => {
@@ -523,7 +571,7 @@ export default function TiptapEditor({
   const currentFontSize = selectedFontSize || editorFontSize;
 
   return (
-    <div className="tiptap-editor flex h-full flex-col overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20">
+    <div className="tiptap-editor flex h-full flex-col overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-200">
       {/* 툴바 - PC 버전 */}
       <div className="hidden shrink-0 border-b border-gray-100 bg-gray-50/80 px-3 py-2 lg:block overflow-x-auto">
         <div className="flex items-center gap-0.5">
@@ -690,9 +738,9 @@ export default function TiptapEditor({
       />
 
       {/* 하단 안내 - 모바일에서만 표시 */}
-      <div className="flex shrink-0 items-center justify-between border-t border-gray-100 bg-gray-50/50 px-3 py-2 lg:hidden">
+      {/* <div className="flex shrink-0 items-center justify-between border-t border-gray-100 bg-gray-50/50 px-3 py-2 lg:hidden">
         <p className="text-xs text-gray-400">이미지는 최대 5MB까지 첨부 가능합니다</p>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -52,16 +52,15 @@ instance.interceptors.response.use(
     let description = get(error, 'message', '');
     if (status === 401 || status === 403) {
       description = '로그인이 만료되었습니다. 로그인 후 이용해주세요.';
+      await alertStore.getState().showConfirmAlert({
+        title: '알림',
+        description,
+        size: 'sm',
+      });
+
+      allClearPersistStore();
+      window.location.href = '/';
     }
-
-    await alertStore.getState().showConfirmAlert({
-      title: '알림',
-      description,
-      size: 'sm',
-    });
-
-    allClearPersistStore();
-    window.location.href = '/';
 
     throw error;
   }

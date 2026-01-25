@@ -17,8 +17,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { useAlertStore, useLoginStore, useUserStore } from '@/stores';
+import useRequireAuth from '@/hooks/useRequireAuth';
+import { useUserStore } from '@/stores';
 
 // 하드코딩된 통계 데이터
 const statsData = [
@@ -48,30 +50,17 @@ const statsData = [
 // 메뉴 데이터
 const menuItems = [
   { icon: User, label: '개인 정보 수정', url: '/mypage/myinfo' },
-  { icon: Truck, label: '주문 조회', url: '/mypage/orders' },
+  { icon: Truck, label: '주문 내역 조회', url: '/mypage/orders' },
   { icon: MessageCircleQuestion, label: '문의 하기', url: '/mypage/inquiry' },
   { icon: ShoppingCart, label: '장바구니', url: '/cart' },
 ];
 
 const MypageContainer = () => {
-  const router = useRouter();
-  const { showConfirmAlert } = useAlertStore();
-  const { forward } = useNativeRouter();
-  const { isLoggedIn } = useLoginStore();
-  const { user } = useUserStore();
+  useRequireAuth();
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      (async () => {
-        await showConfirmAlert({
-          title: '안내',
-          description: '로그인이 만료되었습니다. 다시 로그인해 주세요.',
-          confirmText: '확인',
-        });
-        router.push('/login');
-      })();
-    }
-  }, [isLoggedIn]);
+  const router = useRouter();
+  const { forward } = useNativeRouter();
+  const { user } = useUserStore();
 
   useEffect(() => {
     forEach(menuItems, ({ url }) => {
@@ -92,7 +81,7 @@ const MypageContainer = () => {
           <div className="p-6">
             <div className="flex items-center gap-4">
               <Avatar className="size-20 border-2 border-gray-200 shadow-md mr-[10px]">
-                <AvatarImage src="images/myinfo/leg_profile.png" alt={user.username} />
+                <AvatarImage src={`${AWS_S3_DOMAIN}${user.profileImage}`} alt={user.username} />
                 <AvatarFallback className="bg-white text-black text-xl font-bold">
                   {user.username.charAt(0)}
                 </AvatarFallback>

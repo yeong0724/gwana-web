@@ -39,3 +39,8 @@ export enum RoleEnum {
   ADMIN = 'ADMIN',
   GENERAL = 'GENERAL',
 }
+
+export enum YesOrNoEnum {
+  YES = 'Y',
+  NO = 'N',
+}

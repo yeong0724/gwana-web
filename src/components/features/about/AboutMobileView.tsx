@@ -8,7 +8,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 
-import { aboutGwanaImg } from '@/static/images';
+import { AWS_S3_DOMAIN } from '@/constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -350,7 +350,7 @@ const AboutMobileView = () => {
           ref={phase1BgRef}
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('/images/about/gwana_about_01.webp')`,
+            backgroundImage: `url('${AWS_S3_DOMAIN}images/about/mobile/gwana_about_01.webp')`,
           }}
         />
 
@@ -359,7 +359,7 @@ const AboutMobileView = () => {
           ref={phase2BgRef}
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('/images/about/gwana_about_02.webp')`,
+            backgroundImage: `url('${AWS_S3_DOMAIN}images/about/mobile/gwana_about_02.webp')`,
             opacity: 0,
           }}
         />
@@ -374,7 +374,7 @@ const AboutMobileView = () => {
         >
           <div ref={phase1TitleRef} style={{ opacity: 0 }}>
             <Image
-              src={aboutGwanaImg}
+              src={`${AWS_S3_DOMAIN}images/about/mobile/gwana_about_03.png`}
               alt="관아수제차"
               className="w-[280px] lg:w-[350px] mb-[150px]"
               style={{

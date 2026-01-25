@@ -2,7 +2,7 @@
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, RotateCcw } from 'lucide-react';
 import * as React from 'react';
 import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
 
@@ -14,27 +14,32 @@ function Calendar({
   buttonVariant = 'ghost',
   formatters,
   components,
+  useReset = false,
+  onReset,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
+  useReset?: boolean;
+  onReset?: () => void;
 }) {
   const defaultClassNames = getDefaultClassNames();
 
   return (
-    <DayPicker
-      showOutsideDays={showOutsideDays}
-      className={cn(
-        'bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent',
-        String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
-        String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
-        className
-      )}
-      captionLayout={captionLayout}
-      formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString('default', { month: 'short' }),
-        ...formatters,
-      }}
-      classNames={{
+    <div className="flex flex-col">
+      <DayPicker
+        showOutsideDays={showOutsideDays}
+        className={cn(
+          'bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent',
+          String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
+          String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
+          className
+        )}
+        captionLayout={captionLayout}
+        formatters={{
+          formatMonthDropdown: (date) => date.toLocaleString('default', { month: 'short' }),
+          ...formatters,
+        }}
+        classNames={{
         root: cn('w-fit', defaultClassNames.root),
         months: cn('flex gap-4 flex-col md:flex-row relative', defaultClassNames.months),
         month: cn('flex flex-col w-full gap-4', defaultClassNames.month),
@@ -132,6 +137,20 @@ function Calendar({
       }}
       {...props}
     />
+      {useReset && (
+        <div className="px-3 pb-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onReset}
+            className="w-full gap-2 text-muted-foreground"
+          >
+            <RotateCcw className="size-4" />
+            초기화
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
 

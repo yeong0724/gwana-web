@@ -1,0 +1,1 @@
+export const AWS_S3_DOMAIN = process.env.NEXT_PUBLIC_AWS_S3_DOMAIN || '';

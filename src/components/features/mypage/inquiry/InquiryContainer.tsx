@@ -1,93 +1,71 @@
 'use client';
 
-import useNativeRouter from '@/hooks/useNativeRouter';
-import { Card, CardContent } from '@/components/ui/card';
-import { MessageCircleQuestion, PenLine, Inbox, ChevronRight } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface Inquiry {
-  id: number;
-  title: string;
-  status: 'pending' | 'answered';
-  createdAt: string;
-}
+import { ChevronRight, MessageCircleQuestion, PenLine, Search } from 'lucide-react';
 
-// 예시 데이터
-const mockInquiryList: Inquiry[] = [
-  {
-    id: 1,
-    title: '배송 관련 문의드립니다',
-    status: 'answered',
-    createdAt: '2025-01-20',
-  },
-  {
-    id: 2,
-    title: '주문 취소는 어떻게 하나요?',
-    status: 'answered',
-    createdAt: '2025-01-18',
-  },
-  {
-    id: 3,
-    title: '상품 교환 요청합니다',
-    status: 'pending',
-    createdAt: '2025-01-15',
-  },
-  {
-    id: 4,
-    title: '결제 오류가 발생했어요',
-    status: 'pending',
-    createdAt: '2025-01-12',
-  },
-  {
-    id: 5,
-    title: '회원 등급 관련 문의',
-    status: 'answered',
-    createdAt: '2025-01-10',
-  },
-  {
-    id: 6,
-    title: '배송 관련 문의드립니다',
-    status: 'answered',
-    createdAt: '2025-01-20',
-  },
-  {
-    id: 7,
-    title: '주문 취소는 어떻게 하나요?',
-    status: 'answered',
-    createdAt: '2025-01-18',
-  },
-  {
-    id: 8,
-    title: '상품 교환 요청합니다',
-    status: 'pending',
-    createdAt: '2025-01-15',
-  },
-  {
-    id: 9,
-    title: '결제 오류가 발생했어요',
-    status: 'pending',
-    createdAt: '2025-01-12',
-  },
-  {
-    id: 10,
-    title: '회원 등급 관련 문의',
-    status: 'answered',
-    createdAt: '2025-01-10',
-  },
-];
+import DatePicker from '@/components/common/DatePicker';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import useNativeRouter from '@/hooks/useNativeRouter';
+import { formatDate } from '@/lib/utils';
+import { useMypageService } from '@/service';
+import { Inquiry, InquiryListSearchRequest, YesOrNoEnum } from '@/types';
+import { map } from 'lodash-es';
+
+type SearchParams = {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+};
 
 const InquiryContainer = () => {
   const { forward } = useNativeRouter();
   const router = useRouter();
 
-  const inquiryList: Inquiry[] = mockInquiryList;
+  const [searchDate, setSearchDate] = useState<SearchParams>({
+    startDate: undefined,
+    endDate: undefined,
+  });
+
+  // const [searchPayload, setSearchPayload] = useState<InquiryListSearchRequest>({
+  //   startDate: '',
+  //   endDate: '',
+  // });
+
+  const searchPayload = useMemo(() => {
+    return {
+      startDate: formatDate(searchDate.startDate),
+      endDate: formatDate(searchDate.endDate),
+    };
+  }, [searchDate]);
+  const [inquiryList, setInquiryList] = useState<Inquiry[]>([]);
+
+  const { useGetInquiryListQuery } = useMypageService();
+  const { data: inquiryListData, refetch } = useGetInquiryListQuery(searchPayload, {
+    enabled: false,
+  });
 
   const handleWriteInquiry = () => {
     forward('/mypage/inquiry/write');
   };
 
+  const onChangeSearchParams = (name: string, value: Date | undefined) => {
+    setSearchDate((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const onSearch = () => {
+    refetch();
+  };
+
   useEffect(() => {
+    if (inquiryListData) {
+      setInquiryList(inquiryListData.data);
+    }
+  }, [inquiryListData]);
+
+  useEffect(() => {
+    refetch();
     router.prefetch('/mypage/inquiry/write');
   }, []);
 
@@ -102,13 +80,49 @@ const InquiryContainer = () => {
           </div>
         </div>
 
+        {/* 날짜 범위 선택 */}
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+          {/* 시작 날짜 */}
+          <div className="w-[40%]">
+            <DatePicker
+              name="startDate"
+              value={searchDate.startDate}
+              onSelectDate={onChangeSearchParams}
+              placeholder="시작일"
+              align="start"
+              disabled={searchDate.endDate ? (date) => date > searchDate.endDate! : undefined}
+              useReset
+            />
+          </div>
+
+          <span className="text-gray-400 text-sm shrink-0">~</span>
+
+          {/* 종료 날짜 */}
+          <div className="w-[40%]">
+            <DatePicker
+              name="endDate"
+              value={searchDate.endDate}
+              onSelectDate={onChangeSearchParams}
+              align="end"
+              placeholder="종료일"
+              disabled={searchDate.startDate ? (date) => date < searchDate.startDate! : undefined}
+              useReset
+            />
+          </div>
+
+          {/* 조회 버튼 */}
+          <Button onClick={onSearch} className="h-9 flex-1 bg-[#A8BF6A] hover:bg-[#96ad5c]">
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+
         {/* 문의 리스트 영역 */}
         {inquiryList.length === 0 ? (
           // 빈 상태 UI
           <Card className="flex-1 flex flex-col border-0 shadow-none">
             <CardContent className="p-0 flex-1 flex flex-col">
               <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-                <Inbox className="size-16 mb-4 text-gray-300" />
+                <MessageCircleQuestion className="size-16 mb-4 text-gray-300" />
                 <p className="text-lg font-medium">등록된 문의가 없습니다</p>
                 <p className="text-sm mt-1">궁금한 점이 있으시면 문의해 주세요</p>
               </div>
@@ -118,22 +132,22 @@ const InquiryContainer = () => {
           // 문의 리스트
           <div className="flex-1 min-h-0 overflow-y-auto">
             <ul className="divide-y divide-gray-100 px-4">
-              {inquiryList.map((inquiry) => (
-                <li key={inquiry.id} className="group">
+              {inquiryList.map(({ title, createdAt, isAnswered }, index) => (
+                <li key={index} className="group">
                   <button className="w-full py-4 flex items-center justify-between cursor-pointer transition-colors hover:bg-gray-50/80 rounded-lg -mx-2 px-4">
                     <div className="flex-1 min-w-0 text-left">
                       <p className="text-gray-800 font-medium truncate group-hover:text-[#A8BF6A] transition-colors">
-                        {inquiry.title}
+                        {title}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-sm text-gray-400">{inquiry.createdAt}</span>
+                        <span className="text-sm text-gray-400">{createdAt}</span>
                         <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${inquiry.status === 'answered'
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${isAnswered === YesOrNoEnum.YES
                             ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
                             : 'bg-amber-50 text-amber-600 border border-amber-100'
                             }`}
                         >
-                          {inquiry.status === 'answered' ? '답변완료' : '대기중'}
+                          {isAnswered === YesOrNoEnum.YES ? '답변완료' : '대기중'}
                         </span>
                       </div>
                     </div>

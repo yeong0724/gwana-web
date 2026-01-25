@@ -1,7 +1,8 @@
 'use client';
 
-import { gwana_logo_1_webp } from '@/static/images';
 import Image from 'next/image';
+
+import { AWS_S3_DOMAIN } from '@/constants';
 
 const LoginContainer = () => {
   const onKakaoLogin = async () => {
@@ -27,13 +28,13 @@ const LoginContainer = () => {
       {/* 메인 컨텐츠 */}
       <div className="flex bg-white flex-col items-center px-6 w-full max-w-[500px] mx-auto flex-1 overflow-hidden border-x border-gray-100">
         {/* 로고 */}
-        <div className="mt-8 sm:mt-12 md:mt-16 flex-shrink-0">
+        <div className="mt-20 flex-shrink-0">
           <Image
-            src={gwana_logo_1_webp}
-            width={300}
+            src={`${AWS_S3_DOMAIN}images/logo/gwana_logo_2.webp`}
+            width={320}
             height={130}
             alt="관아수제차"
-            className="object-contain w-[240px] h-auto sm:w-[280px] md:w-[320px]"
+            className="object-contain h-auto w-[240px]"
           />
         </div>
 
@@ -55,7 +56,7 @@ const LoginContainer = () => {
               className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#FEE500] hover:bg-[#FDD835] text-gray-900 border border-gray-300"
             >
               <Image
-                src="/images/kakao_logo.webp"
+                src={`${AWS_S3_DOMAIN}images/socialLoginLogo/kakao_logo.webp`}
                 width={24}
                 height={24}
                 alt="카카오"
@@ -70,7 +71,7 @@ const LoginContainer = () => {
               className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#03C75A] hover:bg-[#02B350] text-white border border-gray-300"
             >
               <Image
-                src="/images/naver_logo.png"
+                src={`${AWS_S3_DOMAIN}images/socialLoginLogo/naver_logo.png`}
                 width={25}
                 height={25}
                 alt="네이버"

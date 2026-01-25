@@ -1,3 +1,5 @@
+import { YesOrNoEnum } from "./enum";
+
 export interface GetAccessTokenByKakaoCodeRequest {
   code: string;
 }
@@ -85,4 +87,11 @@ export interface UpdateMyinfoRequest {
   zonecode: string | null;
   roadAddress: string | null;
   detailAddress: string | null;
+}
+
+export interface CreateInquiryRequest {
+  title: string;
+  content: string;
+  isSecret: YesOrNoEnum;
+  productId: string | null;
 }

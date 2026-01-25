@@ -153,3 +153,14 @@ export interface UpdateMyinfoResponse {
   roadAddress: string | null;
   detailAddress: string | null;
 }
+
+export type Inquiry = {
+  productId: string;
+  title: string;
+  content: string;
+  isSecret: string;
+  isAnswered: string;
+  createdAt: string;
+  createdBy: string;
+  username: string;
+};

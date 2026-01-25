@@ -73,3 +73,8 @@ export interface User {
   detailAddress: string | null;
   role: RoleEnum;
 }
+
+export type InquiryListSearchRequest = {
+  startDate: string;
+  endDate: string;
+}

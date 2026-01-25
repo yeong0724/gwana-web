@@ -6,11 +6,16 @@ export type UserStore = {
   clearUser: () => void;
 };
 
-export type LoginStoreState = Omit<LoginStore, 'clearLogout' | 'setLogin'>;
+export type LoginStoreState = Omit<
+  LoginStore,
+  'clearLogout' | 'setLogin' | 'setLoginStoreHydrated' | 'loginStoreHydrated'
+>;
 
 export type LoginStore = {
   isLoggedIn: boolean;
   provider: SocialProviderEnum;
-  setLogin: (loginInfo: LoginStoreState) => void;
+  loginStoreHydrated: boolean;
+  setLogin: (loginInfo: Partial<LoginStoreState>) => void;
   clearLogout: () => void;
+  setLoginStoreHydrated: (loginStoreHydrated: boolean) => void;
 };

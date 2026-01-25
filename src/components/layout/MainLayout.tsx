@@ -7,7 +7,7 @@ import { CustomHeader } from '@/components/common';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { menuGroup } from '@/constants';
-import { allClearPersistStore, cn, getAccessToken, noMainHeaderPage, renewLoginInfo } from '@/lib/utils';
+import { allClearPersistStore, clearLoginInfo, cn, getAccessToken, noMainHeaderPage, renewLoginInfo } from '@/lib/utils';
 import { useLoginService } from '@/service';
 import { useAlertStore } from '@/stores';
 import { ResultCode } from '@/types';
@@ -31,7 +31,10 @@ const MainLayout = ({ children }: Props) => {
     const accessToken = getAccessToken();
 
     // 토큰이 없다면 검증 미진행
-    if (!accessToken) return;
+    if (!accessToken) {
+      clearLoginInfo();
+      return;
+    }
 
     refreshAccessToken(
       { accessToken },
@@ -40,7 +43,7 @@ const MainLayout = ({ children }: Props) => {
           if (code === ResultCode.SUCCESS) {
             renewLoginInfo(data);
           } else {
-            await showConfirmAlert({ title: '에러', description: message || '' });
+            await showConfirmAlert({ title: '알림', description: message || '' });
             allClearPersistStore();
             router.push('/');
           }
@@ -56,7 +59,7 @@ const MainLayout = ({ children }: Props) => {
   useEffect(() => {
     validateAuthorization();
 
-    intervalRef.current = setInterval(validateAuthorization, 30 * 1000 * 60);
+    intervalRef.current = setInterval(validateAuthorization, 25 * 1000 * 60);
 
     return () => {
       if (intervalRef.current) {
