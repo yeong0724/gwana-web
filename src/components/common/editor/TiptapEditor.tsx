@@ -361,13 +361,15 @@ const calculateTotalImageSize = (html: string): number => {
 export default function TiptapEditor({
   value,
   onChange,
-  placeholder = '문의 내용을 상세하게 작성해 주세요.',
+  placeholder = '내용을 상세하게 작성해 주세요.',
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showConfirmAlert, showAlert } = useAlertStore();
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedFontSize, setSelectedFontSize] = useState<string>('');
   const [totalImageSize, setTotalImageSize] = useState<number>(0);
+  // 한글 IME 조합 중인지 추적하는 ref (조합 중 setContent 방지)
+  const isComposingRef = useRef<boolean>(false);
 
   const { useTempImageUploadMutation } = useMypageService();
   const { mutateAsync: uploadTempImage } = useTempImageUploadMutation();
@@ -432,11 +434,23 @@ export default function TiptapEditor({
       attributes: {
         class: 'outline-none',
       },
+      handleDOMEvents: {
+        // 한글 IME 조합 시작/종료 이벤트 핸들링
+        compositionstart: () => {
+          isComposingRef.current = true;
+          return false;
+        },
+        compositionend: () => {
+          isComposingRef.current = false;
+          return false;
+        },
+      },
     },
   });
 
   useEffect(() => {
-    if (editor && value !== editor.getHTML()) {
+    // 한글 IME 조합 중에는 setContent를 호출하지 않음 (조합이 끊어지는 문제 방지)
+    if (editor && value !== editor.getHTML() && !isComposingRef.current) {
       editor.commands.setContent(value);
     }
   }, [value, editor]);

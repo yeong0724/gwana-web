@@ -41,8 +41,12 @@ const InquiryContainer = () => {
     enabled: true,
   });
 
-  const handleWriteInquiry = () => {
+  const moveToInquiryWritePage = () => {
     forward('/mypage/inquiry/write');
+  };
+
+  const moveToInquiryDetailPage = (inquiryId: number) => {
+    forward(`/mypage/inquiry/${inquiryId.toString()}`);
   };
 
   const onChangeSearchParams = (name: string, value: Date | undefined) => {
@@ -69,7 +73,6 @@ const InquiryContainer = () => {
   }, [inquiryListData]);
 
   useEffect(() => {
-    refetch();
     router.prefetch('/mypage/inquiry/write');
   }, []);
 
@@ -136,19 +139,22 @@ const InquiryContainer = () => {
           // 문의 리스트
           <div className="flex-1 min-h-0 overflow-y-auto">
             <ul className="divide-y divide-gray-100 px-4">
-              {inquiryList.map(({ title, createdAt, isAnswered }, index) => (
+              {inquiryList.map(({ inquiryId, title, createdAt, isAnswered }, index) => (
                 <li key={index} className="group">
-                  <button className="w-full py-4 flex items-center justify-between cursor-pointer transition-colors hover:bg-gray-50/80 rounded-lg -mx-2 px-4">
+                  <button
+                    onClick={() => moveToInquiryDetailPage(inquiryId)}
+                    className="w-full py-4 flex items-center justify-between cursor-pointer transition-colors hover:bg-gray-50/80 rounded-lg -mx-2 px-4"
+                  >
                     <div className="flex-1 min-w-0 text-left">
-                      <p className="text-gray-800 font-medium truncate group-hover:text-[#A8BF6A] transition-colors">
+                      <p className="text-[14px] text-gray-700 font-semibold truncate group-hover:text-[#A8BF6A] transition-colors">
                         {title}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-sm text-gray-400">{createdAt}</span>
+                        <span className="text-[12px] text-gray-400">{createdAt}</span>
                         <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${isAnswered === YesOrNoEnum.YES
-                              ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                              : 'bg-amber-50 text-amber-600 border border-amber-100'
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isAnswered === YesOrNoEnum.YES
+                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                            : 'bg-amber-50 text-amber-600 border border-amber-100'
                             }`}
                         >
                           {isAnswered === YesOrNoEnum.YES ? '답변완료' : '답변 대기중'}
@@ -166,7 +172,7 @@ const InquiryContainer = () => {
         {/* 문의 작성 버튼 - 하단 고정 */}
         <div className="flex-shrink-0 bg-white p-4 border-t border-gray-200">
           <button
-            onClick={handleWriteInquiry}
+            onClick={moveToInquiryWritePage}
             className="w-full bg-[#A8BF6A] hover:bg-[#96ad5c] text-white rounded-full py-3 flex items-center justify-center gap-2 transition-colors"
           >
             <PenLine className="size-4" />

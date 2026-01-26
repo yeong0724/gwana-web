@@ -94,4 +94,5 @@ export interface CreateInquiryRequest {
   content: string;
   isSecret: YesOrNoEnum;
   productId: string | null;
+  upperInquiryId: string | null;
 }

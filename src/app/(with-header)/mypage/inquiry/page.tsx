@@ -2,11 +2,7 @@ import InquiryContainer from "@/components/features/mypage/inquiry/InquiryContai
 
 
 const Page = () => {
-  return (
-    <div>
-      <InquiryContainer />
-    </div>
-  );
+  return <InquiryContainer />
 };
 
 export default Page;

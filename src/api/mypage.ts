@@ -4,6 +4,7 @@ import {
   CreateInquiryRequest,
   Inquiry,
   InquiryListSearchRequest,
+  InquirySearchRequest,
   UpdateMyinfoRequest,
   UpdateMyinfoResponse,
 } from '@/types';
@@ -49,4 +50,18 @@ const getInquiryList = async (params: InquiryListSearchRequest) => {
   });
 };
 
-export { uploadProfileImage, uploadTempImage, updateMyinfo, createInquiry, getInquiryList };
+const getInquiry = async (params: InquirySearchRequest) => {
+  return postAxios<ApiResponse<Inquiry>>({
+    url: '/mypage/search/inquiry',
+    params,
+  });
+};
+
+export {
+  uploadProfileImage,
+  uploadTempImage,
+  updateMyinfo,
+  createInquiry,
+  getInquiryList,
+  getInquiry,
+};

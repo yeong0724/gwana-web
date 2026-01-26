@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import {
   createInquiry,
+  getInquiry,
   getInquiryList,
   updateMyinfo,
   uploadProfileImage,
@@ -10,6 +11,7 @@ import {
 import {
   CreateInquiryRequest,
   InquiryListSearchRequest,
+  InquirySearchRequest,
   UpdateMyinfoRequest,
   UseQueryOptionsType,
 } from '@/types';
@@ -49,12 +51,20 @@ const useMypageService = () => {
       ...options,
     });
 
+  const useGetInquiryQuery = (payload: InquirySearchRequest, options?: UseQueryOptionsType) =>
+    useQuery({
+      queryKey: ['inquiry', payload],
+      queryFn: () => getInquiry(payload),
+      ...options,
+    });
+
   return {
     useProfileImageUploadMutation,
     useTempImageUploadMutation,
     useUpdateMyinfoMutation,
     useCreateInquiryMutation,
     useGetInquiryListQuery,
+    useGetInquiryQuery,
   };
 };
 

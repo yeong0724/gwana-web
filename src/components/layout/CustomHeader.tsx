@@ -11,19 +11,18 @@ const CustomHeader = () => {
   const { backward } = useNativeRouter();
 
   const title = useMemo(() => {
-    switch (pathname) {
-      case '/cart':
+    switch (true) {
+      case pathname === '/cart':
         return 'SHOP';
-      case '/payment':
+      case pathname === '/payment':
         return '주문/결제';
-      case '/login':
+      case pathname === '/login':
         return '로그인';
-      case '/mypage':
+      case pathname === '/mypage':
         return '마이페이지';
-      case '/mypage/inquiry':
-      case '/mypage/inquiry/write':
+      case pathname.startsWith('/mypage/inquiry'):
         return '1:1 문의하기';
-      case '/mypage/myinfo':
+      case pathname === '/mypage/myinfo':
         return '개인 정보 수정';
       default:
         return '';

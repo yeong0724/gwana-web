@@ -78,3 +78,7 @@ export type InquiryListSearchRequest = {
   startDate: string | null;
   endDate: string | null;
 }
+
+export type InquirySearchRequest = {
+  inquiryId: string;
+}

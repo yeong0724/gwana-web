@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import TiptapEditor from '@/components/common/editor';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -8,11 +8,17 @@ import { Input } from '@/components/ui/input';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { validateByType } from '@/lib/utils';
 import { useMypageService } from '@/service';
-import { useAlertStore } from '@/stores';
-import { YesOrNoEnum } from '@/types/enum';
+import { useAlertStore, useUserStore } from '@/stores';
+import { RoleEnum, YesOrNoEnum } from '@/types/enum';
 import { CreateInquiryRequest } from '@/types/request';
 
-const InquiryWriteContainer = () => {
+type Props = {
+  inquiryId: string;
+};
+
+const InquiryWriteContainer = ({ inquiryId }: Props) => {
+  const { user } = useUserStore();
+
   const { backward } = useNativeRouter();
   const { showAlert, showConfirmAlert } = useAlertStore();
   const [title, setTitle] = useState<string>('');
@@ -21,6 +27,14 @@ const InquiryWriteContainer = () => {
 
   const { useCreateInquiryMutation } = useMypageService();
   const { mutate: createInquiry } = useCreateInquiryMutation();
+
+  const isAdmin = useMemo(() => {
+    if (user.role === RoleEnum.ADMIN) {
+      setTitle('안녕하세요 고객님. 답변 드립니다.');
+      return true;
+    }
+    return false;
+  }, [user]);
 
   const handleSubmit = async () => {
     if (!title || title.trim().length < 2) {
@@ -44,13 +58,16 @@ const InquiryWriteContainer = () => {
       content,
       isSecret,
       productId: null,
+      upperInquiryId: isAdmin && inquiryId ? inquiryId : null,
     };
 
     createInquiry(payload, {
       onSuccess: async () => {
+        const description = isAdmin ? '답변이 제출되었습니다.' : '문의가 제출되었습니다.';
+
         await showConfirmAlert({
           title: '안내',
-          description: '문의가 제출되었습니다.',
+          description,
         });
 
         backward();
@@ -96,14 +113,14 @@ const InquiryWriteContainer = () => {
       {/* 하단 안내 영역 */}
       <div className="flex shrink-0 items-center justify-between border-x border-b border-gray-200 bg-gray-50/50 px-4 py-2.5">
         <p className="text-[13px] text-gray-400">이미지는 최대 5MB까지 첨부 가능합니다</p>
-        <label className="flex cursor-pointer items-center gap-1.5">
+        {!isAdmin && <label className="flex cursor-pointer items-center gap-1.5">
           <Checkbox
             id="isSecret"
             checked={isSecret === 'Y'}
             onCheckedChange={(checked) => setIsSecret(checked ? YesOrNoEnum.YES : YesOrNoEnum.NO)}
           />
           <span className="text-[14px] text-gray-600">비밀글로 작성</span>
-        </label>
+        </label>}
       </div>
     </div>
   );

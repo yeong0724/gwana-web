@@ -1,4 +1,4 @@
-import { RoleEnum, SocialProviderEnum } from '@/types';
+import { RoleEnum, SocialProviderEnum, YesOrNoEnum } from '@/types';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -155,11 +155,13 @@ export interface UpdateMyinfoResponse {
 }
 
 export type Inquiry = {
-  productId: string;
+  inquiryId: number;
+  productId: string | null;
+  productName: string | null;
   title: string;
   content: string;
-  isSecret: string;
-  isAnswered: string;
+  isSecret: YesOrNoEnum;
+  isAnswered: YesOrNoEnum;
   createdAt: string;
   createdBy: string;
   username: string;

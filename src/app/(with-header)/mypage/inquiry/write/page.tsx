@@ -1,12 +1,13 @@
-import InquiryWriteContainer from "@/components/features/mypage/inquiry/write/InquiryWriteContainer";
+import InquiryWriteContainer from '@/components/features/mypage/inquiry/write/InquiryWriteContainer';
 
+interface Props {
+  searchParams: Promise<{ inquiryId: string }>;
+}
 
-const Page = () => {
-  return (
-    <div>
-      <InquiryWriteContainer />
-    </div>
-  );
+const Page = async ({ searchParams }: Props) => {
+  const { inquiryId = '' } = await searchParams;
+
+  return <InquiryWriteContainer inquiryId={inquiryId} />;
 };
 
 export default Page;

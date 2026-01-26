@@ -9,7 +9,7 @@ import { HttpMethod } from '@/types';
 const axiosOption = {
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   withCredentials: true,
-  timeout: 300000,
+  timeout: 5 * 60 * 1000, // 5분
   headers: {
     'Content-Type': 'application/json',
   },
