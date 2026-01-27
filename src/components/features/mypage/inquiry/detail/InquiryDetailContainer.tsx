@@ -61,8 +61,8 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
   }, [inquiryData]);
 
   useEffect(() => {
-    router.prefetch('/mypage/inquiry/write');
-  }, [router]);
+    router.prefetch(`/mypage/inquiry/write?inquiryId=${inquiryId}`);
+  }, [router, inquiryId]);
 
   /**
    * 문의내용

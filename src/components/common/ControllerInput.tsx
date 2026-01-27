@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 import { isEmpty } from 'lodash-es';
 import {
@@ -39,6 +39,7 @@ const ControllerInput = <T extends FieldValues>({
   callbackFn?: HandleChange<HTMLInputElement, FieldPathValue<T, FieldPath<T>>> | null;
   inputRef?: (el: HTMLInputElement | null) => void;
 }) => {
+  const [composingValue, setComposingValue] = useState<string | null>(null);
   const { setValue, control, clearErrors } = useFormContext<T>();
 
   const {
@@ -61,9 +62,11 @@ const ControllerInput = <T extends FieldValues>({
 
   const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
     if ((event.nativeEvent as KeyboardEvent).isComposing && event.target.value) {
-      return null;
+      setComposingValue(event.target.value);
+      return;
     }
 
+    setComposingValue(null);
     const value = onFilterValue(event) as FieldPathValue<T, FieldPath<T>>;
 
     if (callbackFn) {
@@ -87,7 +90,7 @@ const ControllerInput = <T extends FieldValues>({
         ref={inputRef}
         name={name}
         placeholder={placeholder}
-        value={field.value}
+        value={composingValue || field.value}
         onChange={onChangeHandler}
         // onFocus={handleFocus}
         className={`${className} outline-none ${error?.message ? '!border-red-500 focus:!border-red-500' : ''} ${disabled ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : ''}`}
