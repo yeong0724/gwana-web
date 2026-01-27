@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Camera, PenLine, X } from 'lucide-react';
 import DaumPostcode, { Address } from 'react-daum-postcode';
@@ -20,6 +21,7 @@ const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 2;
 
 const MyinfoContainer = () => {
+  const router = useRouter();
   const awsS3Domain = process.env.NEXT_PUBLIC_AWS_S3_DOMAIN || '';
   const isMobile = getIsMobile();
 
@@ -140,6 +142,7 @@ const MyinfoContainer = () => {
         if (code === ResultCode.SUCCESS) {
           toast.success('회원정보가 수정되었습니다.');
           setUser(data);
+          router.prefetch('/mypage');
         }
       },
     });
@@ -251,7 +254,7 @@ const MyinfoContainer = () => {
                 </div>
 
                 {/* 휴대폰 번호 */}
-                <div className="space-y-1">
+                <div className="space-y-1 mb-[0px]">
                   <div className="px-[5px] mb-1">
                     <label className="text-gray-800 font-medium text-base">휴대폰 번호</label>
                   </div>
@@ -308,7 +311,7 @@ const MyinfoContainer = () => {
                     <button
                       type="button"
                       onClick={addressSearchOpenHandler}
-                      className="px-6 py-2 border border-gray-800 text-gray-800 rounded-md font-medium text-base hover:bg-gray-800 hover:text-white transition-colors whitespace-nowrap"
+                      className="px-6 py-[6px] border border-gray-800 text-gray-800 rounded-md font-medium text-[14px] hover:bg-gray-800 hover:text-white transition-colors whitespace-nowrap"
                     >
                       검색하기
                     </button>
