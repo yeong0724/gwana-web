@@ -9,7 +9,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 
-import { getRegexpByType } from '@/lib/utils';
+import { validateByType } from '@/lib/utils';
 import type { FormatEnum, HandleChange, ReactHookFormEventType } from '@/types/type';
 
 const ControllerInput = <T extends FieldValues>({
@@ -52,12 +52,7 @@ const ControllerInput = <T extends FieldValues>({
   const onFilterValue = (event: ChangeEvent<ReactHookFormEventType<T>>) => {
     const { value } = event.target;
 
-    if ((event.nativeEvent as KeyboardEvent).isComposing && value) {
-      return null;
-    }
-
-    const REG_EXP = getRegexpByType(type);
-    if (!value || REG_EXP.test(value)) {
+    if (!value || validateByType(value, type)) {
       return value;
     }
 
@@ -65,9 +60,11 @@ const ControllerInput = <T extends FieldValues>({
   };
 
   const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
-    const value = onFilterValue(event) as FieldPathValue<T, FieldPath<T>>;
+    if ((event.nativeEvent as KeyboardEvent).isComposing && event.target.value) {
+      return null;
+    }
 
-    if (!value) return;
+    const value = onFilterValue(event) as FieldPathValue<T, FieldPath<T>>;
 
     if (callbackFn) {
       callbackFn(null, { name, value });
