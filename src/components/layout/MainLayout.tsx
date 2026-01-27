@@ -19,6 +19,7 @@ import {
 } from '@/lib/utils';
 import { useLoginService } from '@/service';
 import { ResultCode } from '@/types';
+import { useAlertStore } from '@/stores';
 
 interface Props {
   children: ReactNode;
@@ -28,7 +29,7 @@ const MainLayout = ({ children }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const isNoMainHeaderPage = noMainHeaderPage(pathname);
-
+  const { showConfirmAlert } = useAlertStore();
   const { useRefreshAccessToken } = useLoginService();
   const { mutate: refreshAccessToken } = useRefreshAccessToken();
 
@@ -54,6 +55,10 @@ const MainLayout = ({ children }: Props) => {
             renewLoginInfo(data);
           } else {
             allClearPersistStore();
+            await showConfirmAlert({
+              title: '에러',
+              description: message || '',
+            });
 
             if (pathname.startsWith('/mypage') || pathname === '/payment') {
               toast.info(message || '');
@@ -61,7 +66,12 @@ const MainLayout = ({ children }: Props) => {
             }
           }
         },
-        onError: () => {
+        onError: async () => {
+          await showConfirmAlert({
+            title: '에러',
+            description: '로그인 정보가 만료되었습니다. 다시 로그인해주세요.',
+          });
+
           allClearPersistStore();
           router.push('/');
         },
