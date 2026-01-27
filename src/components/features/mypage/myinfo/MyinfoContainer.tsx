@@ -119,6 +119,7 @@ const MyinfoContainer = () => {
     const confirm = await showConfirmAlert({
       title: '안내',
       description: '회원 정보를 수정하시겠습니까?',
+      cancelText: '취소',
     });
 
     if (!confirm) return;
