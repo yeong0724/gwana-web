@@ -81,8 +81,8 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
             <div className="flex items-center gap-3 mb-3">
               <span
                 className={`shrink-0 text-[10px] px-2 py-1 rounded-full font-medium border ${isAnswered === YesOrNoEnum.YES
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
-                    : 'bg-amber-50 text-amber-600 border-amber-200'
+                  ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                  : 'bg-amber-50 text-amber-600 border-amber-200'
                   }`}
               >
                 {isAnswered === YesOrNoEnum.YES ? '답변완료' : '답변대기'}
@@ -103,7 +103,7 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
           {/* 문의 내용 + 답변 영역 */}
           <div>
             {/* 문의 내용 */}
-            <div className="px-4 py-3">
+            <div className="px-4 py-3 min-h-[260px]">
               <div
                 className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words"
                 dangerouslySetInnerHTML={{ __html: getCleanHtmlContent(content) }}

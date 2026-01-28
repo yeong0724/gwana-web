@@ -177,6 +177,72 @@ const getCleanHtmlContent = (htmlContent: string) => {
   return DOMPurify.sanitize(htmlContent);
 };
 
+export const compressImage = async (
+  file: File,
+  options: {
+    maxWidth?: number;
+    maxHeight?: number;
+    quality?: number;
+    format?: 'image/jpeg' | 'image/png' | 'image/webp';
+  } = {}
+): Promise<File> => {
+  const { maxWidth, maxHeight, quality = 0.7, format = 'image/webp' } = options;
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => {
+      let { width, height } = img;
+
+      // maxWidth, maxHeight가 있을 때만 리사이즈
+      if (maxWidth || maxHeight) {
+        const ratioW = maxWidth ? maxWidth / width : 1;
+        const ratioH = maxHeight ? maxHeight / height : 1;
+        const ratio = Math.min(ratioW, ratioH, 1); // 1보다 크면 확대 안 함
+
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error('Compression failed'));
+            return;
+          }
+
+          const ext = format.split('/')[1];
+          const newName = file.name.replace(/\.\w+$/, `.${ext}`);
+
+          resolve(
+            new File([blob], newName, {
+              type: format,
+              lastModified: Date.now(),
+            })
+          );
+        },
+        format,
+        quality
+      );
+    };
+
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+};
+
 export {
   clearLoginInfo,
   allClearPersistStore,
@@ -197,5 +263,5 @@ export {
   setRedirectUrl,
   formatDate,
   getCleanHtmlContent,
-  getPhoneNumber
+  getPhoneNumber,
 };

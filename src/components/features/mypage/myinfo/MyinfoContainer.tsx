@@ -12,7 +12,7 @@ import ControllerInput from '@/components/common/ControllerInput';
 import SearchPostcodeModal from '@/components/common/modal/SearchPostcodeModal';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import useMyinfoForm from '@/hooks/useMyinfoForm';
-import { getIsMobile } from '@/lib/utils';
+import { compressImage, getIsMobile } from '@/lib/utils';
 import { useMypageService } from '@/service';
 import { useAlertStore, useUserStore } from '@/stores';
 import { MyinfoForm, ResultCode, UpdateMyinfoRequest } from '@/types';
@@ -62,12 +62,14 @@ const MyinfoContainer = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const compressedFile = await compressImage(file, { maxWidth: 300, quality: 0.5 });
+
     // 확장자 검사
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+    if (!ALLOWED_FILE_TYPES.includes(compressedFile.type)) {
       showAlert({
         title: '업로드 불가',
         description: '허용된 확장자는 jpeg, png, webp 입니다.',
@@ -77,7 +79,7 @@ const MyinfoContainer = () => {
     }
 
     // 용량 검사
-    if (file.size > MAX_FILE_SIZE * 1024 * 1024) {
+    if (compressedFile.size > MAX_FILE_SIZE * 1024 * 1024) {
       showAlert({
         title: '업로드 불가',
         description: `업로드 가능한 용량은 ${MAX_FILE_SIZE}MB 이하입니다.`,
@@ -92,9 +94,9 @@ const MyinfoContainer = () => {
       setPreviewImg(reader.result as string);
     };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressedFile);
 
-    setSelectedProfileImageFile(file);
+    setSelectedProfileImageFile(compressedFile);
 
     e.target.value = '';
   };
@@ -138,12 +140,17 @@ const MyinfoContainer = () => {
     }
 
     updateMyinfo(payload, {
-      onSuccess: ({ code, data }) => {
+      onSuccess: ({ code, data, message }) => {
         if (code === ResultCode.SUCCESS) {
           toast.success('회원정보가 수정되었습니다.');
           setUser(data);
           router.prefetch('/mypage');
+        } else {
+          toast.error(message || '회원정보 수정에 실패하였습니다.');
         }
+      },
+      onError: () => {
+        toast.error('회원정보 수정에 실패하였습니다.');
       },
     });
   };
@@ -287,11 +294,10 @@ const MyinfoContainer = () => {
                     />
                   </div>
                   <span
-                    className={`pl-2 text-[12px] sm:text-[8px] block ${
-                      errors.phoneFirst || errors.phoneMiddle || errors.phoneLast
-                        ? 'text-red-500'
-                        : 'invisible'
-                    }`}
+                    className={`pl-2 text-[12px] sm:text-[8px] block ${errors.phoneFirst || errors.phoneMiddle || errors.phoneLast
+                      ? 'text-red-500'
+                      : 'invisible'
+                      }`}
                   >
                     휴대폰 번호를 입력해주세요
                   </span>
