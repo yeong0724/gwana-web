@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import DOMPurify from 'dompurify';
 import { some, startsWith } from 'lodash-es';
@@ -101,12 +101,6 @@ const noMainHeaderPage = (pathname: string) => {
   );
 };
 
-const getIsMobile = () => {
-  const userAgent = navigator.userAgent;
-  const isMobile = /mobile/i.test(userAgent);
-  return isMobile;
-};
-
 const setAccessToken = (accessToken: string) => {
   localStorage.setItem('accessToken', accessToken);
 };
@@ -164,10 +158,16 @@ const renewLoginInfo = (refreshResponse: LoginResponse) => {
   loginActions.setLogin({ isLoggedIn: true, provider });
 };
 
-const formatDate = (date: Date | undefined, dateFormat: string = 'yyyy-MM-dd') => {
+const formatDate = (date: Date | undefined | string, dateFormat: string = 'yyyy-MM-dd') => {
   if (!date) return null;
 
   return format(date, dateFormat, { locale: ko });
+};
+
+const formatRelativeTime = (date: Date | undefined | string) => {
+  if (!date) return null;
+
+  return formatDistanceToNow(new Date(date), { addSuffix: true, locale: ko });
 };
 
 const getCleanHtmlContent = (htmlContent: string) => {
@@ -254,7 +254,6 @@ export {
   decodeToken,
   delayAsync,
   noMainHeaderPage,
-  getIsMobile,
   setAccessToken,
   getAccessToken,
   removeAccessToken,
@@ -262,6 +261,7 @@ export {
   getRedirectUrl,
   setRedirectUrl,
   formatDate,
+  formatRelativeTime,
   getCleanHtmlContent,
   getPhoneNumber,
 };

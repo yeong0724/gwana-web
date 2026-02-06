@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react';
 
 import { FieldPath, FieldPathValue, FieldValues } from 'react-hook-form';
+
 import { RoleEnum, YesOrNoEnum } from '@/types';
 
 export type HandleChange<T, V> = (
@@ -113,4 +114,7 @@ export type Review = {
 
   // 작성자 Id
   createdBy: string;
-}
+
+  // 작성자 이메일
+  email: string;
+};

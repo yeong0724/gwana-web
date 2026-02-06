@@ -13,7 +13,7 @@ import ProductDetailWebView from '@/components/features/product/detail/ProductDe
 import { type CarouselApi } from '@/components/ui/carousel';
 import { Provider } from '@/context/productDetailContext';
 import { useCartService, useMypageService, useProductService } from '@/service';
-import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
+import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stores';
 import { cartActions } from '@/stores/useCartStore';
 import {
   Cart,
@@ -44,6 +44,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
   const { isLoggedIn } = useLoginStore();
+  const {
+    user: { role },
+  } = useUserStore();
   const { showAlert } = useAlertStore();
   const { setCart, addCart } = useCartStore();
 
@@ -81,7 +84,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
   const [purchaseList, setPurchaseList] = useState<PurchaseList[]>([]);
 
   // 리뷰 검색 옵션
-  const [reviewSearchPayload, setReviewSearchPayload] = useState<Omit<ReviewListSearchRequest, 'page'>>({
+  const [reviewSearchPayload, setReviewSearchPayload] = useState<
+    Omit<ReviewListSearchRequest, 'page'>
+  >({
     productId,
     sortBy: SortByEnum.LATEST,
     photoOnly: false,
@@ -95,10 +100,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
   );
 
   const { useGetReviewListInfiniteQuery } = useMypageService();
-  const { data: reviewListData } = useGetReviewListInfiniteQuery(
-    reviewSearchPayload,
-    { enabled: true }
-  );
+  const { data: reviewListData } = useGetReviewListInfiniteQuery(reviewSearchPayload, {
+    enabled: true,
+  });
 
   const { reviewList, totalReviewCount } = useMemo(() => {
     if (reviewListData) {
@@ -371,6 +375,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
           reviewList,
           totalReviewCount,
           reviewSearchPayload,
+          role,
         }}
         controller={{
           setApi,
@@ -384,7 +389,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
           onPurchaseMobileHandler,
           handleAddToCart,
           handlePurchase,
-          setReviewSearchPayload
+          setReviewSearchPayload,
         }}
       >
         {isMobile ? (

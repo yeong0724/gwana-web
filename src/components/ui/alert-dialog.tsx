@@ -1,9 +1,12 @@
 'use client';
 
-import { buttonVariants } from '@/components/ui/button';
-import { cn, getIsMobile } from '@/lib/utils';
-import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import * as React from 'react';
+
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
+
+import { buttonVariants } from '@/components/ui/button';
+import useIsMobile from '@/hooks/useIsMobile';
+import { cn } from '@/lib/utils';
 
 function AlertDialog({
   ...props
@@ -43,7 +46,7 @@ function AlertDialogContent({
   className,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
-  const isMobile = getIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <AlertDialogPortal>
@@ -128,14 +131,14 @@ function AlertDialogCancel({
 
 export {
   AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 };

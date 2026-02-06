@@ -1,6 +1,13 @@
 import { CarouselApi } from '@/components/ui/carousel';
 import createGenericContext from '@/providers/ContextProvider';
-import { ProductDetailResponse, ProductOption, PurchaseList, Review, ReviewListSearchRequest } from '@/types';
+import {
+  ProductDetailResponse,
+  ProductOption,
+  PurchaseList,
+  Review,
+  ReviewListSearchRequest,
+  RoleEnum,
+} from '@/types';
 
 type ProductDetailStateContextType = {
   product: ProductDetailResponse;
@@ -13,6 +20,7 @@ type ProductDetailStateContextType = {
   reviewList: Review[];
   totalReviewCount: number;
   reviewSearchPayload: Omit<ReviewListSearchRequest, 'page'>;
+  role: RoleEnum;
 };
 
 type ProductDetailControllerContextType = {

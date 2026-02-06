@@ -199,10 +199,11 @@ const InquiryContainer = () => {
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className="text-[12px] text-gray-400">{createdAt}</span>
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isAnswered === YesOrNoEnum.YES
-                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                            : 'bg-amber-50 text-amber-600 border border-amber-100'
-                            }`}
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                            isAnswered === YesOrNoEnum.YES
+                              ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                              : 'bg-amber-50 text-amber-600 border border-amber-100'
+                          }`}
                         >
                           {isAnswered === YesOrNoEnum.YES ? '답변완료' : '답변 대기중'}
                         </span>

@@ -5,9 +5,9 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { toast } from 'sonner';
 
-import { CustomHeader } from '@/components/common';
 import Footer from '@/components/layout/Footer';
-import Header from '@/components/layout/Header';
+import Header from '@/components/layout/Header/MainHeader';
+import SubHeader from '@/components/layout/Header/SubHeader';
 import { menuGroup } from '@/constants';
 import {
   allClearPersistStore,
@@ -88,7 +88,7 @@ const MainLayout = ({ children }: Props) => {
 
   return isNoMainHeaderPage ? (
     <div className="h-dvh  flex flex-col relative overflow-hidden bg-white">
-      <CustomHeader />
+      <SubHeader />
       {children}
     </div>
   ) : (

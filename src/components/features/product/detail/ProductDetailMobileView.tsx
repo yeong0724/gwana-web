@@ -1,5 +1,5 @@
+import { Fragment, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
 
 import gsap from 'gsap';
 import { clone, isEmpty, map } from 'lodash-es';
@@ -19,8 +19,8 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
-import { localeFormat } from '@/lib/utils';
-import { Review } from '@/types';
+import { formatDate, localeFormat } from '@/lib/utils';
+import { Review, RoleEnum } from '@/types';
 
 type TabType = 'detail' | 'review' | 'qna';
 
@@ -46,6 +46,7 @@ const ProductDetailMobileView = () => {
     reviewList,
     totalReviewCount,
     reviewSearchPayload,
+    role,
   } = useStateContext();
 
   const {
@@ -262,22 +263,25 @@ const ProductDetailMobileView = () => {
         <div className="flex items-center justify-center">
           <button
             onClick={() => handleTabClick('detail')}
-            className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${activeTab === 'detail' ? 'text-black' : 'text-gray-400'
-              }`}
+            className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${
+              activeTab === 'detail' ? 'text-black' : 'text-gray-400'
+            }`}
           >
             상세 설명
           </button>
           <button
             onClick={() => handleTabClick('review')}
-            className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${activeTab === 'review' ? 'text-black' : 'text-gray-400'
-              }`}
+            className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${
+              activeTab === 'review' ? 'text-black' : 'text-gray-400'
+            }`}
           >
             후기 ({totalReviewCount})
           </button>
           <button
             onClick={() => handleTabClick('qna')}
-            className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${activeTab === 'qna' ? 'text-black' : 'text-gray-400'
-              }`}
+            className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${
+              activeTab === 'qna' ? 'text-black' : 'text-gray-400'
+            }`}
           >
             Q&A
           </button>
@@ -316,8 +320,9 @@ const ProductDetailMobileView = () => {
         {/* 상세 이미지 영역 */}
         <div className="relative">
           <div
-            className={`w-full space-y-0 overflow-hidden transition-all duration-500 ease-in-out ${isDetailExpanded ? 'max-h-none' : 'max-h-[600px]'
-              }`}
+            className={`w-full space-y-0 overflow-hidden transition-all duration-500 ease-in-out ${
+              isDetailExpanded ? 'max-h-none' : 'max-h-[600px]'
+            }`}
           >
             {product.infos.map((image, index) => (
               <div key={index} className="relative w-full">
@@ -340,8 +345,9 @@ const ProductDetailMobileView = () => {
 
           {/* 펼치기/접기 버튼 */}
           <div
-            className={`flex justify-center ${isDetailExpanded ? 'mt-8' : 'absolute bottom-4 left-0 right-0'
-              }`}
+            className={`flex justify-center ${
+              isDetailExpanded ? 'mt-8' : 'absolute bottom-4 left-0 right-0'
+            }`}
           >
             <button
               onClick={() => {
@@ -369,7 +375,7 @@ const ProductDetailMobileView = () => {
       <div className="h-2 bg-gray-100" />
 
       {/* 리뷰 섹션 */}
-      <div ref={reviewSectionRef} className="max-w-[800px] pt-6 pb-32 px-5">
+      <div ref={reviewSectionRef} className="max-w-[800px] py-6 px-5">
         {/* 리뷰 타이틀 */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[18px] font-medium text-gray-800">후기</h3>
@@ -393,7 +399,7 @@ const ProductDetailMobileView = () => {
           <>
             {map(reviewList, (review: Review, index: number) => {
               return (
-                <>
+                <Fragment key={review.reviewId}>
                   <div key={review.reviewId} className="py-4">
                     {/* 별점 및 작성일 */}
                     <div className="flex items-center justify-between pb-4">
@@ -420,11 +426,19 @@ const ProductDetailMobileView = () => {
                           );
                         })}
                       </div>
-                      <span className="text-xs text-gray-400">{review.createdAt}</span>
+                      <div className="flex items-center">
+                        <span className="text-[13px] text-gray-500">{review.email}</span>
+                        <span className="text-[12px] text-gray-400 mx-[4px]">|</span>
+                        <span className="text-[12px] text-gray-400">
+                          {formatDate(review?.createdAt, 'yyyy.MM.dd')}
+                        </span>
+                      </div>
                     </div>
 
                     {/* 리뷰 내용 */}
-                    <p className="text-sm text-gray-700 mb-8 whitespace-pre-wrap">{review.content}</p>
+                    <p className="text-sm text-gray-700 mb-8 whitespace-pre-wrap">
+                      {review.content}
+                    </p>
 
                     {/* 리뷰 이미지 */}
                     {review.reviewImages && review.reviewImages.length > 0 && (
@@ -451,16 +465,14 @@ const ProductDetailMobileView = () => {
                       </div>
                     )}
                   </div>
-                  {index !== reviewList.length - 1 && (
-                    <div className="border-t border-gray-200" />
-                  )}
-                </>
+                  {index !== reviewList.length - 1 && <div className="border-t border-gray-200" />}
+                </Fragment>
               );
             })}
 
             {/* 리뷰 더보기 버튼 */}
-            {totalReviewCount > 5 && (
-              <div className="flex justify-center py-6">
+            {totalReviewCount > 0 && (
+              <div className="flex justify-center pt-10 pb-2">
                 <button className="px-6 py-2 text-sm font-medium text-[#A8BF6A] border border-[#A8BF6A] rounded-md hover:bg-[#A8BF6A]/5 transition-colors">
                   리뷰 더보기
                 </button>
@@ -478,7 +490,7 @@ const ProductDetailMobileView = () => {
       <div className="h-2 bg-gray-100" />
 
       {/* Q&A 섹션 */}
-      <div ref={qnaSectionRef} className="max-w-[800px] pt-6 px-5 mb-[200px]">
+      <div ref={qnaSectionRef} className="max-w-[800px] pt-6 px-5 mb-[100px]">
         {/* 질문 타이틀 */}
         <h3 className="text-[18px] font-medium text-gray-800 mb-4">질문</h3>
 
@@ -492,11 +504,13 @@ const ProductDetailMobileView = () => {
         <div className="border-t border-gray-200" />
 
         {/* 질문 쓰기 버튼 */}
-        <div className="flex justify-end py-4">
-          <button className="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-[#96ad5c] transition-colors">
-            질문 쓰기
-          </button>
-        </div>
+        {role !== RoleEnum.ADMIN && (
+          <div className="flex justify-end py-4">
+            <button className="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-[#96ad5c] transition-colors">
+              질문 쓰기
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 모바일 하단 고정 버튼 영역 - Portal로 body에 직접 렌더링 */}
@@ -512,8 +526,9 @@ const ProductDetailMobileView = () => {
             >
               {/* 확장 패널: 구매수량 + 상품금액 합계 (옵션 없는 경우) */}
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${isBottomPanelOpen ? 'max-h-[500px]' : 'max-h-0'
-                  }`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isBottomPanelOpen ? 'max-h-[500px]' : 'max-h-0'
+                }`}
               >
                 {/* 닫기 버튼 */}
                 <button

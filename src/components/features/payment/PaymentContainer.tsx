@@ -7,18 +7,19 @@ import { useRouter } from 'next/navigation';
 import { TossPaymentsWidgets } from '@tosspayments/tosspayments-sdk';
 import { cloneDeep, first, isEmpty, pick, size } from 'lodash-es';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import DaumPostcode, { Address } from 'react-daum-postcode';
+import { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider } from 'react-hook-form';
 
 import ControllerInput from '@/components/common/ControllerInput';
 import ControllerSelect from '@/components/common/ControllerSelect';
 import { SearchPostcodeModal } from '@/components/common/modal';
+import SearchPostcodeSheet from '@/components/common/modal/SearchPostcodeSheet';
 import TossPayments from '@/components/features/payment/TossPayments';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { deliveryRequestOptions } from '@/constants';
+import useIsMobile from '@/hooks/useIsMobile';
 import usePaymentForm from '@/hooks/usePaymentForm';
-import { getIsMobile, localeFormat } from '@/lib/utils';
+import { localeFormat } from '@/lib/utils';
 import { usePaymentService } from '@/service';
 import { useAlertStore, useUserStore } from '@/stores';
 import { PaymentForm, PaymentSessionResponse, SavePaymentInfoRequest } from '@/types';
@@ -38,8 +39,8 @@ type Props = {
 };
 
 const PaymentContainer = ({ sessionId }: Props) => {
-  const isMobile = getIsMobile();
   const router = useRouter();
+  const { isMobile } = useIsMobile();
   const { showConfirmAlert, showAlert } = useAlertStore();
   const { form, setValue, clearErrors, watch } = usePaymentForm();
   const { user } = useUserStore();
@@ -419,27 +420,24 @@ const PaymentContainer = ({ sessionId }: Props) => {
           </div>
         </form>
       </FormProvider>
-      {/* 모바일: 바텀 시트 */}
-      {isMobile && (
-        <Sheet open={addressOpen} onOpenChange={setAddressOpen}>
-          <SheetContent side="bottom" className="h-full">
-            <SheetHeader className="border-b">
-              <SheetTitle>주소찾기</SheetTitle>
-            </SheetHeader>
-            <DaumPostcode
-              style={{ width: '100%', height: '100%' }}
-              onComplete={handleAddressComplete}
-            />
-          </SheetContent>
-        </Sheet>
-      )}
-      {/* PC: 다이얼로그 모달 */}
-      {!isMobile && (
-        <SearchPostcodeModal
-          open={addressOpen}
-          onOpenChange={setAddressOpen}
-          onComplete={handleAddressComplete}
-        />
+      {isMobile ? (
+        <>
+          {/* MOBILE - 주소 검색 바텀 시트 */}
+          <SearchPostcodeSheet
+            addressOpen={addressOpen}
+            setAddressOpen={setAddressOpen}
+            handleAddressComplete={handleAddressComplete}
+          />
+        </>
+      ) : (
+        <>
+          {/* WEB (PC) - 주소 검색 다이얼로그 모달 */}
+          <SearchPostcodeModal
+            open={addressOpen}
+            onOpenChange={setAddressOpen}
+            onComplete={handleAddressComplete}
+          />
+        </>
       )}
     </div>
   );

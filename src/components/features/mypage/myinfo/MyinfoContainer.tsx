@@ -4,15 +4,16 @@ import { ChangeEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Camera, PenLine, X } from 'lucide-react';
-import DaumPostcode, { Address } from 'react-daum-postcode';
+import { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import ControllerInput from '@/components/common/ControllerInput';
-import SearchPostcodeModal from '@/components/common/modal/SearchPostcodeModal';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { SearchPostcodeModal, SearchPostcodeSheet } from '@/components/common/modal';
+import { AWS_S3_DOMAIN } from '@/constants';
+import useIsMobile from '@/hooks/useIsMobile';
 import useMyinfoForm from '@/hooks/useMyinfoForm';
-import { compressImage, getIsMobile } from '@/lib/utils';
+import { compressImage } from '@/lib/utils';
 import { useMypageService } from '@/service';
 import { useAlertStore, useUserStore } from '@/stores';
 import { MyinfoForm, ResultCode, UpdateMyinfoRequest } from '@/types';
@@ -22,8 +23,7 @@ const MAX_FILE_SIZE = 2;
 
 const MyinfoContainer = () => {
   const router = useRouter();
-  const awsS3Domain = process.env.NEXT_PUBLIC_AWS_S3_DOMAIN || '';
-  const isMobile = getIsMobile();
+  const { isMobile } = useIsMobile();
 
   const { showAlert, showConfirmAlert } = useAlertStore();
   const { setUser } = useUserStore();
@@ -89,7 +89,7 @@ const MyinfoContainer = () => {
     }
 
     // 미리보기 이미지 세팅
-    setPreviewImg(URL.createObjectURL(compressedFile))
+    setPreviewImg(URL.createObjectURL(compressedFile));
 
     setSelectedProfileImageFile(compressedFile);
 
@@ -201,7 +201,7 @@ const MyinfoContainer = () => {
                       ) : (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={`${previewImg || awsS3Domain + profileImage || ''}`}
+                          src={`${previewImg || AWS_S3_DOMAIN + profileImage || ''}`}
                           alt="프로필 미리보기"
                           className="w-full h-full object-cover"
                         />
@@ -295,10 +295,11 @@ const MyinfoContainer = () => {
                     />
                   </div>
                   <span
-                    className={`pl-2 text-[12px] sm:text-[8px] block ${errors.phoneFirst || errors.phoneMiddle || errors.phoneLast
-                      ? 'text-red-500'
-                      : 'invisible'
-                      }`}
+                    className={`pl-2 text-[12px] sm:text-[8px] block ${
+                      errors.phoneFirst || errors.phoneMiddle || errors.phoneLast
+                        ? 'text-red-500'
+                        : 'invisible'
+                    }`}
                   >
                     휴대폰 번호를 입력해주세요
                   </span>
@@ -360,26 +361,24 @@ const MyinfoContainer = () => {
           </div>
         </form>
       </FormProvider>
-      {isMobile && (
-        <Sheet open={addressOpen} onOpenChange={setAddressOpen}>
-          <SheetContent side="bottom" className="h-full">
-            <SheetHeader className="border-b">
-              <SheetTitle>주소찾기</SheetTitle>
-            </SheetHeader>
-            <DaumPostcode
-              style={{ width: '100%', height: '100%' }}
-              onComplete={handleAddressComplete}
-            />
-          </SheetContent>
-        </Sheet>
-      )}
-      {/* PC: 다이얼로그 모달 */}
-      {!isMobile && (
-        <SearchPostcodeModal
-          open={addressOpen}
-          onOpenChange={setAddressOpen}
-          onComplete={handleAddressComplete}
-        />
+      {isMobile ? (
+        <>
+          {/* MOBILE - 주소 검색 바텀 시트 */}
+          <SearchPostcodeSheet
+            addressOpen={addressOpen}
+            setAddressOpen={setAddressOpen}
+            handleAddressComplete={handleAddressComplete}
+          />
+        </>
+      ) : (
+        <>
+          {/* WEB (PC) - 주소 검색 다이얼로그 모달 */}
+          <SearchPostcodeModal
+            open={addressOpen}
+            onOpenChange={setAddressOpen}
+            onComplete={handleAddressComplete}
+          />
+        </>
       )}
     </div>
   );

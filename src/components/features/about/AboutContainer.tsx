@@ -1,26 +1,19 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 import AboutMobileView from '@/components/features/about/AboutMobileView';
 import AboutWebView from '@/components/features/about/AboutWebView';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import useIsMobile from '@/hooks/useIsMobile';
 
 const AboutContainer = () => {
   const router = useRouter();
+  const { isMobile } = useIsMobile();
 
   useEffect(() => {
     router.prefetch('/product?category=all');
   }, [router]);
-
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   if (isMobile === null) return null;
 
