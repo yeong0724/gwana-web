@@ -118,3 +118,8 @@ export type Review = {
   // 작성자 이메일
   email: string;
 };
+
+export type DropdownOption = {
+  value: string;
+  label: string;
+};

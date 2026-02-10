@@ -9,10 +9,9 @@ import {
   useFormContext,
 } from 'react-hook-form';
 
+import { Input } from '@/components/ui/input';
 import { validateByType } from '@/lib/utils';
 import type { FormatEnum, HandleChange, ReactHookFormEventType } from '@/types/type';
-
-import { Input } from '../ui/input';
 
 const ControllerInput = <T extends FieldValues>({
   required = false,

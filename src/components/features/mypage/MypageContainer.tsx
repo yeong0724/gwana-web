@@ -18,6 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import useRequireAuth from '@/hooks/useRequireAuth';
+import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores';
 
 // 하드코딩된 통계 데이터
@@ -153,7 +154,13 @@ const MypageContainer = () => {
 
       {/* 회원 탈퇴 버튼 - 맨 하단 고정 */}
       <div className="max-w-md mx-auto w-full py-4 flex items-center justify-center">
-        <Button className="flex items-center justify-center gap-2 text-[15px] text-red-400 hover:text-gray-500 transition-colors bg-white border-0 tracking-wider">
+        <Button
+          className={cn(
+            'flex items-center justify-center',
+            'text-[15px] text-red-400 hover:text-gray-500',
+            'gap-2 transition-colors bg-white border-0 tracking-wider'
+          )}
+        >
           <UserX2Icon className="size-4" />
           <span>회원 탈퇴</span>
         </Button>

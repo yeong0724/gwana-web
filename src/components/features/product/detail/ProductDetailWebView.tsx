@@ -1,4 +1,9 @@
-import { CustomDropdown } from '@/components/common';
+import Image from 'next/image';
+
+import { clone, isEmpty, map } from 'lodash-es';
+import { Share2, X } from 'lucide-react';
+
+import { OptionDropdown } from '@/components/common/form';
 import { Button } from '@/components/ui/button';
 import {
   Carousel,
@@ -9,12 +14,9 @@ import {
 } from '@/components/ui/carousel';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import { localeFormat } from '@/lib/utils';
-import { clone, isEmpty, map } from 'lodash-es';
-import { Share2, X } from 'lucide-react';
-import Image from 'next/image';
 
 const ProductDetailWebView = () => {
-  const { product, current, purchaseList, totalPrice } = useStateContext();
+  const { product, optionList, current, purchaseList, totalPrice } = useStateContext();
   const {
     setApi,
     handleShare,
@@ -131,7 +133,7 @@ const ProductDetailWebView = () => {
             {/* 옵션 선택 - 커스텀 드롭다운 */}
             {!isEmpty(product.options) && (
               <div className="mb-4">
-                <CustomDropdown options={product.options} onOptionSelect={onOptionSelect} />
+                <OptionDropdown options={optionList} onOptionSelect={onOptionSelect} />
               </div>
             )}
 

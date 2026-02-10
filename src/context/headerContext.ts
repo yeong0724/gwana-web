@@ -12,19 +12,22 @@ type HeaderStateContextType = {
   isMenuOpen: boolean;
   main: Menu[];
   category: Menu[];
+  isLoggedIn: boolean;
 };
 
 type HeaderControllerContextType = {
   setIsHeaderHovered: (isHeaderHovered: boolean) => void;
   setIsMainHovered: (isMainHovered: boolean) => void;
-
   goBackWithTransitions: () => void;
   goHome: () => void;
   goToCartPage: () => void;
+  goToLoginPage: () => void;
+  goToMyPage: () => void;
+  goToOrderHistoryPage: () => void;
   toggleMenu: () => void;
-  moveToLoginPage: () => void;
   onClickMain: (menuId: string) => void;
   onClickCategory: (mainMenuId: string, categoryMenuId: string) => void;
+  handleLogout: () => void;
 };
 
 export const { Provider, useStateContext, useControllerContext } = createGenericContext<

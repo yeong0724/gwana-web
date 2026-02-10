@@ -8,7 +8,7 @@ import { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import ControllerInput from '@/components/common/ControllerInput';
+import { ControllerInput } from '@/components/common/form';
 import { SearchPostcodeModal, SearchPostcodeSheet } from '@/components/common/modal';
 import { AWS_S3_DOMAIN } from '@/constants';
 import useIsMobile from '@/hooks/useIsMobile';

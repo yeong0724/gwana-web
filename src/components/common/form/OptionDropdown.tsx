@@ -1,26 +1,25 @@
 'use client';
 
-import { localeFormat } from '@/lib/utils';
-import { ProductOption } from '@/types';
-import { map } from 'lodash-es';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
-interface Props {
-  options: ProductOption[];
-  onOptionSelect: (option: ProductOption) => void;
-  placeholder?: string;
-}
+import { map } from 'lodash-es';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const CustomDropdown = ({
+import { DropdownOption } from '@/types';
+
+const OptionDropdown = ({
   options,
   onOptionSelect,
   placeholder = '옵션을 선택해주세요',
-}: Props) => {
+}: {
+  options: DropdownOption[];
+  onOptionSelect: (value: string) => void;
+  placeholder?: string;
+}) => {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
 
-  const handleSelect = (option: ProductOption) => {
-    onOptionSelect?.(option);
+  const handleSelect = (value: string) => {
+    onOptionSelect?.(value);
     setIsOptionOpen(false);
   };
 
@@ -49,12 +48,13 @@ const CustomDropdown = ({
         <div className="border-t border-gray-300">
           {map(options, (option) => (
             <button
-              key={option.optionId}
+              key={option.value}
               type="button"
-              onClick={() => handleSelect(option)}
+              onClick={() => handleSelect(option.value)}
               className="w-full px-3 py-3 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
             >
-              {option.optionName} (+ {localeFormat(option.optionPrice)})
+              {/* {option.optionName} (+ {localeFormat(option.optionPrice)}) */}
+              {option.label}
             </button>
           ))}
         </div>
@@ -63,4 +63,4 @@ const CustomDropdown = ({
   );
 };
 
-export default CustomDropdown;
+export default OptionDropdown;

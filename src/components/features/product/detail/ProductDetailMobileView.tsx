@@ -6,7 +6,7 @@ import { clone, isEmpty, map } from 'lodash-es';
 import { ChevronDown, ChevronUp, Share2, Star, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
-import { CustomDropdown } from '@/components/common';
+import { OptionDropdown } from '@/components/common/form';
 import ImageSlideModal from '@/components/common/modal/ImageSlideModal';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,6 +38,7 @@ const ProductDetailMobileView = () => {
 
   const {
     product,
+    optionList,
     current,
     isMounted,
     isBottomPanelOpen,
@@ -540,7 +541,7 @@ const ProductDetailMobileView = () => {
                 <div className="px-4 pb-4 space-y-4 bg-white">
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {!isEmpty(product.options) && (
-                    <CustomDropdown options={product.options} onOptionSelect={onOptionSelect} />
+                    <OptionDropdown options={optionList} onOptionSelect={onOptionSelect} />
                   )}
                   {/* 선택된 옵션 목록 */}
                   {!isEmpty(purchaseList) && (

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { clone, findIndex, forEach, isEmpty, pick, sumBy } from 'lodash-es';
+import { clone, find, findIndex, forEach, isEmpty, map, pick, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
 import { PurchaseGuideModal, ShareModal } from '@/components/common/modal';
@@ -12,12 +12,14 @@ import ProductDetailMobileView from '@/components/features/product/detail/Produc
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
 import { type CarouselApi } from '@/components/ui/carousel';
 import { Provider } from '@/context/productDetailContext';
+import { localeFormat } from '@/lib/utils';
 import { useCartService, useMypageService, useProductService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stores';
 import { cartActions } from '@/stores/useCartStore';
 import {
   Cart,
   CartOption,
+  DropdownOption,
   ProductDetailResponse,
   ProductOption,
   PurchaseList,
@@ -338,7 +340,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
     setPurchaseList(updatedCart);
   };
 
-  const onOptionSelect = (option: ProductOption) => {
+  const onOptionSelect = (value: string) => {
+    const option = find(product.options, { optionId: value }) as ProductOption;
     const { optionId, optionName, optionPrice } = option;
     const index = findIndex(purchaseList, { optionId });
     if (index < 0) {
@@ -359,6 +362,13 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }
   };
 
+  const optionList: DropdownOption[] = useMemo(() => {
+    return map(product.options, (option) => ({
+      value: option.optionId,
+      label: `${option.optionName} (+ ${localeFormat(option.optionPrice)})`,
+    }));
+  }, [product.options]);
+
   if (isMobile === null) return null;
 
   return (
@@ -366,6 +376,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
       <Provider
         state={{
           product,
+          optionList,
           api,
           current,
           isMounted,

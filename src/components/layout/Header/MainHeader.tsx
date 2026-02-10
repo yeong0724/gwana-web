@@ -149,6 +149,8 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  if (!isMobile) return null;
+
   return (
     <Provider
       state={{

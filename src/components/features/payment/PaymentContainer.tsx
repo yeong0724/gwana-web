@@ -10,8 +10,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider } from 'react-hook-form';
 
-import ControllerInput from '@/components/common/ControllerInput';
-import ControllerSelect from '@/components/common/ControllerSelect';
+import { ControllerInput, ControllerSelect } from '@/components/common/form';
 import { SearchPostcodeModal } from '@/components/common/modal';
 import SearchPostcodeSheet from '@/components/common/modal/SearchPostcodeSheet';
 import TossPayments from '@/components/features/payment/TossPayments';

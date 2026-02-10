@@ -47,7 +47,7 @@ const MobileMainHeader = () => {
                 width={120}
                 height={120}
                 onClick={goHome}
-                className="cursor-pointer"
+                className="object-contain cursor-pointer"
                 priority
               />
             )}
@@ -58,7 +58,7 @@ const MobileMainHeader = () => {
                 width={80}
                 height={80}
                 onClick={goHome}
-                className="cursor-pointer"
+                className="object-contain cursor-pointer"
                 priority
               />
             )}

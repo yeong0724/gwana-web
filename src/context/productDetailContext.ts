@@ -1,8 +1,8 @@
 import { CarouselApi } from '@/components/ui/carousel';
 import createGenericContext from '@/providers/ContextProvider';
 import {
+  DropdownOption,
   ProductDetailResponse,
-  ProductOption,
   PurchaseList,
   Review,
   ReviewListSearchRequest,
@@ -11,6 +11,7 @@ import {
 
 type ProductDetailStateContextType = {
   product: ProductDetailResponse;
+  optionList: DropdownOption[];
   api: CarouselApi;
   current: number;
   isMounted: boolean;
@@ -28,7 +29,7 @@ type ProductDetailControllerContextType = {
   setCurrent: (current: number) => void;
   handleShare: () => void;
   setIsBottomPanelOpen: (isBottomPanelOpen: boolean) => void;
-  onOptionSelect: (option: ProductOption) => void;
+  onOptionSelect: (value: string) => void;
   setPurchaseList: (purchaseList: PurchaseList[]) => void;
   handleQuantityChange: (index: number, quantity: number) => void;
   onCartMobileHandler: () => void;
