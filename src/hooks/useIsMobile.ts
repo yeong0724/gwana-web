@@ -22,7 +22,7 @@ const useIsMobile = ({ breakpoint = Breakpoint.SM }: Props = {}) => {
     }
   };
 
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(true);
 
   useEffect(() => {
     const breakpointWidth = getBreakpointValue(breakpoint);
