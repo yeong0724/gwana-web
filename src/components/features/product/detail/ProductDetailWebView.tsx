@@ -28,7 +28,7 @@ const ProductDetailWebView = () => {
   } = useControllerContext();
 
   return (
-    <div className="hidden lg:block">
+    <>
       <div className="max-w-[1000px] mx-auto py-10">
         <div className="flex flex-row gap-20">
           {/* 좌측: 이미지 캐러셀 */}
@@ -257,7 +257,7 @@ const ProductDetailWebView = () => {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

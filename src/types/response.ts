@@ -43,6 +43,10 @@ export type Product = {
   infos: string[];
   price: number;
   shippingPrice: number;
+  createdAt: string;
+  createdBy: string | null;
+  modifiedAt: string;
+  modifiedBy: string | null;
 };
 
 export type PaymentSession = {
@@ -154,11 +158,10 @@ export interface UpdateMyinfoResponse {
 }
 
 export type InfiniteResponse<T> = {
-  data: T
+  data: T;
   page: number;
   size: number;
   totalCount: number;
   hasNext: boolean;
   totalPages: number | null;
-}
-
+};

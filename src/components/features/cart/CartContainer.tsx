@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { cloneDeep, filter, findIndex, isEmpty, map, reject, some, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
+import { ResponsiveLayout } from '@/components/common';
 import { PurchaseGuideModal } from '@/components/common/modal';
 import CartModileView from '@/components/features/cart/CartModileView';
 import CartWebView from '@/components/features/cart/CartWebView';
@@ -14,7 +15,7 @@ import useNativeRouter from '@/hooks/useNativeRouter';
 import { setRedirectUrl } from '@/lib/utils';
 import { useCartService, usePaymentService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
-import { AddToCartRequest, Cart, CartState } from '@/types';
+import { AddToCartRequest, Breakpoint, Cart, CartState } from '@/types';
 
 const FREE_SHIPPING_THRESHOLD = 50000;
 
@@ -242,12 +243,11 @@ const CartContainer = () => {
         getShippingPrice,
       }}
     >
-      {/* PC - Web View */}
-      <CartWebView />
-
-      {/* Mobile View */}
-      <CartModileView />
-
+      <ResponsiveLayout
+        mobileComponent={<CartModileView />}
+        webComponent={<CartWebView />}
+        breakpoint={Breakpoint.LG}
+      />
       {/* 비로그인시 구매가이드 모달 */}
       <PurchaseGuideModal
         modalOpen={purchaseGuideModalOpen}

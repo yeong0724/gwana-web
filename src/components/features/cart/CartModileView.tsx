@@ -1,10 +1,12 @@
+import React from 'react';
+import Image from 'next/image';
+
+import { filter, first, isEmpty, map, size, some } from 'lodash-es';
+import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import { useControllerContext, useStateContext } from '@/context/cartContext';
 import { localeFormat } from '@/lib/utils';
-import { filter, first, isEmpty, map, size, some } from 'lodash-es';
-import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
-import Image from 'next/image';
-import React from 'react';
 
 const CartModileView = () => {
   const { cart, isNoSelect, totalProductPrice, totalShippingPrice } = useStateContext();
@@ -20,7 +22,7 @@ const CartModileView = () => {
   } = useControllerContext();
 
   return (
-    <div className="flex flex-col w-full mx-auto flex-1 border-x border-gray-100 overflow-hidden lg:hidden">
+    <div className="flex flex-col w-full mx-auto flex-1 border-x border-gray-100 overflow-hidden">
       {/* 전체선택 헤더 */}
       <div className="flex items-center justify-between p-3 bg-white border-b border-gray-200 flex-shrink-0">
         <label className="flex items-center gap-2 cursor-pointer select-none">

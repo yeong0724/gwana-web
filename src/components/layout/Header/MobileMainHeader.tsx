@@ -12,24 +12,13 @@ const Navigation = dynamic(() => import('@/components/layout/Navigation'), {
 });
 
 const MobileMainHeader = () => {
-  const { modileHeaderStyle, pathname, isScrolled, cartCount, menuGroup, isMenuOpen } =
-    useStateContext();
+  const { modileHeaderStyle, pathname, cartCount, menuGroup, isMenuOpen } = useStateContext();
   const { goBackWithTransitions, goHome, goToCartPage, toggleMenu, goToLoginPage } =
     useControllerContext();
 
-  const isAboutPage = pathname === '/about';
-
   return (
     <>
-      <header
-        className={modileHeaderStyle}
-        style={{
-          background:
-            isAboutPage || isScrolled
-              ? ''
-              : 'linear-gradient(to bottom, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)',
-        }}
-      >
+      <header className={modileHeaderStyle}>
         <div className="relative flex items-center justify-between px-4 h-full">
           <button
             onClick={goBackWithTransitions}

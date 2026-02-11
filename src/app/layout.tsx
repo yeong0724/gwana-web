@@ -1,13 +1,20 @@
 import '@/app/globals.css';
-import { GlobalAlert, GlobalLoading } from '@/components/common';
+
+import type { Metadata } from 'next';
+import {
+  Cormorant_Garamond,
+  EB_Garamond,
+  Libre_Baskerville,
+  Playfair_Display,
+} from 'next/font/google';
+import localFont from 'next/font/local';
+
+import { GlobalAlert, GlobalLoading } from '@/components/common/global';
 import KakaoScript from '@/components/script/KakaoScript';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Toaster } from '@/components/ui/sonner';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import { Cormorant_Garamond, Playfair_Display, EB_Garamond, Libre_Baskerville } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Gwana Tea House',

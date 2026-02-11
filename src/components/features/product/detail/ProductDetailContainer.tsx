@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { clone, find, findIndex, forEach, isEmpty, map, pick, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
+import { ResponsiveLayout } from '@/components/common';
 import { PurchaseGuideModal, ShareModal } from '@/components/common/modal';
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
@@ -80,8 +81,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
     options: [],
   });
 
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
   // 상품 선택 옵션
   const [purchaseList, setPurchaseList] = useState<PurchaseList[]>([]);
 
@@ -120,14 +119,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
       totalReviewCount: 0,
     };
   }, [reviewListData]);
-
-  const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-
-  useEffect(() => {
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // 클라이언트 마운트 감지 + 스크롤 최상단 이동
   useEffect(() => {
@@ -369,8 +360,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }));
   }, [product.options]);
 
-  if (isMobile === null) return null;
-
   return (
     <>
       <Provider
@@ -403,13 +392,10 @@ const ProductDetailContainer = ({ productId }: Props) => {
           setReviewSearchPayload,
         }}
       >
-        {isMobile ? (
-          // Mobile View
-          <ProductDetailMobileView />
-        ) : (
-          // Web View
-          <ProductDetailWebView />
-        )}
+        <ResponsiveLayout
+          mobileComponent={<ProductDetailMobileView />}
+          webComponent={<ProductDetailWebView />}
+        />
       </Provider>
       {/* Modal Area */}
       <PurchaseGuideModal

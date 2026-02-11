@@ -152,7 +152,7 @@ const ProductDetailMobileView = () => {
   }, []);
 
   return (
-    <div className="lg:hidden">
+    <>
       <div className="max-w-[1000px] mx-auto pb-2 px-6 pt-6">
         <div className="flex flex-col gap-12">
           {/* 이미지 캐러셀 */}
@@ -645,7 +645,7 @@ const ProductDetailMobileView = () => {
         initialIndex={selectedImageIndex}
         showArrows={false}
       />
-    </div>
+    </>
   );
 };
 

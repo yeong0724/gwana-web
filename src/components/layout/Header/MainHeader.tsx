@@ -6,10 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { size } from 'lodash-es';
 
+import { ResponsiveLayout } from '@/components/common';
 import MobileMainHeader from '@/components/layout/Header/MobileMainHeader';
 import WebMainHeader from '@/components/layout/Header/WebMainHeader';
 import { Provider } from '@/context/headerContext';
 import useNativeRouter from '@/hooks/useNativeRouter';
+import { cn } from '@/lib/utils';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
 import { type MenuGroup } from '@/types';
@@ -123,11 +125,14 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   const modileHeaderStyle = useMemo(() => {
     switch (pathname) {
       case '/':
-        return `h-[48px] top-0 z-40 absolute left-0 right-0 ${isScrolled ? 'bg-white border-b border-gray-200' : 'linear-gradient(to bottom, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0) 100%)'}`;
+        return cn(
+          'h-[48px] top-0 z-40 absolute left-0 right-0',
+          'bg-gradient-to-b from-white/60 to-white/0'
+        );
       case '/about':
         return 'h-[58px] top-0 z-40 absolute left-0 right-0 bg-transparent';
       default:
-        return `h-[48px] top-0 z-40 relative bg-white ${isScrolled ? 'border-b border-gray-200' : ''}`;
+        return cn('h-[48px] top-0 z-40 relative bg-white border-b border-gray-200');
     }
   }, [pathname, isScrolled]);
 
@@ -146,8 +151,6 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // if (isMobile === null) return null;
 
   return (
     <Provider
@@ -179,15 +182,8 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
         handleLogout,
       }}
     >
-      <div className="sticky top-0 z-50" id="main-header" style={{ viewTransitionName: 'header' }}>
-        <div className="block md:hidden">
-          {/* Mobile Header */}
-          <MobileMainHeader />
-        </div>
-        <div className="hidden md:block">
-          {/* Web(PC) Header */}
-          <WebMainHeader />
-        </div>
+      <div className="sticky top-0 z-50" style={{ viewTransitionName: 'header' }}>
+        <ResponsiveLayout mobileComponent={<MobileMainHeader />} webComponent={<WebMainHeader />} />
       </div>
     </Provider>
   );

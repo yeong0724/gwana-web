@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, RefObject } from 'react';
 
 import { FieldPath, FieldPathValue, FieldValues } from 'react-hook-form';
 
@@ -122,4 +122,17 @@ export type Review = {
 export type DropdownOption = {
   value: string;
   label: string;
+};
+
+export type DragScrollType = {
+  scrollRef: RefObject<HTMLDivElement | null>;
+  scrollToElement: (element: HTMLElement) => void;
+  dragHandlers: {
+    onMouseDown: (e: React.MouseEvent) => void;
+    onMouseMove: (e: React.MouseEvent) => void;
+    onMouseUp: () => void;
+    onMouseLeave: () => void;
+    onTouchStart: (e: React.TouchEvent) => void;
+    onTouchEnd: () => void;
+  };
 };

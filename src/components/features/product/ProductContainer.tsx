@@ -3,16 +3,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { concat, filter, find, forEach, isNil, map } from 'lodash-es';
+import { concat, filter, forEach } from 'lodash-es';
 
 import { productMockData } from '@/api/mock';
-import ProductCard from '@/components/features/product/ProductCard';
+import { ResponsiveLayout } from '@/components/common';
+import ProductMobileView from '@/components/features/product/ProductMobileView';
+import { Provider } from '@/context/productContext';
 import { useDragScroll } from '@/hooks/useDragScroll';
-import useIsMobile from '@/hooks/useIsMobile';
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { cn } from '@/lib/utils';
 import { useMenuStore } from '@/stores';
-import { Breakpoint } from '@/types';
+import { DragScrollType } from '@/types';
+
+import ProductWebView from './ProductWebView';
 
 // 카테고리 전환용 애니메이션 duration (ms)
 const CATEGORY_ANIMATION_DURATION = 400;
@@ -23,10 +25,9 @@ type Props = {
 
 const ProductContainer = ({ categoryId }: Props) => {
   // 드래그 스크롤 훅들
-  const categoryTabScroll = useDragScroll();
+  const categoryTabScroll: DragScrollType = useDragScroll();
   const pathname = usePathname();
   const { forward } = useNativeRouter();
-  const { isMobile } = useIsMobile({ breakpoint: Breakpoint.MD });
 
   // 동시 슬라이드를 위한 상태
   const [currentCategory, setCurrentCategory] = useState<string>(categoryId);
@@ -114,139 +115,25 @@ const ProductContainer = ({ categoryId }: Props) => {
     forward(`/product/${productId}`);
   };
 
-  if (isNil(isMobile)) return null;
-
   return (
-    <div className="flex min-h-screen bg-gray-50 max-w-[1800px] mx-auto">
-      <div className="block md:hidden flex-1 px-[15px] pt-[10px] pb-40 min-w-0 lg:ml-80 bg-white">
-        <div className="mb-5 md:-mx-8">
-          <div className="mb-4">
-            <nav
-              ref={categoryTabScroll.scrollRef}
-              className="flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing relative"
-              {...categoryTabScroll.dragHandlers}
-            >
-              {productCategory.map(({ menuId, menuName }) => (
-                <button
-                  key={menuId}
-                  data-category-id={menuId}
-                  className={`pb-[12px] pt-[5px] cursor-pointer text-[13px] w-[100px] font-medium transition-colors duration-200 flex-shrink-0 text-center ${
-                    categoryId === menuId ? 'text-black' : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  onClick={() => onClickCategory(menuId)}
-                >
-                  {menuName}
-                </button>
-              ))}
-              {/* 탭 밑줄 인디케이터 - nav 안쪽에서 스크롤과 함께 이동 */}
-              <div
-                className="absolute bottom-0 h-[2px] bg-black transition-all duration-300 ease-out"
-                style={{
-                  width: '100px',
-                  left: `${productCategory.findIndex(({ menuId }) => menuId === categoryId) * 100}px`,
-                }}
-              />
-            </nav>
-            {/* 하단 배경 라인 */}
-            <div className="h-[2px] bg-gray-200" />
-          </div>
-        </div>
-        <div className="mb-6">
-          <div className="text-gray-700 pl-[5px] mb-2 text-[15px]">
-            <span className="mr-[10px]">티 제품</span>
-            {`>`}
-            <span className="mx-[10px] font-bold text-[15px]">
-              {find(productCategory, { menuId: categoryId })?.menuName}
-            </span>
-          </div>
-        </div>
-        {/* ProductList - 동시 슬라이드 애니메이션 */}
-        <div className="relative overflow-hidden">
-          {/* 들어오는 리스트 (현재 카테고리) */}
-          {currentCategory && (
-            <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
-              <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-[16px] gap-y-10 md:gap-x-4 md:gap-y-10">
-                {map(productList, (product) => (
-                  <ProductCard
-                    key={product.productId}
-                    product={product}
-                    onClickProduct={onClickProduct}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+    <Provider
+      state={{
+        categoryTabScroll,
+        productCategory,
+        categoryId,
+        currentCategory,
+        isTransitioning,
+        productList,
+      }}
+      controller={{ onClickCategory, onClickProduct }}
+    >
+      <div className="flex min-h-screen bg-gray-50 max-w-[1800px] mx-auto">
+        <ResponsiveLayout
+          mobileComponent={<ProductMobileView />}
+          webComponent={<ProductWebView />}
+        />
       </div>
-      <div className="hidden md:block">
-        <nav
-          className="block w-80 bg-white fixed top-[60px] overflow-y-auto flex-shrink-0"
-          style={{ height: 'calc(100vh - 80px)' }}
-        >
-          {/* 네비 헤더 - 스티키 */}
-          <div className="bg-white z-10 px-5 py-7">
-            <h2 className="text-[28px] font-bold text-gray-900">티 제품</h2>
-            <div className="w-[98%] h-px bg-gray-800 mt-3" />
-          </div>
-
-          {/* 메뉴 리스트 */}
-          <div className="py-[5px]">
-            {productCategory.map(({ menuId, menuName }) => (
-              <div key={menuId} className="mb-1">
-                {/* 2뎁스 메뉴 */}
-                <button
-                  onClick={() => onClickCategory(menuId)}
-                  className={cn(
-                    'w-full px-5 py-4 transition-all duration-500 cursor-pointer flex items-center justify-between',
-                    'font-bold text-left text-[20px] text-black hover:text-green-800',
-                    'bg-white hover:bg-gray-100',
-                    categoryId === menuId ? 'text-green-800' : 'text-black'
-                  )}
-                >
-                  <span>{menuName}</span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </nav>
-        {/* 메인 컨텐츠 영역 - 나머지 공간 차지 */}
-        <div className="flex-1 px-[15px] pt-[10px] pb-40 min-w-0 ml-80 bg-white">
-          <div className="mb-6">
-            <div className="text-gray-700 pl-[5px] mb-2 text-[15px]">
-              <span className="mr-[10px]">티 제품</span>
-              {`>`}
-              <span className="mx-[10px] font-bold text-[15px]">
-                {find(productCategory, { menuId: categoryId })?.menuName}
-              </span>
-            </div>
-          </div>
-          {/* ProductList - 동시 슬라이드 애니메이션 */}
-          <div className="relative overflow-hidden">
-            {/* 들어오는 리스트 (현재 카테고리) */}
-            {currentCategory && (
-              <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
-                <div
-                  className={cn(
-                    'grid grid-cols-2',
-                    'lg:grid-cols-3',
-                    'xl:grid-cols-4',
-                    'gap-x-4 gap-y-10'
-                  )}
-                >
-                  {map(productList, (product) => (
-                    <ProductCard
-                      key={product.productId}
-                      product={product}
-                      onClickProduct={onClickProduct}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    </Provider>
   );
 };
 

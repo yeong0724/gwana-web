@@ -1,9 +1,11 @@
+import Image from 'next/image';
+
+import { first, isEmpty, map, size, some } from 'lodash-es';
+import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import { useControllerContext, useStateContext } from '@/context/cartContext';
 import { localeFormat } from '@/lib/utils';
-import { first, isEmpty, map, size, some } from 'lodash-es';
-import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
-import Image from 'next/image';
 
 const CartWebView = () => {
   const { cart, isNoSelect, totalProductPrice, totalShippingPrice } = useStateContext();
@@ -19,7 +21,7 @@ const CartWebView = () => {
   } = useControllerContext();
 
   return (
-    <div className="hidden lg:flex w-full max-w-[1600px] mx-auto flex-1 min-h-0 overflow-y-auto px-16 pt-8 bg-white">
+    <div className="flex w-full max-w-[1600px] mx-auto flex-1 min-h-0 overflow-y-auto px-16 pt-8 bg-white">
       {/* 좌측: 장바구니 목록 영역 */}
       <div className="flex flex-col flex-1 min-w-0">
         {/* 장바구니 타이틀 */}

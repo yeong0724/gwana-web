@@ -1,7 +1,13 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { filter, forEach, map, shuffle, take } from 'lodash-es';
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
+
 import { productMockData } from '@/api/mock';
-import ProductCard from '@/components/features/product/ProductCard';
+import { ProductCard } from '@/components/common';
 import {
   Carousel,
   CarouselContent,
@@ -10,10 +16,6 @@ import {
 } from '@/components/ui/carousel';
 import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { filter, forEach, map, shuffle, take } from 'lodash-es';
-import { ArrowRight, Check, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
 
 type RankingTab = 'realtime' | 'monthly';
 
@@ -72,7 +74,7 @@ const MainContainer = () => {
           video.muted = videos[index].isSound ? !isSoundOn : true;
 
           const playVideo = () => {
-            video.play().catch(() => { });
+            video.play().catch(() => {});
           };
 
           if (video.readyState >= 3) {
@@ -102,12 +104,12 @@ const MainContainer = () => {
 
   return (
     <>
-      <div className="hidden lg:block">
+      <div className="hidden md:block">
         <div>Web View Main Page</div>
       </div>
 
       {/* Mobile View Main Page */}
-      <div className="lg:hidden relative w-full bg-gray-50 overflow-hidden">
+      <div className="md:hidden relative w-full bg-gray-50 overflow-hidden">
         <Carousel
           setApi={setApi}
           opts={{

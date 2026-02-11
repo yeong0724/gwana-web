@@ -8,7 +8,7 @@ import { forEach } from 'lodash-es';
 import { ChevronDown, ChevronRight, MessageCircleQuestion, PenLine, Search } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
 
-import DatePicker from '@/components/common/DatePicker';
+import { DatePicker } from '@/components/common/form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
