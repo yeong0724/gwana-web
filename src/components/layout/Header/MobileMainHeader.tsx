@@ -45,9 +45,9 @@ const MobileMainHeader = () => {
                 src={`${AWS_S3_DOMAIN}images/logo/gwana_logo_1.webp`}
                 alt="gwana_logo"
                 width={120}
-                height={120}
+                height={80}
                 onClick={goHome}
-                className="object-contain cursor-pointer"
+                className="cursor-pointer"
                 priority
               />
             )}
@@ -56,9 +56,9 @@ const MobileMainHeader = () => {
                 src={`${AWS_S3_DOMAIN}images/logo/gwana_logo_2.webp`}
                 alt="gwana_logo"
                 width={80}
-                height={80}
+                height={20}
                 onClick={goHome}
-                className="object-contain cursor-pointer"
+                className="cursor-pointer"
                 priority
               />
             )}

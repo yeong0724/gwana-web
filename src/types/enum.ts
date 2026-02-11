@@ -49,3 +49,10 @@ export enum SortByEnum {
   RECOMMENDED = 'recommended',
   LATEST = 'latest',
 }
+
+export enum Breakpoint {
+  SM = 'sm',
+  MD = 'md',
+  LG = 'lg',
+  XL = 'xl',
+}

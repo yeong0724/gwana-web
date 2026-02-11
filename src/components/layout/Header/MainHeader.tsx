@@ -9,11 +9,10 @@ import { size } from 'lodash-es';
 import MobileMainHeader from '@/components/layout/Header/MobileMainHeader';
 import WebMainHeader from '@/components/layout/Header/WebMainHeader';
 import { Provider } from '@/context/headerContext';
-import useIsMobile from '@/hooks/useIsMobile';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { useCartService } from '@/service';
 import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
-import type { MenuGroup } from '@/types';
+import { type MenuGroup } from '@/types';
 
 type HeaderProps = {
   menuGroup: MenuGroup;
@@ -26,7 +25,6 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { isMobile } = useIsMobile();
   const { backward } = useNativeRouter();
   const { setMenu } = useMenuStore();
   const { isLoggedIn } = useLoginStore();
@@ -149,7 +147,7 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!isMobile) return null;
+  // if (isMobile === null) return null;
 
   return (
     <Provider
@@ -181,18 +179,15 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
         handleLogout,
       }}
     >
-      <div className="sticky top-0 z-50" style={{ viewTransitionName: 'header' }}>
-        {isMobile ? (
-          <>
-            {/* Mobile Header */}
-            <MobileMainHeader />
-          </>
-        ) : (
-          <>
-            {/* Web(PC) Header */}
-            <WebMainHeader />
-          </>
-        )}
+      <div className="sticky top-0 z-50" id="main-header" style={{ viewTransitionName: 'header' }}>
+        <div className="block md:hidden">
+          {/* Mobile Header */}
+          <MobileMainHeader />
+        </div>
+        <div className="hidden md:block">
+          {/* Web(PC) Header */}
+          <WebMainHeader />
+        </div>
       </div>
     </Provider>
   );

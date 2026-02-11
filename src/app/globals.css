@@ -426,9 +426,17 @@
   animation: none;
 }
 
+::view-transition-group(header),
+::view-transition-image-pair(header),
 ::view-transition-old(header),
 ::view-transition-new(header) {
-  animation: none;
+  animation: none !important;
+  mix-blend-mode: normal !important;
+  isolation: auto !important;
+}
+
+::view-transition-old(header) {
+  display: none !important;
 }
 
 ::view-transition-old(custom-header),

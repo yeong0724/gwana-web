@@ -1,19 +1,12 @@
 import { useEffect, useState } from 'react';
 
-enum Breakpoint {
-  SM = 'sm',
-  MD = 'md',
-  LG = 'lg',
-  XL = 'xl',
-}
+import { Breakpoint } from '@/types';
 
 type Props = {
   breakpoint?: Breakpoint;
 };
 
-const useIsMobile = ({ breakpoint = Breakpoint.LG }: Props = {}) => {
-  const [isMobile, setIsMobile] = useState(false);
-
+const useIsMobile = ({ breakpoint = Breakpoint.SM }: Props = {}) => {
   const getBreakpointValue = (breakpoint: Breakpoint): number => {
     switch (breakpoint) {
       case Breakpoint.SM:
@@ -28,6 +21,8 @@ const useIsMobile = ({ breakpoint = Breakpoint.LG }: Props = {}) => {
         return 1024;
     }
   };
+
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
     const breakpointWidth = getBreakpointValue(breakpoint);
