@@ -37,6 +37,7 @@ type ProductDetailControllerContextType = {
   handleAddToCart: () => void;
   handlePurchase: () => void;
   setReviewSearchPayload: (reviewSearchPayload: Omit<ReviewListSearchRequest, 'page'>) => void;
+  handleReviewOpen: () => void;
 };
 
 export const { Provider, useStateContext, useControllerContext } = createGenericContext<

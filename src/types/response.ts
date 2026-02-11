@@ -164,4 +164,5 @@ export type InfiniteResponse<T> = {
   totalCount: number;
   hasNext: boolean;
   totalPages: number | null;
+  averageRating: number | null;
 };

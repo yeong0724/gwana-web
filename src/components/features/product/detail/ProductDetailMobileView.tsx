@@ -16,26 +16,15 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Checkbox } from '@/components/ui/checkbox';
 import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
+import useImageSlide from '@/hooks/useImageSlide';
 import { formatDate, localeFormat } from '@/lib/utils';
 import { Review, RoleEnum } from '@/types';
 
 type TabType = 'detail' | 'review' | 'qna';
 
 const ProductDetailMobileView = () => {
-  const [isDetailExpanded, setIsDetailExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('detail');
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
-  // 섹션 refs
-  const detailSectionRef = useRef<HTMLDivElement>(null);
-  const reviewSectionRef = useRef<HTMLDivElement>(null);
-  const qnaSectionRef = useRef<HTMLDivElement>(null);
-
   const {
     product,
     optionList,
@@ -46,7 +35,6 @@ const ProductDetailMobileView = () => {
     totalPrice,
     reviewList,
     totalReviewCount,
-    reviewSearchPayload,
     role,
   } = useStateContext();
 
@@ -59,8 +47,25 @@ const ProductDetailMobileView = () => {
     handleQuantityChange,
     onCartMobileHandler,
     onPurchaseMobileHandler,
-    setReviewSearchPayload,
+    handleReviewOpen,
   } = useControllerContext();
+
+  const [isDetailExpanded, setIsDetailExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('detail');
+
+  // Review Images Slide Modal Hook
+  const {
+    imageSlideOpen,
+    setImageSlideOpen,
+    selectedImages,
+    selectedImageIndex,
+    handleImageModalOpen,
+  } = useImageSlide();
+
+  // 섹션 refs
+  const detailSectionRef = useRef<HTMLDivElement>(null);
+  const reviewSectionRef = useRef<HTMLDivElement>(null);
+  const qnaSectionRef = useRef<HTMLDivElement>(null);
 
   // 탭 클릭으로 인한 스크롤인지 여부
   const isTabClickScrolling = useRef(false);
@@ -300,7 +305,7 @@ const ProductDetailMobileView = () => {
       </div>
 
       {/* 상세정보 섹션 - 모바일뷰 */}
-      <div ref={detailSectionRef} className="max-w-[800px] pt-18 pb-32 px-5">
+      <div ref={detailSectionRef} className="max-w-[800px] pt-18 pb-16 px-5">
         {/* 상세정보 타이틀 */}
         <div className="relative flex items-center justify-center mb-15">
           {/* 양쪽 라인 */}
@@ -380,17 +385,6 @@ const ProductDetailMobileView = () => {
         {/* 리뷰 타이틀 */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[18px] font-medium text-gray-800">후기</h3>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <Checkbox
-              checked={reviewSearchPayload.photoOnly}
-              onCheckedChange={(checked) =>
-                setReviewSearchPayload({ ...reviewSearchPayload, photoOnly: checked === true })
-              }
-              className="h-4 w-4 border-gray-300"
-              disabled={!totalReviewCount}
-            />
-            <span className="text-sm text-gray-600">사진 후기만 보기</span>
-          </label>
         </div>
 
         <div className="border-t border-gray-200" />
@@ -448,11 +442,7 @@ const ProductDetailMobileView = () => {
                           <div
                             key={idx}
                             className="relative w-30 h-30 flex-shrink-0 cursor-pointer border border-gray-200 rounded-xs"
-                            onClick={() => {
-                              setSelectedImages(review.reviewImages!);
-                              setSelectedImageIndex(idx);
-                              setIsImageModalOpen(true);
-                            }}
+                            onClick={() => handleImageModalOpen(review.reviewImages!, idx)}
                           >
                             <Image
                               src={`${AWS_S3_DOMAIN}${image}`}
@@ -474,7 +464,10 @@ const ProductDetailMobileView = () => {
             {/* 리뷰 더보기 버튼 */}
             {totalReviewCount > 0 && (
               <div className="flex justify-center pt-10 pb-2">
-                <button className="px-6 py-2 text-sm font-medium text-[#A8BF6A] border border-[#A8BF6A] rounded-md hover:bg-[#A8BF6A]/5 transition-colors">
+                <button
+                  className="px-6 py-2 text-sm font-medium text-[#A8BF6A] border border-[#A8BF6A] rounded-md hover:bg-[#A8BF6A]/5 transition-colors"
+                  onClick={handleReviewOpen}
+                >
                   리뷰 더보기
                 </button>
               </div>
@@ -639,8 +632,8 @@ const ProductDetailMobileView = () => {
 
       {/* 이미지 슬라이드 모달 */}
       <ImageSlideModal
-        modalOpen={isImageModalOpen}
-        setModalOpen={setIsImageModalOpen}
+        modalOpen={imageSlideOpen}
+        setModalOpen={setImageSlideOpen}
         images={selectedImages}
         initialIndex={selectedImageIndex}
         showArrows={false}

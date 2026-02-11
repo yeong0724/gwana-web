@@ -8,7 +8,7 @@ import { clone, find, findIndex, forEach, isEmpty, map, pick, sumBy } from 'loda
 import { toast } from 'sonner';
 
 import { ResponsiveLayout } from '@/components/common';
-import { PurchaseGuideModal, ShareModal } from '@/components/common/modal';
+import { ProductReviewSheet, PurchaseGuideModal, ShareModal } from '@/components/common/modal';
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
 import { type CarouselApi } from '@/components/ui/carousel';
@@ -65,6 +65,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
   // 모바일 하단 패널 토글 상태
   const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(false);
+
+  // 제품 리뷰 모달 상태
+  const [reviewOpen, setReviewOpen] = useState<boolean>(false);
 
   // Portal을 위한 클라이언트 마운트 상태
   const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -353,6 +356,10 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }
   };
 
+  const handleReviewOpen = () => {
+    setReviewOpen(true);
+  };
+
   const optionList: DropdownOption[] = useMemo(() => {
     return map(product.options, (option) => ({
       value: option.optionId,
@@ -390,6 +397,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
           handleAddToCart,
           handlePurchase,
           setReviewSearchPayload,
+          handleReviewOpen,
         }}
       >
         <ResponsiveLayout
@@ -407,6 +415,11 @@ const ProductDetailContainer = ({ productId }: Props) => {
         modalOpen={shareModalOpen}
         setModalOpen={setShareModalOpen}
         onKakaoShare={handleKakaoShare}
+      />
+      <ProductReviewSheet
+        reviewOpen={reviewOpen}
+        setReviewOpen={setReviewOpen}
+        productId={productId}
       />
     </>
   );

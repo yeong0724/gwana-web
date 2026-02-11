@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
-import { X } from "lucide-react";
-import { type CarouselApi } from "@/components/ui/carousel";
+import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
+
+import { X } from 'lucide-react';
 
 import {
   Carousel,
@@ -11,8 +11,9 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { AWS_S3_DOMAIN } from "@/constants";
+  type CarouselApi,
+} from '@/components/ui/carousel';
+import { AWS_S3_DOMAIN } from '@/constants';
 
 type Props = {
   modalOpen: boolean;
@@ -47,23 +48,37 @@ const ImageSlideModal = ({
 
   useEffect(() => {
     if (!api) return;
-    api.on("select", onSelect);
+    api.on('select', onSelect);
     return () => {
-      api.off("select", onSelect);
+      api.off('select', onSelect);
     };
   }, [api, onSelect]);
 
   // 모달이 열릴 때 body 스크롤 방지
   useEffect(() => {
     if (modalOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [modalOpen]);
+
+  // Escape 키: 슬라이드만 닫고, 아래 레이어(리뷰 시트 등)로 이벤트가 전파되지 않도록 capture에서 처리
+  useEffect(() => {
+    if (!modalOpen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        e.preventDefault();
+        setModalOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleEscape, true);
+    return () => document.removeEventListener('keydown', handleEscape, true);
+  }, [modalOpen, setModalOpen]);
 
   const handleClose = () => {
     setModalOpen(false);
@@ -72,9 +87,14 @@ const ImageSlideModal = ({
   if (!modalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white flex flex-col">
+    <div
+      className="fixed inset-0 z-[120] bg-white flex flex-col"
+      role="dialog"
+      aria-modal="true"
+    >
       {/* 닫기 버튼 */}
       <button
+        type="button"
         onClick={handleClose}
         className="absolute top-4 right-4 z-10 p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
         aria-label="닫기"
