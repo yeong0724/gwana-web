@@ -11,10 +11,10 @@ const ResponsiveLayout = ({ mobileComponent, webComponent, breakpoint = Breakpoi
   return (
     <>
       {/* Mobile View */}
-      <div className={cn(`${breakpoint}:hidden`)}>{mobileComponent}</div>
+      <div className={cn('contents', `${breakpoint}:hidden`)}>{mobileComponent}</div>
 
       {/* Web View */}
-      <div className={cn('hidden', `${breakpoint}:block`)}>{webComponent}</div>
+      <div className={cn('contents', 'hidden', `${breakpoint}:block`)}>{webComponent}</div>
     </>
   );
 };
