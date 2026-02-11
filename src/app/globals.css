@@ -426,14 +426,9 @@
   animation: none;
 }
 
-::view-transition-old(header) {
-  animation: none;
-  opacity: 0;
-}
-
+::view-transition-old(header),
 ::view-transition-new(header) {
   animation: none;
-  opacity: 1;
 }
 
 ::view-transition-old(custom-header),
