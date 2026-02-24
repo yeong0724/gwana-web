@@ -28,9 +28,9 @@ const ProductMobileView = () => {
               key={menuId}
               data-category-id={menuId}
               className={cn(
-                'py-[10px]',
-                'cursor-pointer w-[100px] font-medium transition-colors duration-300 flex-shrink-0',
-                'text-[13px] text-center',
+                'py-[10px] w-[100px]',
+                'cursor-pointer transition-colors duration-300 flex-shrink-0',
+                'text-[13px] text-center font-medium',
                 categoryId === menuId ? 'text-black' : 'text-gray-500'
               )}
               onClick={() => onClickCategory(menuId)}

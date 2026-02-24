@@ -26,11 +26,11 @@ import {
 import FontSize from 'tiptap-extension-font-size';
 import ImageResize from 'tiptap-extension-resize-image';
 
-import { cn, compressImage } from '@/lib/utils';
-import { useAlertStore } from '@/stores';
-import { useMypageService } from '@/service';
-import { ResultCode } from '@/types';
 import { AWS_S3_DOMAIN } from '@/constants';
+import { cn, compressImage } from '@/lib/utils';
+import { useMypageService } from '@/service';
+import { useAlertStore } from '@/stores';
+import { ResultCode } from '@/types';
 
 interface Props {
   value: string;

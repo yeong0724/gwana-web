@@ -1,11 +1,11 @@
 import InquiryDetailParallelContainer from '@/components/features/mypage/inquiry/detail/InquiryDetailParallelContainer';
 
 type PageProps = {
-  params: Promise<{ inquiryId: string }>;
+  searchParams: Promise<{ inquiryId: string }>;
 };
 
-const Page = async ({ params }: PageProps) => {
-  const { inquiryId } = await params;
+const Page = async ({ searchParams }: PageProps) => {
+  const { inquiryId } = await searchParams;
 
   return <InquiryDetailParallelContainer inquiryId={inquiryId} />;
 };

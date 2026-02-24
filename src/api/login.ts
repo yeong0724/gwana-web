@@ -3,7 +3,7 @@ import { delayAsync } from '@/lib/utils';
 import type { ApiResponse, LoginResponse } from '@/types';
 
 const getAccessTokenByKakaoCode = async <T>(params: T) => {
-  await delayAsync(10000);
+  await delayAsync(3000);
   return postAxios<ApiResponse<LoginResponse>>({
     url: '/user/callback',
     params,

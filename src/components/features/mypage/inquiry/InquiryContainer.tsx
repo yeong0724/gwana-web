@@ -9,6 +9,7 @@ import { ChevronDown, ChevronRight, MessageCircleQuestion, PenLine, Search } fro
 import { useInView } from 'react-intersection-observer';
 
 import { DatePicker } from '@/components/common/form';
+import { GlobalLoading } from '@/components/common/global';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -54,21 +55,24 @@ const InquiryContainer = () => {
   });
 
   const { useGetInquiryListInfiniteQuery } = useMypageService();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetInquiryListInfiniteQuery(
-    searchPayload,
-    {
-      enabled: isLoggedIn,
-    }
-  );
+  const {
+    data: inquiryQueryData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetching,
+  } = useGetInquiryListInfiniteQuery(searchPayload, {
+    enabled: isLoggedIn,
+  });
 
-  const inquiryList = data?.pages.flatMap(({ data }) => data.data) ?? [];
+  const inquiryList = inquiryQueryData?.pages.flatMap(({ data }) => data.data) ?? [];
 
   const moveToInquiryWritePage = () => {
     forward('/mypage/inquiry/write');
   };
 
   const moveToInquiryDetailPage = (inquiryId: number) => {
-    forward(`/mypage/inquiry/${inquiryId.toString()}`);
+    forward(`/mypage/inquiry/detail?inquiryId=${inquiryId.toString()}`);
   };
 
   const onChangeSearchParams = (name: string, value: Date | undefined) => {
@@ -99,7 +103,7 @@ const InquiryContainer = () => {
     router.prefetch('/mypage/inquiry/write');
 
     forEach(inquiryList, ({ inquiryId }) => {
-      router.prefetch(`/mypage/inquiry/${inquiryId.toString()}`);
+      router.prefetch(`/mypage/inquiry/detail?inquiryId=${inquiryId.toString()}`);
     });
   }, [inquiryList]);
 
@@ -111,6 +115,7 @@ const InquiryContainer = () => {
 
   return (
     <div className="bg-white h-[calc(100dvh-56px)] flex flex-col overflow-hidden">
+      {isFetching && <GlobalLoading />}
       <div className="mx-auto w-full flex-1 flex flex-col min-h-0 max-w-[600px] border-x border-gray-100 bg-white">
         {/* 헤더: 타이틀 */}
         <div className="flex items-center justify-between py-2.5 border-b border-gray-100 px-4 bg-white sticky top-0 z-10">
