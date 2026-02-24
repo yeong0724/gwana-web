@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { size } from 'lodash-es';
 
-import { ResponsiveLayout } from '@/components/common';
+import { ResponsiveFrame } from '@/components/common/frame';
 import MobileMainHeader from '@/components/layout/Header/MobileMainHeader';
 import WebMainHeader from '@/components/layout/Header/WebMainHeader';
 import { Provider } from '@/context/headerContext';
@@ -183,7 +183,7 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
       }}
     >
       <div className="sticky top-0 z-50" style={{ viewTransitionName: 'header' }}>
-        <ResponsiveLayout mobileComponent={<MobileMainHeader />} webComponent={<WebMainHeader />} />
+        <ResponsiveFrame mobileComponent={<MobileMainHeader />} webComponent={<WebMainHeader />} />
       </div>
     </Provider>
   );

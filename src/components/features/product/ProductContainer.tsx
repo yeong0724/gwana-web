@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { concat, filter, forEach } from 'lodash-es';
 
 import { productMockData } from '@/api/mock';
-import { ResponsiveLayout } from '@/components/common';
+import { ResponsiveFrame } from '@/components/common/frame';
 import ProductMobileView from '@/components/features/product/ProductMobileView';
 import { Provider } from '@/context/productContext';
 import { useDragScroll } from '@/hooks/useDragScroll';
@@ -128,7 +128,7 @@ const ProductContainer = ({ categoryId }: Props) => {
       controller={{ onClickCategory, onClickProduct }}
     >
       <div className="flex min-h-screen bg-gray-50 max-w-[1800px] mx-auto">
-        <ResponsiveLayout
+        <ResponsiveFrame
           mobileComponent={<ProductMobileView />}
           webComponent={<ProductWebView />}
         />

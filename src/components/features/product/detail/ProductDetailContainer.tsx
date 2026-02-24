@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { clone, find, findIndex, forEach, isEmpty, map, pick, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
-import { ResponsiveLayout } from '@/components/common';
+import { ResponsiveFrame } from '@/components/common/frame';
 import { ProductReviewSheet, PurchaseGuideModal, ShareModal } from '@/components/common/modal';
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
@@ -384,7 +384,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
           handleReviewOpen,
         }}
       >
-        <ResponsiveLayout
+        <ResponsiveFrame
           mobileComponent={<ProductDetailMobileView />}
           webComponent={<ProductDetailWebView />}
         />

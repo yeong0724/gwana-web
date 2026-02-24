@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { cloneDeep, filter, findIndex, isEmpty, map, reject, some, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
-import { ResponsiveLayout } from '@/components/common';
+import { ResponsiveFrame } from '@/components/common/frame';
 import { PurchaseGuideModal } from '@/components/common/modal';
 import CartModileView from '@/components/features/cart/CartModileView';
 import CartWebView from '@/components/features/cart/CartWebView';
@@ -243,7 +243,7 @@ const CartContainer = () => {
         getShippingPrice,
       }}
     >
-      <ResponsiveLayout
+      <ResponsiveFrame
         mobileComponent={<CartModileView />}
         webComponent={<CartWebView />}
         breakpoint={Breakpoint.LG}

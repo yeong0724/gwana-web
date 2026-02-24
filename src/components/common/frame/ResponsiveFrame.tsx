@@ -7,7 +7,7 @@ type Props = {
   breakpoint?: Breakpoint;
 };
 
-const ResponsiveLayout = ({ mobileComponent, webComponent, breakpoint = Breakpoint.MD }: Props) => {
+const ResponsiveFrame = ({ mobileComponent, webComponent, breakpoint = Breakpoint.MD }: Props) => {
   return (
     <>
       {/* Mobile View */}
@@ -18,4 +18,4 @@ const ResponsiveLayout = ({ mobileComponent, webComponent, breakpoint = Breakpoi
     </>
   );
 };
-export default ResponsiveLayout;
+export default ResponsiveFrame;

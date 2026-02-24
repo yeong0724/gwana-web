@@ -1,4 +1,5 @@
-import InquiryDetailParallelContainer from '@/components/features/mypage/inquiry/detail/InquiryDetailParallelContainer';
+import { ParallelRouterFrame } from '@/components/common/frame';
+import InquiryDetailContainer from '@/components/features/mypage/inquiry/detail/InquiryDetailContainer';
 
 type PageProps = {
   searchParams: Promise<{ inquiryId: string }>;
@@ -7,7 +8,11 @@ type PageProps = {
 const Page = async ({ searchParams }: PageProps) => {
   const { inquiryId } = await searchParams;
 
-  return <InquiryDetailParallelContainer inquiryId={inquiryId} />;
+  return (
+    <ParallelRouterFrame>
+      <InquiryDetailContainer inquiryId={inquiryId} />
+    </ParallelRouterFrame>
+  );
 };
 
 export default Page;
