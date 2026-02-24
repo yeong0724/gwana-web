@@ -7,15 +7,9 @@ import { ChevronDown, ChevronUp, Share2, Star, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 import { OptionDropdown } from '@/components/common/form';
-import ImageSlideModal from '@/components/common/modal/ImageSlideModal';
+import { ImageSlideModal } from '@/components/common/modal';
+import ProductCarousel from '@/components/features/product/detail/ProductCarousel';
 import { Button } from '@/components/ui/button';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import useImageSlide from '@/hooks/useImageSlide';
@@ -28,7 +22,6 @@ const ProductDetailMobileView = () => {
   const {
     product,
     optionList,
-    current,
     isMounted,
     isBottomPanelOpen,
     purchaseList,
@@ -39,7 +32,6 @@ const ProductDetailMobileView = () => {
   } = useStateContext();
 
   const {
-    setApi,
     handleShare,
     setIsBottomPanelOpen,
     onOptionSelect,
@@ -161,60 +153,7 @@ const ProductDetailMobileView = () => {
       <div className="max-w-[1000px] mx-auto pb-2 px-6 pt-6">
         <div className="flex flex-col gap-12">
           {/* 이미지 캐러셀 */}
-          <div className="flex-1">
-            {product?.images && product.images.length > 0 ? (
-              <div className="w-full group">
-                <Carousel
-                  className="w-full relative"
-                  setApi={setApi}
-                  opts={{
-                    align: 'start',
-                    loop: product.images.length > 1,
-                  }}
-                >
-                  <CarouselContent>
-                    {product.images.map((image, index) => (
-                      <CarouselItem key={index}>
-                        <div className="relative w-full aspect-square">
-                          <Image
-                            src={image}
-                            alt={`${product.productName} ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            sizes="100vw"
-                            priority
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  {product.images.length > 1 && (
-                    <>
-                      <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
-                      <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
-                    </>
-                  )}
-                  {/* 페이지 인디케이터 - 캐러셀 안쪽 하단 */}
-                  {product.images.length > 1 && (
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-center">
-                      <div className="w-3/4 relative h-[4px] border border-gray-600 overflow-hidden bg-gray-400">
-                        <div
-                          className="absolute left-0 h-full bg-white transition-all duration-300 ease-out"
-                          style={{
-                            width: `${((current + 1) / product.images.length) * 100}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </Carousel>
-              </div>
-            ) : (
-              <div className="w-full aspect-square bg-gray-200 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-              </div>
-            )}
-          </div>
+          <ProductCarousel product={product} />
 
           {/* 상품 정보 */}
           <div className="flex-1 flex flex-col">

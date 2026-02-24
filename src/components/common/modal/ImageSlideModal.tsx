@@ -87,11 +87,7 @@ const ImageSlideModal = ({
   if (!modalOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[120] bg-white flex flex-col"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div className="fixed inset-0 z-[120] bg-white flex flex-col" role="dialog" aria-modal="true">
       {/* 닫기 버튼 */}
       <button
         type="button"

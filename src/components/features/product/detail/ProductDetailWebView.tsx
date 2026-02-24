@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { clone, isEmpty, map } from 'lodash-es';
@@ -12,13 +13,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import type { CarouselApi } from '@/components/ui/carousel';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import { localeFormat } from '@/lib/utils';
 
 const ProductDetailWebView = () => {
-  const { product, optionList, current, purchaseList, totalPrice } = useStateContext();
+  const { product, optionList, purchaseList, totalPrice } = useStateContext();
   const {
-    setApi,
     handleShare,
     onOptionSelect,
     setPurchaseList,
@@ -26,6 +27,19 @@ const ProductDetailWebView = () => {
     handleAddToCart,
     handlePurchase,
   } = useControllerContext();
+
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    setCurrent(carouselApi.selectedScrollSnap());
+    const onSelect = () => setCurrent(carouselApi.selectedScrollSnap());
+    carouselApi.on('select', onSelect);
+    return () => {
+      carouselApi.off('select', onSelect);
+    };
+  }, [carouselApi]);
 
   return (
     <>
@@ -37,7 +51,7 @@ const ProductDetailWebView = () => {
               <div className="w-full group">
                 <Carousel
                   className="w-full relative"
-                  setApi={setApi}
+                  setApi={setCarouselApi}
                   opts={{
                     align: 'start',
                     loop: product.images.length > 1,

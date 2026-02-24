@@ -11,7 +11,6 @@ import { ResponsiveLayout } from '@/components/common';
 import { ProductReviewSheet, PurchaseGuideModal, ShareModal } from '@/components/common/modal';
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
-import { type CarouselApi } from '@/components/ui/carousel';
 import { Provider } from '@/context/productDetailContext';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useMypageService, useProductService } from '@/service';
@@ -58,10 +57,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
   const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
-
-  // Carousel State
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
 
   // 모바일 하단 패널 토글 상태
   const [isBottomPanelOpen, setIsBottomPanelOpen] = useState(false);
@@ -128,13 +123,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
     setIsMounted(true);
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    if (!api) return;
-
-    setCurrent(() => api.selectedScrollSnap());
-    api.on('select', () => setCurrent(() => api.selectedScrollSnap()));
-  }, [api]);
 
   useEffect(() => {
     if (productDetailData) {
@@ -373,8 +361,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
         state={{
           product,
           optionList,
-          api,
-          current,
           isMounted,
           isBottomPanelOpen,
           purchaseList,
@@ -385,8 +371,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
           role,
         }}
         controller={{
-          setApi,
-          setCurrent,
           handleShare,
           setIsBottomPanelOpen,
           onOptionSelect,
