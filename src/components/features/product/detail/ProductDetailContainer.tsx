@@ -12,7 +12,6 @@ import { ProductReviewSheet, PurchaseGuideModal, ShareModal } from '@/components
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
 import { Provider } from '@/context/productDetailContext';
-import useNativeRouter from '@/hooks/useNativeRouter';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useMypageService, useProductService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stores';
@@ -46,7 +45,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const router = useRouter();
-  const { forward } = useNativeRouter();
   const { isLoggedIn } = useLoginStore();
   const {
     user: { role },
@@ -357,7 +355,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
   };
 
   const moveToInquiryWritePage = () => {
-    forward(`/mypage/inquiry/write?productId=${productId}`);
+    router.push(`/mypage/inquiry/write?productId=${productId}`);
   };
 
   const optionList: DropdownOption[] = useMemo(() => {

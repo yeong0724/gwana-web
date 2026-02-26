@@ -6,11 +6,11 @@ type Props = {
 
 const ParallelRouterFrame = ({ children }: Props) => {
   return (
-    <div className="fixed inset-0 z-50 bg-white flex flex-col">
+    <div className="absolute inset-0 z-75 bg-white flex flex-col">
       {/* Parallel Modal Header */}
       <SubHeader viewTransitionName="" />
       {/* Parallel Modal Content */}
-      <div className="flex-1 overflow-hidden">{children}</div>
+      <div className="flex-1 overflow-auto">{children}</div>
     </div>
   );
 };
