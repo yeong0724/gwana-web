@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import useImageSlide from '@/hooks/useImageSlide';
-import { formatDate, localeFormat } from '@/lib/utils';
+import { cn, formatDate, localeFormat } from '@/lib/utils';
 import { Review, RoleEnum } from '@/types';
 
 type TabType = 'detail' | 'review' | 'qna';
@@ -40,6 +40,7 @@ const ProductDetailMobileView = () => {
     onCartMobileHandler,
     onPurchaseMobileHandler,
     handleReviewOpen,
+    moveToInquiryWritePage,
   } = useControllerContext();
 
   const [isDetailExpanded, setIsDetailExpanded] = useState(false);
@@ -404,7 +405,12 @@ const ProductDetailMobileView = () => {
             {totalReviewCount > 0 && (
               <div className="flex justify-center pt-10 pb-2">
                 <button
-                  className="px-6 py-2 text-sm font-medium text-[#A8BF6A] border border-[#A8BF6A] rounded-md hover:bg-[#A8BF6A]/5 transition-colors"
+                  className={cn(
+                    'px-6 py-2',
+                    'text-sm font-medium text-[#A8BF6A]',
+                    'border border-[#A8BF6A] rounded-md',
+                    'active:bg-[#A8BF6A]/10'
+                  )}
                   onClick={handleReviewOpen}
                 >
                   리뷰 더보기
@@ -425,7 +431,15 @@ const ProductDetailMobileView = () => {
       {/* Q&A 섹션 */}
       <div ref={qnaSectionRef} className="max-w-[800px] pt-6 px-5 mb-[100px]">
         {/* 질문 타이틀 */}
-        <h3 className="text-[18px] font-medium text-gray-800 mb-4">질문</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-[18px] font-medium text-gray-800">질문</h3>
+          <button
+            className="mr-1 text-[15px] text-gray-500 active:text-gray-700"
+            onClick={moveToInquiryWritePage}
+          >
+            문의하기
+          </button>
+        </div>
 
         <div className="border-t border-gray-200" />
 
@@ -438,9 +452,16 @@ const ProductDetailMobileView = () => {
 
         {/* 질문 쓰기 버튼 */}
         {role !== RoleEnum.ADMIN && (
-          <div className="flex justify-end py-4">
-            <button className="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-[#96ad5c] transition-colors">
-              질문 쓰기
+          <div className="flex justify-center pt-6 pb-2">
+            <button
+              className={cn(
+                'px-6 py-2',
+                'text-sm font-medium text-[#A8BF6A]',
+                'border border-[#A8BF6A] rounded-md',
+                'active:bg-[#A8BF6A]/10'
+              )}
+            >
+              문의 더보기
             </button>
           </div>
         )}

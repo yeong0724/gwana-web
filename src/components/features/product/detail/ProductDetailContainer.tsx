@@ -12,6 +12,7 @@ import { ProductReviewSheet, PurchaseGuideModal, ShareModal } from '@/components
 import ProductDetailMobileView from '@/components/features/product/detail/ProductDetailMobileView';
 import ProductDetailWebView from '@/components/features/product/detail/ProductDetailWebView';
 import { Provider } from '@/context/productDetailContext';
+import useNativeRouter from '@/hooks/useNativeRouter';
 import { localeFormat } from '@/lib/utils';
 import { useCartService, useMypageService, useProductService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stores';
@@ -45,6 +46,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const router = useRouter();
+  const { forward } = useNativeRouter();
   const { isLoggedIn } = useLoginStore();
   const {
     user: { role },
@@ -99,9 +101,13 @@ const ProductDetailContainer = ({ productId }: Props) => {
   );
 
   const { useGetReviewListInfiniteQuery } = useMypageService();
-  const { data: reviewListData } = useGetReviewListInfiniteQuery(reviewSearchPayload, {
-    enabled: true,
-  });
+  const { data: reviewListData } = useGetReviewListInfiniteQuery(
+    reviewSearchPayload,
+    'productDetail',
+    {
+      enabled: true,
+    }
+  );
 
   const { reviewList, totalReviewCount } = useMemo(() => {
     if (reviewListData) {
@@ -122,6 +128,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
   useEffect(() => {
     setIsMounted(true);
     window.scrollTo(0, 0);
+
+    router.prefetch(`/mypage/inquiry/write?productId=${productId}`);
   }, []);
 
   useEffect(() => {
@@ -348,6 +356,10 @@ const ProductDetailContainer = ({ productId }: Props) => {
     setReviewOpen(true);
   };
 
+  const moveToInquiryWritePage = () => {
+    forward(`/mypage/inquiry/write?productId=${productId}`);
+  };
+
   const optionList: DropdownOption[] = useMemo(() => {
     return map(product.options, (option) => ({
       value: option.optionId,
@@ -382,6 +394,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
           handlePurchase,
           setReviewSearchPayload,
           handleReviewOpen,
+          moveToInquiryWritePage,
         }}
       >
         <ResponsiveFrame

@@ -14,9 +14,10 @@ import { CreateInquiryRequest } from '@/types/request';
 
 type Props = {
   inquiryId: string;
+  productId: string | null;
 };
 
-const InquiryWriteContainer = ({ inquiryId }: Props) => {
+const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
   const { user } = useUserStore();
 
   const { backward } = useNativeRouter();
@@ -58,7 +59,7 @@ const InquiryWriteContainer = ({ inquiryId }: Props) => {
       title,
       content,
       isSecret,
-      productId: null,
+      productId,
       upperInquiryId: isAdmin && inquiryId ? inquiryId : null,
     };
 

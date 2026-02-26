@@ -79,10 +79,11 @@ const useMypageService = () => {
 
   const useGetReviewListInfiniteQuery = (
     payload: Omit<ReviewListSearchRequest, 'page'>,
+    queryKey: string,
     options?: UseQueryOptionsType
   ) =>
     useInfiniteQuery({
-      queryKey: ['reviewList', payload],
+      queryKey: ['reviewList', queryKey, payload],
       queryFn: ({ pageParam = 0 }) => getReviewList({ ...payload, page: pageParam }),
       getNextPageParam: ({ data }) => (data.hasNext ? data.page + 1 : undefined),
       initialPageParam: 0,

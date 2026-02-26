@@ -21,6 +21,8 @@ type Props = {
   productId: string;
 };
 
+type ReviewSearchPayload = Omit<ReviewListSearchRequest, 'page'>;
+
 const ProductReviewSheet = ({ reviewOpen, setReviewOpen, productId }: Props) => {
   const queryClient = useQueryClient();
   const { ref, inView } = useInView();
@@ -33,13 +35,15 @@ const ProductReviewSheet = ({ reviewOpen, setReviewOpen, productId }: Props) => 
     handleImageModalOpen,
   } = useImageSlide();
 
-  const [reviewSearchPayload, setReviewSearchPayload] = useState<
-    Omit<ReviewListSearchRequest, 'page'>
-  >({
+  const initialReviewSearchPayload: ReviewSearchPayload = {
     productId,
     sortBy: SortByEnum.LATEST,
     photoOnly: false,
     size: 5,
+  };
+
+  const [reviewSearchPayload, setReviewSearchPayload] = useState<ReviewSearchPayload>({
+    ...initialReviewSearchPayload,
   });
 
   const { useGetReviewListInfiniteQuery } = useMypageService();
@@ -48,7 +52,7 @@ const ProductReviewSheet = ({ reviewOpen, setReviewOpen, productId }: Props) => 
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetReviewListInfiniteQuery(reviewSearchPayload, {
+  } = useGetReviewListInfiniteQuery(reviewSearchPayload, 'productReviewSheet', {
     enabled: !!reviewOpen,
   });
 
@@ -80,8 +84,12 @@ const ProductReviewSheet = ({ reviewOpen, setReviewOpen, productId }: Props) => 
     setReviewOpen(open);
 
     if (!open) {
+      setReviewSearchPayload({ ...initialReviewSearchPayload });
+
       setTimeout(() => {
-        queryClient.removeQueries({ queryKey: ['reviewList', reviewSearchPayload] });
+        queryClient.removeQueries({
+          queryKey: ['reviewList', 'productReviewSheet'],
+        });
       }, 0);
     }
   };
@@ -94,7 +102,12 @@ const ProductReviewSheet = ({ reviewOpen, setReviewOpen, productId }: Props) => 
 
   return (
     <Sheet open={reviewOpen} onOpenChange={handleClose}>
-      <SheetContent side="bottom" className="h-full z-[100]" overlayClassName="z-[100]">
+      <SheetContent
+        side="bottom"
+        className="h-full z-[100]"
+        overlayClassName="z-[100]"
+        aria-describedby={undefined}
+      >
         <SheetHeader className="border-b">
           <SheetTitle>제품 리뷰</SheetTitle>
         </SheetHeader>
