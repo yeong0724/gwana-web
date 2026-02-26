@@ -1,7 +1,9 @@
 import { postAxios } from '@/lib/api';
+import { delayAsync } from '@/lib/utils';
 import type { ApiResponse, LoginResponse } from '@/types';
 
 const getAccessTokenByKakaoCode = async <T>(params: T) => {
+  await delayAsync(1000);
   return postAxios<ApiResponse<LoginResponse>>({
     url: '/user/callback',
     params,
@@ -29,4 +31,4 @@ const kakaoLogout = async <T>(params: T) => {
   });
 };
 
-export { fetchLogin, getAccessTokenByKakaoCode, kakaoLogout, refreshAccessToken };
+export { getAccessTokenByKakaoCode, fetchLogin, refreshAccessToken, kakaoLogout };
