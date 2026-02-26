@@ -616,3 +616,73 @@
     opacity: 1;
   }
 }
+
+/* iOS-style spinner */
+@keyframes spinner-fade {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.ios-spinner-bar {
+  position: absolute;
+  width: 8%;
+  height: 24%;
+  top: 38%;
+  left: 46%;
+  border-radius: 9999px;
+  transform-origin: center 170%;
+}
+
+.ios-spinner-bar:nth-child(1) {
+  transform: rotate(0deg);
+  animation: spinner-fade 1s -0.083s infinite;
+}
+.ios-spinner-bar:nth-child(2) {
+  transform: rotate(-30deg);
+  animation: spinner-fade 1s -0.166s infinite;
+}
+.ios-spinner-bar:nth-child(3) {
+  transform: rotate(-60deg);
+  animation: spinner-fade 1s -0.25s infinite;
+}
+.ios-spinner-bar:nth-child(4) {
+  transform: rotate(-90deg);
+  animation: spinner-fade 1s -0.333s infinite;
+}
+.ios-spinner-bar:nth-child(5) {
+  transform: rotate(-120deg);
+  animation: spinner-fade 1s -0.416s infinite;
+}
+.ios-spinner-bar:nth-child(6) {
+  transform: rotate(-150deg);
+  animation: spinner-fade 1s -0.5s infinite;
+}
+.ios-spinner-bar:nth-child(7) {
+  transform: rotate(-180deg);
+  animation: spinner-fade 1s -0.583s infinite;
+}
+.ios-spinner-bar:nth-child(8) {
+  transform: rotate(-210deg);
+  animation: spinner-fade 1s -0.666s infinite;
+}
+.ios-spinner-bar:nth-child(9) {
+  transform: rotate(-240deg);
+  animation: spinner-fade 1s -0.75s infinite;
+}
+.ios-spinner-bar:nth-child(10) {
+  transform: rotate(-270deg);
+  animation: spinner-fade 1s -0.833s infinite;
+}
+.ios-spinner-bar:nth-child(11) {
+  transform: rotate(-300deg);
+  animation: spinner-fade 1s -0.916s infinite;
+}
+.ios-spinner-bar:nth-child(12) {
+  transform: rotate(-330deg);
+  animation: spinner-fade 1s -1s infinite;
+}

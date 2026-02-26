@@ -1,4 +1,5 @@
 import { postAxios } from '@/lib/api';
+import { delayAsync } from '@/lib/utils';
 import {
   ApiResponse,
   CreateInquiryRequest,
@@ -58,6 +59,7 @@ const createInquiry = async (params: CreateInquiryRequest) => {
 };
 
 const getInquiryList = async (params: InquiryListSearchRequest) => {
+  await delayAsync(1000);
   return postAxios<ApiResponse<InfiniteResponse<Inquiry[]>>>({
     url: '/mypage/search/inquiry/list',
     params,

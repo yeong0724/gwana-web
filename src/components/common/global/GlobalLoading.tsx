@@ -2,26 +2,51 @@
 
 import Image from 'next/image';
 
-import { useIsMutating } from '@tanstack/react-query';
+import { useIsFetching, useIsMutating } from '@tanstack/react-query';
+
+const SPINNER_BARS = 12;
+const BAR_COLORS = [
+  '#3B82F6',
+  '#5B9BF7',
+  '#7AB4F8',
+  '#93C5F9',
+  '#ABCFFA',
+  '#BDD8FB',
+  '#CFE1FC',
+  '#DDE9FD',
+  '#E8F0FD',
+  '#F0F5FE',
+  '#F5F8FE',
+  '#F9FBFF',
+];
+
+const IosSpinner = ({ size = 48 }: { size?: number }) => (
+  <div className="relative" style={{ width: size, height: size }}>
+    {Array.from({ length: SPINNER_BARS }, (_, i) => (
+      <div key={i} className="ios-spinner-bar" style={{ backgroundColor: BAR_COLORS[i] }} />
+    ))}
+  </div>
+);
 
 const GlobalLoading = () => {
   const isMutating = useIsMutating({
     predicate: (mutation) => {
-      // refreshAccessToken은 로딩 표시에서 제외
       const mutationKey = mutation.options.mutationKey;
       return !(Array.isArray(mutationKey) && mutationKey[0] === 'refreshAccessToken');
     },
   });
 
-  if (!isMutating) return null;
+  const isFetching = useIsFetching();
 
-  const variant: 'default' | 'smooth' | 'fast' | 'wobble' = 'default';
-  const animationClass = {
-    default: 'animate-spin-y',
-    smooth: 'animate-spin-smooth',
-    fast: 'animate-spin-fast',
-    wobble: 'animate-spin-wobble',
-  }[variant];
+  if (!isMutating && !isFetching) return null;
+
+  if (isFetching && !isMutating) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+        <IosSpinner size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/15">
@@ -32,22 +57,11 @@ const GlobalLoading = () => {
             alt="loading"
             width={72}
             height={72}
-            className={animationClass}
+            className="animate-spin-y"
             style={{ transformStyle: 'preserve-3d' }}
           />
-          {/* {showShadow && (
-          <div
-            className="mt-2 rounded-full bg-black/10 animate-shadow-pulse"
-            style={{
-              width: size * 0.7,
-              height: size * 0.15,
-            }}
-          />
-        )} */}
         </div>
-        {true && (
-          <span className="text-sm text-green-700 tracking-wide animate-text-fade">Loading...</span>
-        )}
+        <span className="text-sm text-green-700 tracking-wide animate-text-fade">Loading...</span>
       </div>
     </div>
   );

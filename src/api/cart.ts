@@ -1,9 +1,7 @@
 import { getAxios, postAxios } from '@/lib/api';
-import { delayAsync } from '@/lib/utils';
 import { AddToCartRequest, ApiResponse, Cart, DeleteCartRequest, UpdateCartRequest } from '@/types';
 
 const addToCart = async (params: AddToCartRequest) => {
-  await delayAsync(500);
   return postAxios<ApiResponse<void>>({
     url: '/cart/add',
     params,
