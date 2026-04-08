@@ -103,7 +103,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
     reviewSearchPayload,
     'productDetail',
     {
-      enabled: true,
+      enabled: pathname === `/product/${productId}`,
+      staleTime: 60 * 1000,
     }
   );
 

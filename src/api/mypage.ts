@@ -81,6 +81,7 @@ const createReview = async (params: ReviewCreateRequest) => {
 };
 
 const getReviewList = async (params: ReviewListSearchRequest) => {
+  await delayAsync(800);
   return postAxios<ApiResponse<InfiniteResponse<Review[]>>>({
     url: '/mypage/search/review/list',
     params,

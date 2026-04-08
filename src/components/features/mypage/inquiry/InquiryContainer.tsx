@@ -115,7 +115,6 @@ const InquiryContainer = () => {
 
   return (
     <div className="bg-white h-[calc(100dvh-56px)] flex flex-col overflow-hidden">
-      {isFetching && <GlobalLoading />}
       <div className="mx-auto w-full flex-1 flex flex-col min-h-0 max-w-[600px] border-x border-gray-100 bg-white">
         {/* 헤더: 타이틀 */}
         <div className="flex items-center justify-between py-2.5 border-b border-gray-100 px-4 bg-white sticky top-0 z-10">
@@ -181,9 +180,13 @@ const InquiryContainer = () => {
           <Card className="flex-1 flex flex-col border-0 shadow-none">
             <CardContent className="p-0 flex-1 flex flex-col">
               <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-                <MessageCircleQuestion className="size-16 mb-4 text-gray-300" />
-                <p className="text-lg font-medium">등록된 문의가 없습니다</p>
-                <p className="text-sm mt-1">궁금한 점이 있으시면 문의해 주세요</p>
+                {!isFetching && (
+                  <>
+                    <MessageCircleQuestion className="size-16 mb-4 text-gray-300" />
+                    <p className="text-lg font-medium">등록된 문의가 없습니다</p>
+                    <p className="text-sm mt-1">궁금한 점이 있으시면 문의해 주세요</p>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
