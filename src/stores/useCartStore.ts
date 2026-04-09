@@ -10,7 +10,7 @@ type StoreType = {
   _hasHydrated: boolean;
   setHasHydrated: (hasHydrated: boolean) => void;
   addCart: (cart: Cart) => void;
-  setCart: (count: Cart[]) => void;
+  setCart: (cartList: Cart[]) => void;
   clearCart: () => void;
 };
 

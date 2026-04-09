@@ -1,4 +1,4 @@
-import { SortByEnum, YesOrNoEnum } from "./enum";
+import { SortByEnum, YesOrNoEnum } from './enum';
 
 export interface GetAccessTokenByKakaoCodeRequest {
   code: string;
@@ -24,14 +24,12 @@ export interface ValidateTokenRequest {
 }
 
 export interface AddToCartRequest {
-  productId: string;
+  cartItemId: string;
   quantity: number;
-  optionId: string;
 }
 
 export interface DeleteCartRequest {
-  cartId: string;
-  optionId: string;
+  cartItemId: string;
 }
 
 export interface KakaoLogoutRequest {
@@ -79,7 +77,6 @@ export interface RefreshAccessTokenRequest {
   accessToken: string;
 }
 
-
 export interface UpdateMyinfoRequest {
   email: string;
   phone: string;
@@ -110,11 +107,11 @@ export type InquiryListSearchRequest = {
   isAnswered: string;
   page: number;
   size: number;
-}
+};
 
 export type InquirySearchRequest = {
   inquiryId: string;
-}
+};
 
 export type ReviewListSearchRequest = {
   productId: string;
@@ -122,4 +119,4 @@ export type ReviewListSearchRequest = {
   photoOnly: boolean;
   page: number;
   size: number;
-}
+};

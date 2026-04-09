@@ -10,7 +10,8 @@ import {
 
 type ProductDetailStateContextType = {
   product: ProductDetailResponse;
-  optionList: DropdownOption[];
+  optionalOptions: DropdownOption[];
+  requiredOptions: DropdownOption[];
   isMounted: boolean;
   isBottomPanelOpen: boolean;
   purchaseList: PurchaseList[];

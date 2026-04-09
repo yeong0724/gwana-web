@@ -14,14 +14,13 @@ type CartControllerContextType = {
   onDeleteCartList: () => void;
   onCheckboxHandler: (checked: boolean, index: number) => void;
   onUpdateCartQuantity: (
-    productId: string,
-    optionId: string,
-    quantity: number,
+    cartItemId: string,
     index: number,
-    optionRequired: boolean,
+    cartItemIndex: number,
+    quantity: number,
     quantityDelta: number
   ) => void;
-  onDeleteCart: (cartId: string, optionId: string, index: number) => void;
+  onDeleteCart: (cartItemId: string, index: number, cartItemIndex: number) => void;
   getSumProductPrice: (item: Cart) => number;
   getShippingPrice: (item: Cart) => number;
 };

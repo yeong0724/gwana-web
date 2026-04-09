@@ -4,7 +4,19 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { clone, find, findIndex, forEach, isEmpty, map, pick, sumBy } from 'lodash-es';
+import {
+  clone,
+  filter,
+  find,
+  findIndex,
+  forEach,
+  head,
+  isEmpty,
+  map,
+  orderBy,
+  size,
+  sumBy,
+} from 'lodash-es';
 import { toast } from 'sonner';
 
 import { ResponsiveFrame } from '@/components/common/frame';
@@ -18,24 +30,12 @@ import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stor
 import { cartActions } from '@/stores/useCartStore';
 import {
   Cart,
-  CartOption,
-  DropdownOption,
   ProductDetailResponse,
   ProductOption,
-  PurchaseList,
+  Purchase,
   ReviewListSearchRequest,
   SortByEnum,
 } from '@/types';
-
-const purchasePick = [
-  'productId',
-  'productName',
-  'categoryName',
-  'optionRequired',
-  'price',
-  'shippingPrice',
-  'images',
-];
 
 type Props = {
   productId: string;
@@ -75,12 +75,11 @@ const ProductDetailContainer = ({ productId }: Props) => {
     infos: [],
     price: 0,
     shippingPrice: 0,
-    optionRequired: false,
     options: [],
   });
 
   // 상품 선택 옵션
-  const [purchaseList, setPurchaseList] = useState<PurchaseList[]>([]);
+  const [purchaseList, setPurchaseList] = useState<Purchase[]>([]);
 
   // 리뷰 검색 옵션
   const [reviewSearchPayload, setReviewSearchPayload] = useState<
@@ -93,17 +92,24 @@ const ProductDetailContainer = ({ productId }: Props) => {
   });
 
   const { useProductDetailQuery } = useProductService();
+  const { useGetReviewListInfiniteQuery } = useMypageService();
+
+  /**
+   * 상품 상세 정보 조회
+   */
   const { data: productDetailData, error: productDetailError } = useProductDetailQuery(
     { productId },
-    { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
+    { enabled: false, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );
 
-  const { useGetReviewListInfiniteQuery } = useMypageService();
+  /**
+   * 상품 리뷰 목록 조회 (무한 스크롤)
+   */
   const { data: reviewListData } = useGetReviewListInfiniteQuery(
     reviewSearchPayload,
     'productDetail',
     {
-      enabled: pathname === `/product/${productId}`,
+      enabled: false, // pathname === `/product/${productId}`
       staleTime: 60 * 1000,
     }
   );
@@ -132,23 +138,67 @@ const ProductDetailContainer = ({ productId }: Props) => {
   }, []);
 
   useEffect(() => {
+    const data = {
+      productId: '1',
+      productName: '관아수제차 세작(녹차) 유기농 하동녹차(80g)',
+      categoryId: 'greenTea',
+      categoryName: '녹차',
+      images: [
+        '/images/product/greenTea/thumbnail/greenTeaSejak_1.webp',
+        '/images/product/greenTea/thumbnail/greenTeaSejak_2.webp',
+      ],
+      infos: [
+        '/images/product/greenTea/info/greenTeaSejak_1.webp',
+        '/images/product/greenTea/info/greenTeaSejak_2.webp',
+        '/images/product/greenTea/info/greenTeaSejak_3.webp',
+        '/images/product/greenTea/info/greenTeaSejak_4.webp',
+        '/images/product/greenTea/info/greenTeaSejak_5.webp',
+        '/images/product/greenTea/info/greenTeaSejak_6.webp',
+        '/images/product/greenTea/info/greenTeaSejak_7.webp',
+      ],
+      price: 70000,
+      shippingPrice: 4000,
+      options: [
+        {
+          productOptionId: '1',
+          productId: null,
+          optionName: '선물용 쇼핑백(화이트)',
+          optionPrice: 3000,
+          isRequired: false,
+          isQuantityAdjustable: false,
+        },
+        {
+          productOptionId: '2',
+          productId: '1',
+          optionName: '녹차 드립백 (1팩 3개입)',
+          optionPrice: 10000,
+          isRequired: true,
+          isQuantityAdjustable: true,
+        },
+        {
+          productOptionId: '3',
+          productId: '1',
+          optionName: '홍차 드립백 (1팩 3개입)',
+          optionPrice: 10000,
+          isRequired: true,
+          isQuantityAdjustable: true,
+        },
+      ],
+    };
+
+    const { options } = data;
+    const requiredOptions = filter(options, { isRequired: true });
+    if (size(requiredOptions) === 1) {
+      const requiredOption = { ...head(requiredOptions), quantity: 1 } as Purchase;
+      setPurchaseList((prev) => [...prev, requiredOption]);
+    }
+
+    setProduct(data);
+  }, []);
+
+  useEffect(() => {
     if (productDetailData) {
       const { data } = productDetailData;
-
-      /**
-       * optionRequired false인 경우 옵션 선택이 필수가 아니므로 상품 메인정보를 구매 리스트에 추가
-       */
-      if (!data.optionRequired) {
-        setPurchaseList([
-          {
-            ...pick(data, purchasePick),
-            quantity: 1,
-            optionId: '',
-            optionName: '',
-            optionPrice: 0,
-          } as PurchaseList,
-        ]);
-      }
 
       setProduct(data);
     } else if (productDetailError) {
@@ -157,7 +207,10 @@ const ProductDetailContainer = ({ productId }: Props) => {
   }, [productDetailData, productDetailError]);
 
   const totalPrice = useMemo(() => {
-    const totalProductPrice = sumBy(purchaseList, ({ price, quantity }) => price * quantity);
+    const totalProductPrice = sumBy(
+      purchaseList,
+      ({ optionPrice, quantity }) => optionPrice * quantity
+    );
     const totalShippingPrice =
       totalProductPrice >= 50000 || isEmpty(purchaseList) ? 0 : product.shippingPrice;
 
@@ -174,8 +227,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
     // } else {
     //   setPurchaseGuideModalOpen(true);
     // }
-    if (isEmpty(purchaseList)) {
-      showAlert({ title: '안내', description: '옵션을 선택해주세요.', size: 'sm' });
+    if (isEmpty(filter(purchaseList, { isRequired: true }))) {
+      showAlert({ title: '안내', description: '필수 옵션을 선택해주세요.', size: 'sm' });
       return;
     }
 
@@ -215,10 +268,12 @@ const ProductDetailContainer = ({ productId }: Props) => {
    * 장바구니 상품 추가
    */
   const handleAddToCart = () => {
-    if (isEmpty(purchaseList)) {
-      showAlert({ title: '안내', description: '옵션을 선택해주세요.', size: 'sm' });
+    if (isEmpty(filter(purchaseList, { isRequired: true }))) {
+      showAlert({ title: '안내', description: '필수 옵션을 선택해주세요.', size: 'sm' });
       return;
     }
+
+    const { productName, categoryId, categoryName, images, price, shippingPrice } = product;
 
     // 로그인 상태인 경우
     if (isLoggedIn) {
@@ -235,64 +290,43 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }
     // 비로그인 상태인 경우
     else {
-      forEach(purchaseList, (item) => {
-        const {
+      const cart = cartActions.cart();
+      const index = findIndex(cart, { productId });
+
+      if (index < 0) {
+        const insertCart: Cart = {
+          cartId: '',
           productId,
           productName,
+          categoryId,
           categoryName,
+          images,
           price,
           shippingPrice,
-          images,
-          quantity,
-          optionId,
-          optionName,
-          optionPrice,
-          optionRequired,
-        } = item;
-
-        const cart = cartActions.cart();
-        const index = findIndex(cart, { productId });
-
-        const option: CartOption = {
-          cartId: '',
-          optionId: optionId!,
-          optionName,
-          quantity,
-          optionPrice,
+          cartItems: orderBy(
+            map(purchaseList, (item) => ({ ...item, cartItemId: '' })),
+            ['isRequired'],
+            ['desc']
+          ),
         };
 
-        if (index < 0) {
-          const cartItem: Cart = {
-            cartId: '',
-            productId,
-            productName,
-            categoryName,
-            price,
-            shippingPrice,
-            images,
-            quantity,
-            optionRequired,
-            options: optionId ? [option] : [],
-          };
-
-          addCart(cartItem);
-        } else {
-          const updatedCart = clone(cart);
-
-          if (!optionId) updatedCart[index].quantity += quantity;
-          else {
-            const optionIndex = findIndex(updatedCart[index].options, { optionId });
-            if (optionIndex < 0) {
-              updatedCart[index].options.push(option);
-            } else {
-              updatedCart[index].options[optionIndex].quantity += quantity;
-            }
+        addCart(insertCart);
+      } else {
+        const updatedCart = clone(cart);
+        forEach(purchaseList, (item) => {
+          const { productOptionId, quantity } = item;
+          const cartItemIndex = findIndex(updatedCart[index].cartItems, { productOptionId });
+          if (cartItemIndex < 0) {
+            updatedCart[index].cartItems.push({ ...item, cartItemId: '' });
+          } else {
+            updatedCart[index].cartItems[cartItemIndex].quantity += quantity;
           }
+        });
 
-          setCart(updatedCart);
-        }
-      });
+        setCart(updatedCart);
+      }
 
+      setPurchaseList([]);
       handleSuccessToast();
     }
 
@@ -324,28 +358,19 @@ const ProductDetailContainer = ({ productId }: Props) => {
   };
 
   const handleQuantityChange = (index: number, quantity: number) => {
-    const updatedCart = clone(purchaseList);
-    updatedCart[index].quantity = quantity;
-    setPurchaseList(updatedCart);
+    setPurchaseList((prev) => {
+      prev[index].quantity = quantity;
+      return [...prev];
+    });
   };
 
   const onOptionSelect = (value: string) => {
-    const option = find(product.options, { optionId: value }) as ProductOption;
-    const { optionId, optionName, optionPrice } = option;
-    const index = findIndex(purchaseList, { optionId });
+    const option = find(product.options, { productOptionId: value }) as ProductOption;
+
+    const { productOptionId } = option;
+    const index = findIndex(purchaseList, { productOptionId });
     if (index < 0) {
-      setPurchaseList((prev) => {
-        return [
-          ...prev,
-          {
-            ...pick(product, purchasePick),
-            quantity: 1,
-            optionId,
-            optionName,
-            optionPrice,
-          } as PurchaseList,
-        ];
-      });
+      setPurchaseList((prev) => [...prev, { ...option, quantity: 1 }]);
     } else {
       showAlert({ title: '안내', description: '이미 선택한 옵션입니다.' });
     }
@@ -359,19 +384,28 @@ const ProductDetailContainer = ({ productId }: Props) => {
     router.push(`/mypage/inquiry/write?productId=${productId}`);
   };
 
-  const optionList: DropdownOption[] = useMemo(() => {
-    return map(product.options, (option) => ({
-      value: option.optionId,
-      label: `${option.optionName} (+ ${localeFormat(option.optionPrice)})`,
+  const getOptionList = (isRequired: boolean) => {
+    const options = filter(product.options, { isRequired });
+    return map(options, ({ productOptionId, optionName, optionPrice }) => ({
+      value: productOptionId,
+      label: `${optionName} (+${localeFormat(optionPrice)}원)`,
     }));
-  }, [product.options]);
+  };
+
+  const { optionalOptions, requiredOptions } = useMemo(() => {
+    return {
+      optionalOptions: getOptionList(false),
+      requiredOptions: getOptionList(true),
+    };
+  }, [product]);
 
   return (
     <>
       <Provider
         state={{
           product,
-          optionList,
+          optionalOptions,
+          requiredOptions,
           isMounted,
           isBottomPanelOpen,
           purchaseList,

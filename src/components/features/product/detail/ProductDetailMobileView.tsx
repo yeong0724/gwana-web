@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import gsap from 'gsap';
-import { clone, isEmpty, map } from 'lodash-es';
+import { clone, isEmpty, map, size } from 'lodash-es';
 import { ChevronDown, ChevronUp, Share2, Star, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
@@ -21,7 +21,8 @@ type TabType = 'detail' | 'review' | 'qna';
 const ProductDetailMobileView = () => {
   const {
     product,
-    optionList,
+    optionalOptions,
+    requiredOptions,
     isMounted,
     isBottomPanelOpen,
     purchaseList,
@@ -476,12 +477,16 @@ const ProductDetailMobileView = () => {
           >
             {/* 메인 패널 */}
             <div
-              className={`bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out ${isBottomPanelOpen ? 'rounded-t-2xl' : ''}`}
+              className={cn(
+                'bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] overflow-hidden',
+                'transition-all duration-300 ease-in-out ',
+                `${isBottomPanelOpen ? 'rounded-t-2xl border-t border-gray-400' : ''}`
+              )}
             >
               {/* 확장 패널: 구매수량 + 상품금액 합계 (옵션 없는 경우) */}
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  isBottomPanelOpen ? 'max-h-[500px]' : 'max-h-0'
+                className={`overflow-hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+                  isBottomPanelOpen ? 'max-h-[650px]' : 'max-h-0'
                 }`}
               >
                 {/* 닫기 버튼 */}
@@ -491,27 +496,41 @@ const ProductDetailMobileView = () => {
                 >
                   <ChevronDown size={24} className="text-gray-400" />
                 </button>
-                <div className="px-4 pb-4 space-y-4 bg-white">
+                <div className="px-4 pb-4 space-y-4">
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
-                  {!isEmpty(product.options) && (
-                    <OptionDropdown options={optionList} onOptionSelect={onOptionSelect} />
+                  {size(requiredOptions) > 1 && (
+                    <>
+                      <span className="text-[15px] ml-[2px]">옵션선택 (필수)</span>
+                      <OptionDropdown
+                        options={requiredOptions}
+                        onOptionSelect={onOptionSelect}
+                        placeholder="구성 선택"
+                      />
+                    </>
+                  )}
+                  {/* 옵션 선택 - 커스텀 드롭다운 */}
+                  {!isEmpty(optionalOptions) && (
+                    <>
+                      <span className="text-[15px] ml-[2px]">추가상품</span>
+                      <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
+                    </>
                   )}
                   {/* 선택된 옵션 목록 */}
                   {!isEmpty(purchaseList) && (
                     <div className="space-y-3">
                       {map(
                         purchaseList,
-                        ({ productName, optionId, optionName, quantity, price }, index) => (
+                        ({ productOptionId, optionName, quantity, optionPrice }, index) => (
                           <div
-                            key={index}
+                            key={`${productOptionId}-${index}`}
                             className="border border-gray-200 rounded-md p-4 space-y-3"
                           >
                             <div className="flex items-start justify-between">
-                              {optionId ? (
-                                <>
-                                  <span className="text-sm font-medium text-gray-800">
-                                    {optionName}
-                                  </span>
+                              <>
+                                <span className="text-sm font-medium text-gray-800">
+                                  {optionName}
+                                </span>
+                                {size(requiredOptions) > 1 && (
                                   <button
                                     type="button"
                                     onClick={() => {
@@ -523,12 +542,8 @@ const ProductDetailMobileView = () => {
                                   >
                                     <X size={20} strokeWidth={1.5} />
                                   </button>
-                                </>
-                              ) : (
-                                <span className="text-sm font-medium text-gray-800">
-                                  {productName}
-                                </span>
-                              )}
+                                )}
+                              </>
                             </div>
                             <div className="flex items-center justify-between">
                               <div className="flex items-center border border-gray-300 rounded">
@@ -554,7 +569,7 @@ const ProductDetailMobileView = () => {
                                 </Button>
                               </div>
                               <span className="text-base font-semibold">
-                                {localeFormat(price * quantity)}원
+                                {localeFormat(optionPrice * quantity)}원
                               </span>
                             </div>
                           </div>
