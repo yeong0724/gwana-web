@@ -520,7 +520,10 @@ const ProductDetailMobileView = () => {
                     <div className="space-y-3">
                       {map(
                         purchaseList,
-                        ({ productOptionId, optionName, quantity, optionPrice }, index) => (
+                        (
+                          { productOptionId, optionName, quantity, optionPrice, isRequired },
+                          index
+                        ) => (
                           <div
                             key={`${productOptionId}-${index}`}
                             className="border border-gray-200 rounded-md p-4 space-y-3"
@@ -530,7 +533,7 @@ const ProductDetailMobileView = () => {
                                 <span className="text-sm font-medium text-gray-800">
                                   {optionName}
                                 </span>
-                                {size(requiredOptions) > 1 && (
+                                {(size(requiredOptions) > 1 || !isRequired) && (
                                   <button
                                     type="button"
                                     onClick={() => {

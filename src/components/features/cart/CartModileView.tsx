@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { filter, first, isEmpty, map, orderBy, size, some } from 'lodash-es';
+import { filter, first, isEmpty, map, size, some } from 'lodash-es';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -103,9 +103,16 @@ const CartModileView = () => {
                             className="flex flex-col gap-2 mt-1 py-2"
                           >
                             <div className="flex items-baseline gap-1">
-                              <span className="text-[11px] text-teal-600 font-medium">
-                                {cartItem.isRequired ? '메인 상품' : '선택 옵션'}
-                              </span>
+                              {cartItem.isRequired ? (
+                                <span className="text-[11px] text-teal-600 font-medium">
+                                  메인 상품
+                                </span>
+                              ) : (
+                                <span className="text-[11px] text-teal-600 font-medium">
+                                  선택 옵션
+                                </span>
+                              )}
+
                               <span className="text-[11px] text-gray-400">|</span>
                               <span className="text-[12px] text-gray-700">
                                 {cartItem.optionName}
