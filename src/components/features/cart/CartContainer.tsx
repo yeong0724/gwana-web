@@ -254,6 +254,7 @@ const CartContainer = () => {
         mobileComponent={<CartModileView />}
         webComponent={<CartWebView />}
         breakpoint={Breakpoint.LG}
+        webClassName="lg:flex-1 lg:min-h-0 lg:overflow-y-scroll"
       />
       {/* 비로그인시 구매가이드 모달 */}
       <PurchaseGuideModal
