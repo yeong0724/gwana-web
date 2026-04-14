@@ -1,45 +1,26 @@
-import {
-  addToCart,
-  deleteCart,
-  deleteCartList,
-  getCartList,
-  updateCartList,
-  updateCartQuantity,
-} from '@/api/cart';
-import {
-  AddToCartRequest,
-  DeleteCartRequest,
-  UpdateCartRequest,
-  UseQueryOptionsType,
-} from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import {
+  deleteCart,
+  deleteCartItem,
+  deleteCartList,
+  getCartList,
+  updateCartItemQuantity,
+  upsertCart,
+  upsertCartList,
+} from '@/api/cart';
+import {
+  DeleteCartItemRequest,
+  DeleteCartRequest,
+  UpdateCartItemQuantityRequest,
+  UpsertCartRequest,
+  UseQueryOptionsType,
+} from '@/types';
+
 const useCartService = () => {
-  const useAddToCartMutation = () =>
-    useMutation({
-      mutationFn: (param: AddToCartRequest) => addToCart(param),
-    });
-
-  const useUpdateCartListMutation = () =>
-    useMutation({
-      mutationFn: (param: UpdateCartRequest[]) => updateCartList(param),
-    });
-
-  const useDeleteCartListMutation = () =>
-    useMutation({
-      mutationFn: (param: string[]) => deleteCartList(param),
-    });
-
-  const useDeleteCartMutation = () =>
-    useMutation({
-      mutationFn: (param: DeleteCartRequest) => deleteCart(param),
-    });
-
-  const useUpdateCartQuantityMutation = () =>
-    useMutation({
-      mutationFn: (param: AddToCartRequest) => updateCartQuantity(param),
-    });
-
+  /**
+   * 장바구니 목록 조회
+   */
   const useGetCartListQuery = (options?: UseQueryOptionsType) =>
     useQuery({
       queryKey: ['cartList'],
@@ -47,13 +28,53 @@ const useCartService = () => {
       ...options,
     });
 
+  /**
+   * 장바구니 상품 추가/수정
+   */
+  const useUpsertCartMutation = () =>
+    useMutation({
+      mutationFn: (param: UpsertCartRequest) => upsertCart(param),
+    });
+
+  const useUpsertCartListMutation = () =>
+    useMutation({
+      mutationFn: (param: UpsertCartRequest[]) => upsertCartList(param),
+    });
+
+  const useDeleteCartListMutation = () =>
+    useMutation({
+      mutationFn: (param: string[]) => deleteCartList(param),
+    });
+
+  /**
+   * 장바구니 상품 삭제
+   */
+  const useDeleteCartMutation = () =>
+    useMutation({
+      mutationFn: (param: DeleteCartRequest) => deleteCart(param),
+    });
+
+  /**
+   * 장바구니 옵션 삭제
+   */
+  const useDeleteCartItemMutation = () =>
+    useMutation({
+      mutationFn: (param: DeleteCartItemRequest) => deleteCartItem(param),
+    });
+
+  const useUpdateCartItemQuantityMutation = () =>
+    useMutation({
+      mutationFn: (param: UpdateCartItemQuantityRequest) => updateCartItemQuantity(param),
+    });
+
   return {
-    useAddToCartMutation,
+    useUpsertCartMutation,
     useGetCartListQuery,
-    useUpdateCartListMutation,
+    useUpsertCartListMutation,
     useDeleteCartListMutation,
     useDeleteCartMutation,
-    useUpdateCartQuantityMutation,
+    useDeleteCartItemMutation,
+    useUpdateCartItemQuantityMutation,
   };
 };
 

@@ -157,7 +157,12 @@ const CartModileView = () => {
                                 <button
                                   className="p-1 hover:bg-gray-100 rounded active:scale-90 transition-transform"
                                   onClick={() =>
-                                    onDeleteCart(cartItem.cartItemId, index, cartItemIndex)
+                                    onDeleteCart(
+                                      item.cartId,
+                                      cartItem.cartItemId,
+                                      index,
+                                      cartItemIndex
+                                    )
                                   }
                                 >
                                   <X size={14} className="text-gray-400" />

@@ -15,7 +15,7 @@ import useNativeRouter from '@/hooks/useNativeRouter';
 import { setRedirectUrl } from '@/lib/utils';
 import { useCartService, usePaymentService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
-import { AddToCartRequest, Breakpoint, Cart, CartState } from '@/types';
+import { Breakpoint, Cart, CartState, UpdateCartItemQuantityRequest } from '@/types';
 
 const FREE_SHIPPING_THRESHOLD = 50000;
 
@@ -28,10 +28,11 @@ const CartContainer = () => {
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
 
   const {
+    useDeleteCartItemMutation,
     useDeleteCartMutation,
     useDeleteCartListMutation,
     useGetCartListQuery,
-    useAddToCartMutation,
+    useUpdateCartItemQuantityMutation,
   } = useCartService();
 
   const { useCreatePaymentSessionMutation } = usePaymentService();
@@ -40,9 +41,10 @@ const CartContainer = () => {
     enabled: isLoggedIn,
   });
 
+  const { mutate: deleteCartItemMutate } = useDeleteCartItemMutation();
   const { mutate: deleteCartMutate } = useDeleteCartMutation();
   const { mutate: deleteCartListMutate } = useDeleteCartListMutation();
-  const { mutateAsync: addToCartAsync, isPending: isPendingAddToCart } = useAddToCartMutation();
+  const { mutateAsync: updateCartItemQuantityMutate } = useUpdateCartItemQuantityMutation();
   const { mutateAsync: createPaymentSessionAsync } = useCreatePaymentSessionMutation();
 
   const [cart, setCart] = useState<Array<CartState>>([]);
@@ -79,27 +81,41 @@ const CartContainer = () => {
     return map(cartList, (cart) => ({ ...cart, checked: false }));
   }
 
-  const onDeleteCart = async (cartItemId: string, index: number, cartItemIndex: number) => {
-    const confirmed = await showConfirmAlert({
-      title: '안내',
-      description: '해당 상품을 삭제하시겠습니까?',
-      confirmText: '삭제',
-      cancelText: '취소',
-    });
-
-    if (!confirmed) return;
-
+  const onDeleteCart = async (
+    cartId: string,
+    cartItemId: string,
+    index: number,
+    cartItemIndex: number
+  ) => {
     const newCart = removeCartItem<CartState>(cart, index, cartItemIndex);
+
+    /**
+     * shouldRemoveCart: 해당 상품이 필수 옵션만 남아있는지 여부 (true: 선택옵션만 남은 경우)
+     * - 선택 옵션만 남는 경우는 해당 장바구니 상품은 삭제
+     */
     const shouldRemoveCart = isEmpty(filter(newCart[index].cartItems, { isRequired: true }));
 
     if (shouldRemoveCart) {
+      const confirmed = await showConfirmAlert({
+        title: '안내',
+        description: '해당 상품을 장바구니에서 삭제하시겠습니까?',
+        confirmText: '삭제',
+        cancelText: '취소',
+      });
+
+      if (!confirmed) return;
+
       setCart((prev) => prev.filter((_, i) => i !== index));
     } else {
       setCart(newCart);
     }
 
     if (isLoggedIn) {
-      deleteCartMutate({ cartItemId });
+      if (shouldRemoveCart) {
+        deleteCartMutate({ cartId });
+      } else {
+        deleteCartItemMutate({ cartItemId });
+      }
     } else {
       if (shouldRemoveCart) {
         const copyCartStore = cloneDeep(cartStore);
@@ -129,11 +145,9 @@ const CartContainer = () => {
 
     const selectedCart = filter(cart, { checked: true });
     if (isLoggedIn) {
-      deleteCartListMutate(map(selectedCart, 'productId'));
+      deleteCartListMutate(map(selectedCart, 'cartId'));
     } else {
-      setCartStore(
-        cloneDeep(cartStore).filter(({ productId }) => !some(selectedCart, { productId }))
-      );
+      setCartStore(cloneDeep(cartStore).filter(({ cartId }) => !some(selectedCart, { cartId })));
     }
 
     setCart(filter(cart, { checked: false }));
@@ -146,35 +160,37 @@ const CartContainer = () => {
     quantity: number,
     quantityDelta: number
   ) => {
-    const payload: AddToCartRequest = { cartItemId, quantity: quantityDelta };
+    const updatedQuantity = quantity + quantityDelta;
+
+    const payload: UpdateCartItemQuantityRequest = {
+      cartItemId,
+      quantity: updatedQuantity,
+    };
 
     if (isLoggedIn) {
-      if (!isPendingAddToCart) addToCartAsync(payload);
+      updateCartItemQuantityMutate(payload);
     } else {
       const cloneCartStore = cloneDeep(cartStore);
-      cloneCartStore[index].cartItems[cartItemIndex].quantity = quantity + quantityDelta;
+      cloneCartStore[index].cartItems[cartItemIndex].quantity = updatedQuantity;
       setCartStore(cloneCartStore);
     }
 
     const cloneCart = cloneDeep(cart);
-    cloneCart[index].cartItems[cartItemIndex].quantity = quantity + quantityDelta;
+    cloneCart[index].cartItems[cartItemIndex].quantity = updatedQuantity;
     setCart(cloneCart);
   };
 
   const moveToOrderPage = async () => {
-    if (!isLoggedIn) {
-      setPurchaseGuideModalOpen(true);
-      return;
-    }
-
-    const payload = filter(cart, { checked: true }).map(({ productId, quantity }) => ({
-      productId,
-      quantity,
-    }));
-
-    const { data: sessionId } = await createPaymentSessionAsync(payload);
-
-    forward(`/payment?sessionId=${sessionId}`);
+    // if (!isLoggedIn) {
+    //   setPurchaseGuideModalOpen(true);
+    //   return;
+    // }
+    // const payload = filter(cart, { checked: true }).map(({ productId, quantity }) => ({
+    //   productId,
+    //   quantity,
+    // }));
+    // const { data: sessionId } = await createPaymentSessionAsync(payload);
+    // forward(`/payment?sessionId=${sessionId}`);
   };
 
   const moveToLoginPage = () => {

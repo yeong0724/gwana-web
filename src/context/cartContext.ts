@@ -20,7 +20,7 @@ type CartControllerContextType = {
     quantity: number,
     quantityDelta: number
   ) => void;
-  onDeleteCart: (cartItemId: string, index: number, cartItemIndex: number) => void;
+  onDeleteCart: (cartId: string, cartItemId: string, index: number, cartItemIndex: number) => void;
   getSumProductPrice: (item: Cart) => number;
   getShippingPrice: (item: Cart) => number;
 };

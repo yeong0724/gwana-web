@@ -14,6 +14,7 @@ import {
   isEmpty,
   map,
   orderBy,
+  pick,
   size,
   sumBy,
 } from 'lodash-es';
@@ -52,8 +53,8 @@ const ProductDetailContainer = ({ productId }: Props) => {
   const { showAlert } = useAlertStore();
   const { setCart, addCart } = useCartStore();
 
-  const { useUpdateCartListMutation } = useCartService();
-  const { mutate: updateCartListMutate } = useUpdateCartListMutation();
+  const { useUpsertCartMutation } = useCartService();
+  const { mutate: upsertCartMutate } = useUpsertCartMutation();
 
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
   const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
@@ -99,7 +100,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
    */
   const { data: productDetailData, error: productDetailError } = useProductDetailQuery(
     { productId },
-    { enabled: false, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
+    { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );
 
   /**
@@ -109,7 +110,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
     reviewSearchPayload,
     'productDetail',
     {
-      enabled: false, // pathname === `/product/${productId}`
+      enabled: pathname === `/product/${productId}`,
       staleTime: 60 * 1000,
     }
   );
@@ -138,67 +139,16 @@ const ProductDetailContainer = ({ productId }: Props) => {
   }, []);
 
   useEffect(() => {
-    const data = {
-      productId: '1',
-      productName: '관아수제차 세작(녹차) 유기농 하동녹차(80g)',
-      categoryId: 'greenTea',
-      categoryName: '녹차',
-      images: [
-        '/images/product/greenTea/thumbnail/greenTeaSejak_1.webp',
-        '/images/product/greenTea/thumbnail/greenTeaSejak_2.webp',
-      ],
-      infos: [
-        '/images/product/greenTea/info/greenTeaSejak_1.webp',
-        '/images/product/greenTea/info/greenTeaSejak_2.webp',
-        '/images/product/greenTea/info/greenTeaSejak_3.webp',
-        '/images/product/greenTea/info/greenTeaSejak_4.webp',
-        '/images/product/greenTea/info/greenTeaSejak_5.webp',
-        '/images/product/greenTea/info/greenTeaSejak_6.webp',
-        '/images/product/greenTea/info/greenTeaSejak_7.webp',
-      ],
-      price: 70000,
-      shippingPrice: 4000,
-      options: [
-        {
-          productOptionId: '1',
-          productId: null,
-          optionName: '선물용 쇼핑백(화이트)',
-          optionPrice: 3000,
-          isRequired: false,
-          isQuantityAdjustable: false,
-        },
-        {
-          productOptionId: '2',
-          productId: '1',
-          optionName: '녹차 드립백 (1팩 3개입)',
-          optionPrice: 10000,
-          isRequired: true,
-          isQuantityAdjustable: true,
-        },
-        {
-          productOptionId: '3',
-          productId: '1',
-          optionName: '홍차 드립백 (1팩 3개입)',
-          optionPrice: 10000,
-          isRequired: true,
-          isQuantityAdjustable: true,
-        },
-      ],
-    };
-
-    const { options } = data;
-    const requiredOptions = filter(options, { isRequired: true });
-    if (size(requiredOptions) === 1) {
-      const requiredOption = { ...head(requiredOptions), quantity: 1 } as Purchase;
-      setPurchaseList((prev) => [...prev, requiredOption]);
-    }
-
-    setProduct(data);
-  }, []);
-
-  useEffect(() => {
     if (productDetailData) {
       const { data } = productDetailData;
+
+      const { options } = data;
+
+      const requiredOptions = filter(options, { isRequired: true });
+      if (size(requiredOptions) === 1) {
+        const requiredOption = { ...head(requiredOptions), quantity: 1 } as Purchase;
+        setPurchaseList((prev) => [...prev, requiredOption]);
+      }
 
       setProduct(data);
     } else if (productDetailError) {
@@ -273,11 +223,17 @@ const ProductDetailContainer = ({ productId }: Props) => {
       return;
     }
 
-    const { productName, categoryId, categoryName, images, price, shippingPrice } = product;
-
     // 로그인 상태인 경우
     if (isLoggedIn) {
-      updateCartListMutate(purchaseList, {
+      const payload = {
+        productId,
+        cartItems: map(purchaseList, ({ productOptionId, quantity }) => ({
+          productOptionId,
+          quantity,
+        })),
+      };
+
+      upsertCartMutate(payload, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['cartList'], refetchType: 'all' });
           handleSuccessToast();
@@ -295,14 +251,16 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
       if (index < 0) {
         const insertCart: Cart = {
+          ...pick(product, [
+            'productName',
+            'categoryId',
+            'categoryName',
+            'images',
+            'price',
+            'shippingPrice',
+          ]),
           cartId: '',
           productId,
-          productName,
-          categoryId,
-          categoryName,
-          images,
-          price,
-          shippingPrice,
           cartItems: orderBy(
             map(purchaseList, (item) => ({ ...item, cartItemId: '' })),
             ['isRequired'],
@@ -397,7 +355,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
       optionalOptions: getOptionList(false),
       requiredOptions: getOptionList(true),
     };
-  }, [product]);
+  }, [product.options]);
 
   return (
     <>

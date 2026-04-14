@@ -23,13 +23,32 @@ export interface ValidateTokenRequest {
   accessToken: string;
 }
 
-export interface AddToCartRequest {
+/* 장바구니 */
+export interface UpdateCartRequest {
+  productId: string;
+  optionId: string | null;
+  quantity: number;
+}
+
+export interface UpsertCartRequest {
+  productId: string;
+  cartItems: {
+    productOptionId: string;
+    quantity: number;
+  }[];
+}
+
+export interface UpdateCartItemQuantityRequest {
   cartItemId: string;
   quantity: number;
 }
 
-export interface DeleteCartRequest {
+export interface DeleteCartItemRequest {
   cartItemId: string;
+}
+
+export interface DeleteCartRequest {
+  cartId: string;
 }
 
 export interface KakaoLogoutRequest {
@@ -65,12 +84,6 @@ export interface RequestPaymentApproveRequest {
   orderId: string;
   paymentKey: string;
   amount: number;
-}
-
-export interface UpdateCartRequest {
-  productId: string;
-  optionId: string | null;
-  quantity: number;
 }
 
 export interface RefreshAccessTokenRequest {

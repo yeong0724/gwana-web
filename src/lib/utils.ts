@@ -8,7 +8,7 @@ import { twMerge } from 'tailwind-merge';
 import { cartActions } from '@/stores/useCartStore';
 import { loginActions } from '@/stores/useLoginStore';
 import { userActions } from '@/stores/useUserStore';
-import { LoginResponse } from '@/types';
+import { ApiResponse, LoginResponse } from '@/types';
 import { DecodedToken, FormatEnum } from '@/types/type';
 
 export function cn(...inputs: ClassValue[]) {
@@ -243,6 +243,17 @@ export const compressImage = async (
   });
 };
 
+const asyncFn = async <T>(
+  promise: Promise<ApiResponse<T>>
+): Promise<[null, ApiResponse<T>] | [Error, null]> => {
+  try {
+    const data = await promise;
+    return [null, data];
+  } catch (error) {
+    return [error as Error, null];
+  }
+};
+
 export {
   clearLoginInfo,
   allClearPersistStore,
@@ -264,4 +275,5 @@ export {
   formatRelativeTime,
   getCleanHtmlContent,
   getPhoneNumber,
+  asyncFn,
 };
