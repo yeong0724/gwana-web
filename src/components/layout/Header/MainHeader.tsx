@@ -142,6 +142,15 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   useEffect(() => setMenu(menuGroup), [menuGroup]);
 
   /**
+   * 뒤로가기/앞으로가기 감지 시 메뉴 닫기
+   */
+  useEffect(() => {
+    const handlePopState = () => setIsMenuOpen(false);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  /**
    * 스크롤 위치에 따라 헤더 배경색 변경
    */
   useEffect(() => {
