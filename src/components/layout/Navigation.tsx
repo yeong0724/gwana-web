@@ -92,34 +92,34 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
       {/* 오버레이 */}
       <div
         style={{ viewTransitionName: 'navigation-overlay' }}
-        className={`fixed inset-0 bg-gray-800 bg-opacity-5 z-[70] transition-opacity duration-600 ${isMenuOpen ? 'opacity-30 visible' : 'opacity-0 invisible'
+        className={`fixed inset-0 bg-brand-900 z-[70] transition-opacity duration-300 ${isMenuOpen ? 'opacity-30 visible' : 'opacity-0 invisible'
           }`}
       />
 
       {/* 사이드바 메뉴 */}
       <div
         style={{ viewTransitionName: 'navigation-sidebar' }}
-        className={`fixed top-0 left-0 h-full w-[90%] bg-white z-[1000] transform transition-transform duration-600 ease-in-out ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-0 left-0 h-full w-[90%] bg-warm-50 z-[1000] transform transition-transform duration-300 ease-out ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
           } flex flex-col`}
       >
         {/* 사이드바 헤더 */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-brand-200/60 flex-shrink-0">
           {isLoggedIn ? (
             <button
               onClick={moveToMyPage}
-              className="flex items-center hover:bg-gray-100 rounded-md transition-colors cursor-pointer p-2"
-              aria-label="홈으로 이동"
+              className="flex items-center hover:bg-brand-100 rounded-lg transition-colors duration-200 cursor-pointer p-2"
+              aria-label="마이페이지로 이동"
             >
-              <User size={34} className="text-gray-900 mr-4" />
+              <User size={34} className="text-brand-700 mr-4" />
               <div className="flex flex-col items-start">
                 {user.role === RoleEnum.ADMIN ? (
-                  <span className="text-[16px] font-semibold">
-                    {user?.username} <span className="text-[16px] text-gray-500">[관리자]</span>
+                  <span className="text-[16px] font-semibold text-brand-900">
+                    {user?.username} <span className="text-[16px] text-warm-500">[관리자]</span>
                   </span>
                 ) : (
                   <>
-                    <span className="text-[16px] font-semibold">{user?.username} 님</span>
-                    <span className="text-[14px] text-gray-500">{user?.email}</span>
+                    <span className="text-[16px] font-semibold text-brand-900">{user?.username} 님</span>
+                    <span className="text-[14px] text-warm-500">{user?.email}</span>
                   </>
                 )}
               </div>
@@ -127,20 +127,20 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
           ) : (
             <button
               onClick={moveToLoginPage}
-              className="flex items-center hover:bg-gray-100 rounded-md transition-colors cursor-pointer p-2"
-              aria-label="홈으로 이동"
+              className="flex items-center hover:bg-brand-100 rounded-lg transition-colors duration-200 cursor-pointer p-2"
+              aria-label="로그인 페이지로 이동"
             >
-              <span className="text-[18px] font-semibold mr-[2px]">로그인</span>
-              <ChevronRight size={22} className="text-gray-800" />
+              <span className="text-[18px] font-semibold text-brand-800 mr-[2px]">로그인</span>
+              <ChevronRight size={22} className="text-brand-600" />
             </button>
           )}
 
           <button
             onClick={closeSidebar}
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors cursor-pointer"
+            className="p-2 hover:bg-brand-100 rounded-lg transition-colors duration-200 cursor-pointer"
             aria-label="메뉴 닫기"
           >
-            <X size={24} className="text-gray-700" />
+            <X size={24} className="text-warm-600" />
           </button>
         </div>
 
@@ -153,16 +153,16 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
                 const hasCategory = !isEmpty(filteredCategory);
 
                 return (
-                  <div key={menuId} className="border-b border-gray-100 last:border-b-0">
+                  <div key={menuId} className="border-b border-brand-200/40 last:border-b-0">
                     <button
-                      className={`w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer transition-colors ${currentMenu === menuId ? 'transition-colors' : ''}`}
+                      className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer transition-colors duration-200 hover:bg-brand-50"
                       onClick={() => onClickMain(menuId, hasCategory)}
                     >
-                      <span className="text-base font-medium text-gray-900">{menuName}</span>
+                      <span className="text-base font-medium text-brand-800">{menuName}</span>
                       {hasCategory && (
                         <ChevronDown
                           size={20}
-                          className={`text-gray-400 transition-transform duration-600 ${currentMenu === menuId ? 'rotate-180' : ''
+                          className={`text-warm-400 transition-transform duration-300 ${currentMenu === menuId ? 'rotate-180' : ''
                             }`}
                         />
                       )}
@@ -170,13 +170,13 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
                     {/* 서브메뉴 */}
                     {hasCategory && (
                       <div
-                        className={`bg-amber-50/30 overflow-hidden transition-all duration-600 ease-in-out ${currentMenu === menuId ? 'max-h-48' : 'max-h-0'
+                        className={`bg-brand-50/50 overflow-hidden transition-all duration-300 ease-out ${currentMenu === menuId ? 'max-h-48' : 'max-h-0'
                           }`}
                       >
                         {filteredCategory.map((category, subIndex) => (
                           <button
                             key={subIndex}
-                            className="w-full text-left px-8 py-3 text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer bg-gray-100 "
+                            className="w-full text-left px-8 py-3 text-warm-700 hover:bg-brand-100 hover:text-brand-700 transition-colors duration-200 cursor-pointer"
                             onClick={() => onClickCategory(category.menuId)}
                           >
                             {category.menuName}
@@ -189,30 +189,30 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
               })}
             </div>
 
-            {/* 하단 메뉴 - 심플 텍스트 버튼 스타일 */}
+            {/* 하단 메뉴 */}
             <div className="flex-1" />
-            <div className="py-6 px-4 border-t border-gray-200 flex-shrink-0">
+            <div className="py-6 px-4 border-t border-brand-200/60 flex-shrink-0">
               <div className="flex items-center justify-center gap-0 text-sm tracking-wide">
                 <button
                   onClick={moveToHome}
-                  className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium"
+                  className="text-warm-600 hover:text-brand-700 transition-colors duration-200 cursor-pointer font-medium"
                 >
                   Home
                 </button>
 
                 {isLoggedIn && (
                   <>
-                    <span className="text-gray-300 mx-5">|</span>
+                    <span className="text-brand-200 mx-5">|</span>
                     <button
                       onClick={moveToMyPage}
-                      className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium"
+                      className="text-warm-600 hover:text-brand-700 transition-colors duration-200 cursor-pointer font-medium"
                     >
                       마이페이지
                     </button>
-                    <span className="text-gray-300 mx-5">|</span>
+                    <span className="text-brand-200 mx-5">|</span>
                     <button
                       onClick={handleLogout}
-                      className="text-gray-700 hover:text-black transition-colors cursor-pointer font-medium flex items-center gap-1"
+                      className="text-warm-600 hover:text-brand-700 transition-colors duration-200 cursor-pointer font-medium flex items-center gap-1"
                     >
                       <LogOut size={16} />
                       로그아웃

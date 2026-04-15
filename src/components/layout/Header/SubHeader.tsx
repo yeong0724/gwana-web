@@ -46,23 +46,25 @@ const SubHeader = ({ viewTransitionName = 'header' }: Props) => {
 
   return (
     <header
-      className="relative h-[48px] flex items-center justify-center p-4 border-b border-gray-200 w-full flex-shrink-0 bg-white"
+      className="relative h-[48px] flex items-center justify-center p-4 border-b border-brand-200/60 w-full flex-shrink-0 bg-warm-50"
       style={{ viewTransitionName }}
     >
-      <h1 className="text-[16px] sm:text-[19px] md:text-[20px] lg:text-[22px] font-semibold text-gray-900 tracking-widest">
+      <h1 className="text-[16px] sm:text-[19px] md:text-[20px] lg:text-[22px] font-semibold text-brand-900 tracking-wide">
         {title}
       </h1>
       <button
-        className="absolute left-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
+        className="absolute left-4 p-2 hover:bg-brand-100 rounded-lg transition-colors duration-200"
         onClick={goBack}
+        aria-label="뒤로가기"
       >
-        <ChevronLeft size={20} className="text-gray-700 sm:w-6 sm:h-6" />
+        <ChevronLeft size={20} className="text-brand-700 sm:w-6 sm:h-6" />
       </button>
       <button
-        className="absolute right-3 sm:right-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
+        className="absolute right-3 sm:right-4 p-2 hover:bg-brand-100 rounded-lg transition-colors duration-200"
         onClick={goHome}
+        aria-label="홈으로 이동"
       >
-        <Home size={20} className="text-gray-700 sm:w-6 sm:h-6" />
+        <Home size={20} className="text-brand-700 sm:w-6 sm:h-6" />
       </button>
     </header>
   );

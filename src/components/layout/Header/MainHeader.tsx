@@ -127,12 +127,12 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
       case '/':
         return cn(
           'h-[48px] top-0 z-40 absolute left-0 right-0',
-          'bg-gradient-to-b from-white/60 to-white/0'
+          'bg-gradient-to-b from-warm-50/60 to-warm-50/0'
         );
       case '/about':
         return 'h-[58px] top-0 z-40 absolute left-0 right-0 bg-transparent';
       default:
-        return cn('h-[48px] top-0 z-40 relative bg-white border-b border-gray-200');
+        return cn('h-[48px] top-0 z-40 relative bg-warm-50 border-b border-brand-200/60');
     }
   }, [pathname, isScrolled]);
 

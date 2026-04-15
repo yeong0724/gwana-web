@@ -12,50 +12,55 @@ const ProductWebView = () => {
 
   return (
     <>
+      {/* 사이드 네비게이션 */}
       <nav
-        className="block w-80 bg-white fixed top-[60px] overflow-y-auto flex-shrink-0"
-        style={{ height: 'calc(100vh - 80px)' }}
+        className="block w-72 bg-brand-50/60 fixed top-[60px] overflow-y-auto flex-shrink-0 border-r border-brand-200/40"
+        style={{ height: 'calc(100vh - 60px)' }}
       >
-        {/* 네비 헤더 - 스티키 */}
-        <div className="bg-white z-10 px-5 py-7">
-          <h2 className="text-[28px] font-bold text-gray-900">티 제품</h2>
-          <div className="w-[98%] h-px bg-gray-800 mt-3" />
+        <div className="px-6 pt-10 pb-6">
+          <p className="text-[11px] tracking-[0.15em] text-warm-400 uppercase mb-1">
+            collection
+          </p>
+          <h2 className="text-[26px] font-bold text-brand-900 tracking-tight">티 제품</h2>
+          <div className="w-10 h-[2px] bg-brand-700 mt-4" />
         </div>
 
-        {/* 메뉴 리스트 */}
-        <div className="py-[5px]">
+        <div className="px-3 pb-8">
           {productCategory.map(({ menuId, menuName }) => (
-            <div key={menuId} className="mb-1">
-              {/* 2뎁스 메뉴 */}
-              <button
-                onClick={() => onClickCategory(menuId)}
-                className={cn(
-                  'w-full px-5 py-4 transition-all duration-500 cursor-pointer flex items-center justify-between',
-                  'font-bold text-left text-[20px] text-black hover:text-green-800',
-                  'bg-white hover:bg-gray-100',
-                  categoryId === menuId ? 'text-green-800' : 'text-black'
-                )}
-              >
-                <span>{menuName}</span>
-              </button>
-            </div>
+            <button
+              key={menuId}
+              onClick={() => onClickCategory(menuId)}
+              className={cn(
+                'w-full px-4 py-3.5 transition-all duration-300 cursor-pointer text-left text-[15px] tracking-[-0.01em]',
+                categoryId === menuId
+                  ? 'text-brand-900 font-semibold bg-white/70 border-l-2 border-brand-700'
+                  : 'text-brand-400 font-medium hover:text-brand-700 hover:bg-white/40 border-l-2 border-transparent'
+              )}
+            >
+              {menuName}
+            </button>
           ))}
         </div>
       </nav>
-      {/* 메인 컨텐츠 영역 - 나머지 공간 차지 */}
-      <div className="flex-1 px-[15px] pt-[10px] pb-40 min-w-0 ml-80 bg-white">
-        <div className="mb-6">
-          <div className="text-gray-700 pl-[5px] mb-2 text-[15px]">
-            <span className="mr-[10px]">티 제품</span>
-            {`>`}
-            <span className="mx-[10px] font-bold text-[15px]">
+
+      {/* 메인 컨텐츠 영역 */}
+      <div className="flex-1 min-w-0 ml-72 bg-warm-50">
+        {/* 카테고리 헤더 */}
+        <div className="px-8 pt-10 pb-6 border-b border-brand-200/30">
+          <div className="flex items-center gap-2 text-[12px] text-warm-400 tracking-wide mb-3">
+            <span>티 제품</span>
+            <span className="text-brand-200">·</span>
+            <span className="text-brand-600 font-medium">
               {find(productCategory, { menuId: categoryId })?.menuName}
             </span>
           </div>
+          <h1 className="text-[28px] font-bold text-brand-900 tracking-tight">
+            {find(productCategory, { menuId: categoryId })?.menuName}
+          </h1>
         </div>
-        {/* ProductList - 동시 슬라이드 애니메이션 */}
-        <div className="relative overflow-hidden">
-          {/* 들어오는 리스트 (현재 카테고리) */}
+
+        {/* 상품 그리드 */}
+        <div className="relative overflow-hidden px-8 pt-8 pb-40">
           {currentCategory && (
             <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
               <div
@@ -63,8 +68,9 @@ const ProductWebView = () => {
                   'grid grid-cols-2',
                   'lg:grid-cols-3',
                   'xl:grid-cols-4',
-                  'gap-x-4 gap-y-10'
+                  'gap-x-5 gap-y-12'
                 )}
+                style={{ gridTemplateRows: 'repeat(auto-fill, auto auto auto)' }}
               >
                 {map(productList, (product) => (
                   <ProductCard

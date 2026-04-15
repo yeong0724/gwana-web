@@ -1,12 +1,7 @@
 import '@/app/globals.css';
 
 import type { Metadata } from 'next';
-import {
-  Cormorant_Garamond,
-  EB_Garamond,
-  Libre_Baskerville,
-  Playfair_Display,
-} from 'next/font/google';
+import { Playfair_Display } from 'next/font/google';
 import localFont from 'next/font/local';
 
 import { GlobalAlert, GlobalLoading } from '@/components/common/global';
@@ -38,47 +33,19 @@ const pretendard = localFont({
   variable: '--font-pretendard',
 });
 
-// Google Fonts - Serif 폰트들
-const cormorantGaramond = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-cormorant',
-  display: 'swap',
-});
-
+// 브랜드 Serif — 헤드라인, 브랜드 영문 표기용
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-playfair',
   display: 'swap',
 });
 
-const ebGaramond = EB_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-eb-garamond',
-  display: 'swap',
-});
-
-const libreBaskerville = Libre_Baskerville({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-libre-baskerville',
-  display: 'swap',
-});
-
 export default function Layout({ children }: RootLayoutProps) {
-  const fontVariables = [
-    pretendard.variable,
-    cormorantGaramond.variable,
-    playfairDisplay.variable,
-    ebGaramond.variable,
-    libreBaskerville.variable,
-  ].join(' ');
+  const fontVariables = [pretendard.variable, playfairDisplay.variable].join(' ');
 
   return (
-    <html lang="en" className={fontVariables}>
+    <html lang="ko" className={fontVariables}>
       <head>
         <link rel="apple-touch-icon" href="/images/gwana_logo-192x192.webp" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

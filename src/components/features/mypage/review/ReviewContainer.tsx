@@ -226,12 +226,12 @@ const ReviewContainer = ({ productId }: Props) => {
   const starSize = 'w-9 h-9';
 
   return (
-    <div className="bg-white h-[calc(100dvh-56px)] flex flex-col overflow-hidden">
-      <div className="mx-auto w-full flex-1 flex flex-col min-h-0 max-w-[600px] border-x border-gray-100 bg-white">
+    <div className="bg-warm-50 h-[calc(100dvh-56px)] flex flex-col overflow-hidden">
+      <div className="mx-auto w-full flex-1 flex flex-col min-h-0 max-w-[600px] border-x border-brand-100 bg-white">
         {/* 메인 컨텐츠 영역 */}
         <div className="flex-1 min-h-0 overflow-y-auto px-4 py-5">
           {/* 타이틀 */}
-          <h1 className="text-lg font-bold text-gray-900 mb-4">자세한 제품 리뷰를 작성해주세요</h1>
+          <h1 className="text-lg font-bold text-brand-900 mb-4">자세한 제품 리뷰를 작성해주세요</h1>
 
           {/* 별점 입력 영역 */}
           <div className="mb-4">
@@ -248,18 +248,18 @@ const ReviewContainer = ({ productId }: Props) => {
                     onMouseLeave={() => setHoverRating(0)}
                   >
                     {/* 빈 별 (배경) */}
-                    <Star className={`absolute inset-0 fill-gray-200 text-gray-200 ${starSize}`} />
+                    <Star className={`absolute inset-0 fill-brand-200 text-brand-200 ${starSize}`} />
 
                     {/* 반쪽 채워진 별 */}
                     {isHalf && (
                       <div className="absolute inset-0 overflow-hidden" style={{ width: '50%' }}>
-                        <Star className={`fill-[#F9BC36] text-[#F9BC36] ${starSize}`} />
+                        <Star className={`fill-gold-400 text-gold-400 ${starSize}`} />
                       </div>
                     )}
 
                     {/* 전체 채워진 별 */}
                     {isFull && (
-                      <Star className={`absolute inset-0 fill-[#F9BC36] text-[#F9BC36] ${starSize}`} />
+                      <Star className={`absolute inset-0 fill-gold-400 text-gold-400 ${starSize}`} />
                     )}
 
                     {/* 왼쪽 절반 클릭 영역 (0.5점) */}
@@ -289,12 +289,12 @@ const ReviewContainer = ({ productId }: Props) => {
               value={review.content}
               onChange={handleContentChange}
               placeholder="주문하신 제품의 맛과 품질에 대해 자세히 써주시면 더 유용한 리뷰가 돼요."
-              className="min-h-[180px] resize-none border-gray-300 focus:border-[#62A8E4] focus:ring-[#62A8E4]"
+              className="min-h-[180px] resize-none border-brand-300 focus:border-tea-500 focus:ring-tea-500"
               maxLength={MAX_CONTENT_LENGTH}
             />
             {/* 글자 수 표시 */}
             <div className="flex justify-end mt-1.5">
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-warm-400 tabular-nums">
                 ({review.content.length}/{MAX_CONTENT_LENGTH})
               </span>
             </div>
@@ -306,7 +306,7 @@ const ReviewContainer = ({ productId }: Props) => {
             {reviewImages.map((image, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-lg overflow-hidden bg-gray-100"
+                className="relative aspect-square overflow-hidden bg-brand-100"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -330,10 +330,10 @@ const ReviewContainer = ({ productId }: Props) => {
               <button
                 type="button"
                 onClick={handleAddImageClick}
-                className="aspect-square rounded-lg border-2 border-dashed border-[#62A8E4] flex flex-col items-center justify-center gap-1 hover:bg-blue-50 transition-colors"
+                className="aspect-square border-2 border-dashed border-tea-400 flex flex-col items-center justify-center gap-1 hover:bg-tea-50 transition-colors cursor-pointer"
               >
-                <Camera className="w-6 h-6 text-[#62A8E4]" />
-                <span className="text-xs text-[#62A8E4] font-medium">
+                <Camera className="w-6 h-6 text-tea-500" />
+                <span className="text-xs text-tea-600 font-medium tabular-nums">
                   ({reviewImages.length}/{MAX_IMAGES})
                 </span>
               </button>
@@ -352,10 +352,10 @@ const ReviewContainer = ({ productId }: Props) => {
         </div>
 
         {/* 등록하기 버튼 - 하단 고정 */}
-        <div className="flex-shrink-0 bg-white p-4 border-t border-gray-200">
+        <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200">
           <button
             onClick={handleSubmit}
-            className="w-full bg-[#A8BF6A] hover:bg-[#96ad5c] text-white rounded-full py-3 flex items-center justify-center gap-2 transition-colors"
+            className="w-full bg-tea-500 hover:bg-tea-600 text-white rounded-full py-3 flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <span className="text-[15px] font-semibold">등록하기</span>
           </button>

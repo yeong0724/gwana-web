@@ -160,7 +160,7 @@ const ProductDetailMobileView = () => {
           {/* 상품 정보 */}
           <div className="flex-1 flex flex-col">
             {/* 브레드크럼과 공유 아이콘 */}
-            <div className="flex items-center justify-between text-[18px] font-medium text-gray-900 mb-[20px]">
+            <div className="flex items-center justify-between text-[18px] font-medium text-brand-900 mb-[20px]">
               <div>
                 <span>티 제품</span>
                 <span className="mx-2">{'>'}</span>
@@ -168,10 +168,10 @@ const ProductDetailMobileView = () => {
               </div>
               <button
                 onClick={handleShare}
-                className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                 aria-label="공유하기"
               >
-                <Share2 size={18} className="text-gray-400" />
+                <Share2 size={18} className="text-warm-400" />
               </button>
             </div>
 
@@ -179,16 +179,16 @@ const ProductDetailMobileView = () => {
             <h1 className="text-[20px] font-sans mb-[10px] break-keep">{product.productName}</h1>
 
             {/* 가격 */}
-            <div className="text-[15px] text-gray-600 font-normal mb-6">
+            <div className="text-[15px] text-warm-600 font-normal mb-6">
               {localeFormat(product.price)}원
             </div>
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">
-              <div className="text-[14px] text-gray-700">
+              <div className="text-[14px] text-warm-700">
                 <span>배송비</span>
                 <span className="ml-2">
-                  <span className="text-gray-700">
+                  <span className="text-warm-700">
                     {product.shippingPrice ? (
                       `${localeFormat(product.shippingPrice)}원`
                     ) : (
@@ -197,7 +197,7 @@ const ProductDetailMobileView = () => {
                   </span>
                 </span>
               </div>
-              <p className="text-[12px] text-gray-400 mt-2">
+              <p className="text-[12px] text-warm-400 mt-2">
                 50,000원 이상 구매 시 무료 / 제주도 지역은 배송비 4,000원이 추가되어 부과됩니다.
               </p>
             </div>
@@ -206,12 +206,12 @@ const ProductDetailMobileView = () => {
       </div>
 
       {/* 탭 네비게이션 */}
-      <div className="sticky top-[48px] z-10 bg-white">
+      <div className="sticky top-[48px] z-10 bg-warm-50">
         <div className="flex items-center justify-center">
           <button
             onClick={() => handleTabClick('detail')}
             className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${
-              activeTab === 'detail' ? 'text-black' : 'text-gray-400'
+              activeTab === 'detail' ? 'text-black' : 'text-warm-400'
             }`}
           >
             상세 설명
@@ -219,7 +219,7 @@ const ProductDetailMobileView = () => {
           <button
             onClick={() => handleTabClick('review')}
             className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${
-              activeTab === 'review' ? 'text-black' : 'text-gray-400'
+              activeTab === 'review' ? 'text-black' : 'text-warm-400'
             }`}
           >
             후기 ({totalReviewCount})
@@ -227,7 +227,7 @@ const ProductDetailMobileView = () => {
           <button
             onClick={() => handleTabClick('qna')}
             className={`flex-1 py-4 text-center text-[15px] font-medium transition-colors ${
-              activeTab === 'qna' ? 'text-black' : 'text-gray-400'
+              activeTab === 'qna' ? 'text-black' : 'text-warm-400'
             }`}
           >
             Q&A
@@ -236,7 +236,7 @@ const ProductDetailMobileView = () => {
         {/* 탭 밑줄 인디케이터 */}
         <div className="relative h-[2px] bg-gray-200">
           <div
-            className="absolute h-full bg-black transition-all duration-300"
+            className="absolute h-full bg-brand-900 transition-all duration-300"
             style={{
               width: '33.333%',
               left: activeTab === 'detail' ? '0%' : activeTab === 'review' ? '33.333%' : '66.666%',
@@ -251,15 +251,15 @@ const ProductDetailMobileView = () => {
         <div className="relative flex items-center justify-center mb-15">
           {/* 양쪽 라인 */}
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-400" />
+            <div className="w-full border-t border-brand-300" />
           </div>
 
           {/* 타이틀 영역 */}
-          <div className="relative bg-white px-8">
+          <div className="relative bg-warm-50 px-8">
             <div className="flex flex-col items-center">
-              <span className="text-[10px] tracking-[0.3em] text-gray-400 mb-1">PRODUCT</span>
-              <h2 className="text-2xl font-light tracking-[0.2em] text-gray-900">DETAIL</h2>
-              <div className="mt-3 w-8 h-[2px] bg-teal-600" />
+              <span className="text-[10px] tracking-[0.3em] text-warm-400 mb-1">PRODUCT</span>
+              <h2 className="text-2xl font-light tracking-[0.2em] text-brand-900">DETAIL</h2>
+              <div className="mt-3 w-8 h-[2px] bg-tea-500" />
             </div>
           </div>
         </div>
@@ -303,15 +303,15 @@ const ProductDetailMobileView = () => {
                   handleTabClick('detail');
                 }
               }}
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-warm-50 border border-brand-200 rounded-full shadow-sm hover:bg-brand-50 transition-colors"
             >
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-warm-700">
                 {isDetailExpanded ? '상세 정보 접기' : '상세 정보 더보기'}
               </span>
               {isDetailExpanded ? (
-                <ChevronUp size={18} className="text-gray-500" />
+                <ChevronUp size={18} className="text-warm-500" />
               ) : (
-                <ChevronDown size={18} className="text-gray-500" />
+                <ChevronDown size={18} className="text-warm-500" />
               )}
             </button>
           </div>
@@ -319,16 +319,16 @@ const ProductDetailMobileView = () => {
       </div>
 
       {/* 섹션 구분라인 */}
-      <div className="h-2 bg-gray-100" />
+      <div className="h-2 bg-brand-100" />
 
       {/* 리뷰 섹션 */}
       <div ref={reviewSectionRef} className="max-w-[800px] py-6 px-5">
         {/* 리뷰 타이틀 */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[18px] font-medium text-gray-800">후기</h3>
+          <h3 className="text-[18px] font-medium text-brand-800">후기</h3>
         </div>
 
-        <div className="border-t border-gray-200" />
+        <div className="border-t border-brand-200/60" />
 
         {/* 리뷰 목록 */}
         {!isEmpty(reviewList) ? (
@@ -352,27 +352,27 @@ const ProductDetailMobileView = () => {
                                   className="absolute inset-0 overflow-hidden"
                                   style={{ width: '50%' }}
                                 >
-                                  <Star className="w-4 h-4 fill-[#F9BC36] text-[#F9BC36]" />
+                                  <Star className="w-4 h-4 fill-gold-400 text-gold-400" />
                                 </div>
                               )}
                               {isFull && (
-                                <Star className="absolute inset-0 w-4 h-4 fill-[#F9BC36] text-[#F9BC36]" />
+                                <Star className="absolute inset-0 w-4 h-4 fill-gold-400 text-gold-400" />
                               )}
                             </div>
                           );
                         })}
                       </div>
                       <div className="flex items-center">
-                        <span className="text-[13px] text-gray-500">{review.email}</span>
-                        <span className="text-[12px] text-gray-400 mx-[4px]">|</span>
-                        <span className="text-[12px] text-gray-400">
+                        <span className="text-[13px] text-warm-500">{review.email}</span>
+                        <span className="text-[12px] text-warm-400 mx-[4px]">|</span>
+                        <span className="text-[12px] text-warm-400">
                           {formatDate(review?.createdAt, 'yyyy.MM.dd')}
                         </span>
                       </div>
                     </div>
 
                     {/* 리뷰 내용 */}
-                    <p className="text-sm text-gray-700 mb-8 whitespace-pre-wrap">
+                    <p className="text-sm text-warm-700 mb-8 whitespace-pre-wrap">
                       {review.content}
                     </p>
 
@@ -382,7 +382,7 @@ const ProductDetailMobileView = () => {
                         {review.reviewImages.map((image, idx) => (
                           <div
                             key={idx}
-                            className="relative w-30 h-30 flex-shrink-0 cursor-pointer border border-gray-200 rounded-xs"
+                            className="relative w-30 h-30 flex-shrink-0 cursor-pointer border border-brand-200/60 rounded-xs"
                             onClick={() => handleImageModalOpen(review.reviewImages!, idx)}
                           >
                             <Image
@@ -397,7 +397,7 @@ const ProductDetailMobileView = () => {
                       </div>
                     )}
                   </div>
-                  {index !== reviewList.length - 1 && <div className="border-t border-gray-200" />}
+                  {index !== reviewList.length - 1 && <div className="border-t border-brand-200/60" />}
                 </Fragment>
               );
             })}
@@ -408,9 +408,9 @@ const ProductDetailMobileView = () => {
                 <button
                   className={cn(
                     'px-6 py-2',
-                    'text-sm font-medium text-[#A8BF6A]',
-                    'border border-[#A8BF6A] rounded-md',
-                    'active:bg-[#A8BF6A]/10'
+                    'text-sm font-medium text-tea-500',
+                    'border border-tea-500 rounded-md',
+                    'active:bg-tea-500/10'
                   )}
                   onClick={handleReviewOpen}
                 >
@@ -421,35 +421,35 @@ const ProductDetailMobileView = () => {
           </>
         ) : (
           <div className="py-12 text-center min-h-[250px] flex items-center justify-center">
-            <p className="text-gray-400">작성된 후기가 없습니다.</p>
+            <p className="text-warm-400">작성된 후기가 없습니다.</p>
           </div>
         )}
       </div>
 
       {/* 섹션 구분라인 */}
-      <div className="h-2 bg-gray-100" />
+      <div className="h-2 bg-brand-100" />
 
       {/* Q&A 섹션 */}
       <div ref={qnaSectionRef} className="max-w-[800px] pt-6 px-5 mb-[100px]">
         {/* 질문 타이틀 */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[18px] font-medium text-gray-800">질문</h3>
+          <h3 className="text-[18px] font-medium text-brand-800">질문</h3>
           <button
-            className="mr-1 text-[15px] text-gray-500 active:text-gray-700"
+            className="mr-1 text-[15px] text-warm-500 active:text-warm-700"
             onClick={moveToInquiryWritePage}
           >
             문의하기
           </button>
         </div>
 
-        <div className="border-t border-gray-200" />
+        <div className="border-t border-brand-200/60" />
 
         {/* Q&A 목록 - 현재는 빈 상태 UI만 */}
         <div className="py-12 text-center min-h-[250px] flex items-center justify-center">
-          <p className="text-gray-400">작성된 질문이 없습니다.</p>
+          <p className="text-warm-400">작성된 질문이 없습니다.</p>
         </div>
 
-        <div className="border-t border-gray-200" />
+        <div className="border-t border-brand-200/60" />
 
         {/* 질문 쓰기 버튼 */}
         {role !== RoleEnum.ADMIN && (
@@ -457,9 +457,9 @@ const ProductDetailMobileView = () => {
             <button
               className={cn(
                 'px-6 py-2',
-                'text-sm font-medium text-[#A8BF6A]',
-                'border border-[#A8BF6A] rounded-md',
-                'active:bg-[#A8BF6A]/10'
+                'text-sm font-medium text-tea-500',
+                'border border-tea-500 rounded-md',
+                'active:bg-tea-500/10'
               )}
             >
               문의 더보기
@@ -478,9 +478,9 @@ const ProductDetailMobileView = () => {
             {/* 메인 패널 */}
             <div
               className={cn(
-                'bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] overflow-hidden',
+                'bg-warm-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] overflow-hidden',
                 'transition-all duration-300 ease-in-out ',
-                `${isBottomPanelOpen ? 'rounded-t-2xl border-t border-gray-400' : ''}`
+                `${isBottomPanelOpen ? 'rounded-t-2xl border-t border-brand-300' : ''}`
               )}
             >
               {/* 확장 패널: 구매수량 + 상품금액 합계 (옵션 없는 경우) */}
@@ -494,13 +494,13 @@ const ProductDetailMobileView = () => {
                   onClick={() => setIsBottomPanelOpen(false)}
                   className="w-full flex items-center justify-center py-2"
                 >
-                  <ChevronDown size={24} className="text-gray-400" />
+                  <ChevronDown size={24} className="text-warm-400" />
                 </button>
                 <div className="px-4 pb-4 space-y-4">
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {size(requiredOptions) > 1 && (
                     <>
-                      <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-0.5 mb-1.5 inline-block">옵션선택 <span className="text-rose-500 text-[11px] font-medium align-middle">필수</span></span>
+                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">옵션선택 <span className="text-rose-500 text-[11px] font-medium align-middle">필수</span></span>
                       <OptionDropdown
                         options={requiredOptions}
                         onOptionSelect={onOptionSelect}
@@ -511,7 +511,7 @@ const ProductDetailMobileView = () => {
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {!isEmpty(optionalOptions) && (
                     <>
-                      <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-0.5 mb-1.5 inline-block">추가상품 <span className="text-gray-400 text-[11px] font-normal align-middle">선택</span></span>
+                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">추가상품 <span className="text-warm-400 text-[11px] font-normal align-middle">선택</span></span>
                       <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
                     </>
                   )}
@@ -526,11 +526,11 @@ const ProductDetailMobileView = () => {
                         ) => (
                           <div
                             key={`${productOptionId}-${index}`}
-                            className="border border-gray-200 rounded-md p-4 space-y-3"
+                            className="border border-brand-200/60 rounded-md p-4 space-y-3"
                           >
                             <div className="flex items-start justify-between">
                               <>
-                                <span className="text-sm font-medium text-gray-800">
+                                <span className="text-sm font-medium text-brand-800">
                                   {optionName}
                                 </span>
                                 {(size(requiredOptions) > 1 || !isRequired) && (
@@ -541,7 +541,7 @@ const ProductDetailMobileView = () => {
                                       updatedCart.splice(index, 1);
                                       setPurchaseList(updatedCart);
                                     }}
-                                    className="text-gray-400 hover:text-gray-600"
+                                    className="text-warm-400 hover:text-warm-600"
                                   >
                                     <X size={20} strokeWidth={1.5} />
                                   </button>
@@ -549,7 +549,7 @@ const ProductDetailMobileView = () => {
                               </>
                             </div>
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center border border-gray-300 rounded">
+                              <div className="flex items-center border border-brand-200 rounded">
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -583,7 +583,7 @@ const ProductDetailMobileView = () => {
 
                   {/* 상품금액 합계 */}
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-sm font-medium text-gray-700">상품 금액 합계</span>
+                    <span className="text-sm font-medium text-warm-700">상품 금액 합계</span>
                     <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
                   </div>
                 </div>
@@ -592,13 +592,13 @@ const ProductDetailMobileView = () => {
               <div className="flex">
                 <Button
                   onClick={onCartMobileHandler}
-                  className="flex-[0_0_35%] h-14 text-base bg-black text-white hover:bg-gray-800 rounded-none cursor-pointer"
+                  className="flex-[0_0_35%] h-14 text-base bg-brand-900 text-white hover:bg-brand-800 rounded-none cursor-pointer"
                 >
                   장바구니
                 </Button>
                 <Button
                   onClick={onPurchaseMobileHandler}
-                  className="flex-[0_0_65%] h-14 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none cursor-pointer"
+                  className="flex-[0_0_65%] h-14 text-base bg-tea-500 text-white hover:bg-tea-600 rounded-none cursor-pointer"
                 >
                   구매하기
                 </Button>
