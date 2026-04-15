@@ -8,62 +8,63 @@ const Footer = () => {
 
   return (
     <footer
-      className={`relative z-[60] w-full bg-[#F9F9F9] border-t border-gray-200 min-h-[200px] py-4 ${isProductDetail ? 'pb-18' : ''}`}
+      className={`relative z-[60] w-full bg-brand-50 border-t border-brand-200/60 min-h-[200px] py-8 ${isProductDetail ? 'pb-18' : ''}`}
     >
       <div className="mx-auto px-6 max-w-7xl">
-        <div className="hidden md:flex flex-col space-y-4 text-sm text-gray-700">
-          {/* 첫 번째 줄: 사업자 정보 */}
-          <div className="flex flex-wrap flex-col items-center gap-2 leading-relaxed text-[15px]">
+        {/* 웹 뷰 */}
+        <address className="hidden md:flex flex-col space-y-4 text-sm text-warm-700 not-italic">
+          <div className="flex flex-wrap flex-col items-center gap-2.5 leading-relaxed text-[15px]">
             <div>
-              <span className="font-bold mr-[5px]">상호명: 관아수제차</span>
-              <span>(TEL: 0507-1462-8041)</span>
+              <span className="font-semibold text-brand-800 mr-1.5">상호명: 관아수제차</span>
+              <span className="text-warm-500">(TEL: 0507-1462-8041)</span>
             </div>
             <div>
-              <span className="font-bold mr-[5px]">대표자: 김정옥</span>
-              <span>(mobile: 010-5334-7785 / E-mail: rud0243@naver.com)</span>
+              <span className="font-semibold text-brand-800 mr-1.5">대표자: 김정옥</span>
+              <span className="text-warm-500">(mobile: 010-5334-7785 / E-mail: rud0243@naver.com)</span>
             </div>
             <div>
-              <span className="font-bold">
+              <span className="font-semibold text-brand-800">
                 주소: 경남 하동군 화개면 목압길 24-2 (1층 관아수제차)
               </span>
             </div>
             <div>
-              <span className="font-bold">사업자등록번호: 613-19-89889</span>
+              <span className="font-semibold text-brand-800">사업자등록번호: 613-19-89889</span>
             </div>
-            <div>
-              <span className="text-gray-500">
-                Copyright © Gwana Tea House. All rights reserved.
+            <div className="mt-2">
+              <span className="text-warm-400 text-[13px]">
+                Copyright &copy; Gwana Tea House. All rights reserved.
               </span>
             </div>
           </div>
-        </div>
-        <div className="md:hidden flex flex-col space-y-4 text-gray-700">
-          {/* 첫 번째 줄: 사업자 정보 */}
-          <div className="flex flex-wrap flex-col items-center gap-2 leading-relaxed text-[12px]">
+        </address>
+
+        {/* 모바일 뷰 */}
+        <address className="md:hidden flex flex-col space-y-4 text-warm-700 not-italic">
+          <div className="flex flex-wrap flex-col items-center gap-2 leading-relaxed text-[13px]">
             <div className="flex items-center">
-              <span className="font-bold">상호명: 관아수제차</span>
-              <span className="mx-[5px]">|</span>
-              <span className="font-bold">대표자: 김정옥 (010-5334-7785)</span>
+              <span className="font-semibold text-brand-800">상호명: 관아수제차</span>
+              <span className="mx-1.5 text-brand-200">|</span>
+              <span className="font-semibold text-brand-800">대표자: 김정옥 (010-5334-7785)</span>
             </div>
             <div className="flex items-center">
-              <span className="font-bold">E-mail: rud0243@naver.com</span>
-              <span className="mx-[5px]">|</span>
-              <span className="font-bold">TEL: 0507-1462-8041</span>
+              <span className="font-medium text-warm-600">E-mail: rud0243@naver.com</span>
+              <span className="mx-1.5 text-brand-200">|</span>
+              <span className="font-medium text-warm-600">TEL: 0507-1462-8041</span>
             </div>
             <div>
-              <span className="font-bold">
+              <span className="font-medium text-warm-600">
                 주소: 경남 하동군 화개면 목압길 24-2 (1층 관아수제차)
               </span>
             </div>
             <div>
-              <span className="font-bold">사업자등록번호: 613-19-89889</span>
+              <span className="font-medium text-warm-600">사업자등록번호: 613-19-89889</span>
             </div>
-            <div className="flex flex-col items-center">
-              <span className="text-gray-500">Copyright © Gwana Tea House.</span>
-              <span className="text-gray-500">All rights reserved.</span>
+            <div className="flex flex-col items-center mt-2">
+              <span className="text-warm-400 text-[12px]">Copyright &copy; Gwana Tea House.</span>
+              <span className="text-warm-400 text-[12px]">All rights reserved.</span>
             </div>
           </div>
-        </div>
+        </address>
       </div>
     </footer>
   );

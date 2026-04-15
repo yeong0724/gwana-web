@@ -82,9 +82,9 @@ const ProductDetailWebView = () => {
                   {/* 페이지 인디케이터 - 캐러셀 안쪽 하단 */}
                   {product.images.length > 1 && (
                     <div className="absolute bottom-4 left-4 right-4 flex justify-center">
-                      <div className="w-3/4 relative h-[3px] bg-black/30 overflow-hidden">
+                      <div className="w-3/4 relative h-[3px] bg-brand-900/30 overflow-hidden">
                         <div
-                          className="absolute left-0 h-full bg-black transition-all duration-300 ease-out"
+                          className="absolute left-0 h-full bg-brand-900 transition-all duration-300 ease-out"
                           style={{
                             width: `${((current + 1) / product.images.length) * 100}%`,
                           }}
@@ -104,7 +104,7 @@ const ProductDetailWebView = () => {
           {/* 우측: 상품 정보 */}
           <div className="flex-[0_0_50%] px-5 flex flex-col">
             {/* 브레드크럼과 공유 아이콘 */}
-            <div className="flex items-center justify-between text-[18px] font-medium text-gray-400 mb-[24px]">
+            <div className="flex items-center justify-between text-[18px] font-medium text-warm-400 mb-[24px]">
               <div>
                 <span>티 제품</span>
                 <span className="mx-2">{'>'}</span>
@@ -112,10 +112,10 @@ const ProductDetailWebView = () => {
               </div>
               <button
                 onClick={handleShare}
-                className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-100 hover:bg-brand-200 flex items-center justify-center transition-colors"
                 aria-label="공유하기"
               >
-                <Share2 size={18} className="text-gray-400" />
+                <Share2 size={18} className="text-warm-400" />
               </button>
             </div>
 
@@ -127,10 +127,10 @@ const ProductDetailWebView = () => {
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">
-              <div className="text-[14px] text-gray-400">
+              <div className="text-[14px] text-warm-400">
                 <span>배송비</span>
                 <span className="ml-2">
-                  <span className="text-gray-900">
+                  <span className="text-brand-900">
                     {product.shippingPrice ? (
                       `${localeFormat(product.shippingPrice)}원`
                     ) : (
@@ -139,7 +139,7 @@ const ProductDetailWebView = () => {
                   </span>
                 </span>
               </div>
-              <p className="text-[12px] text-gray-400 mt-2">
+              <p className="text-[12px] text-warm-400 mt-2">
                 50,000원 이상 구매 시 무료 / 제주도 지역은 배송비 4,000원이 추가되어 부과됩니다.
               </p>
             </div>
@@ -147,7 +147,7 @@ const ProductDetailWebView = () => {
             {/* 옵션 선택 - 커스텀 드롭다운 */}
             {size(requiredOptions) > 1 && (
               <div className="mb-4">
-                <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-1 mb-1.5 inline-block">
+                <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-1 mb-1.5 inline-block">
                   옵션선택{' '}
                   <span className="text-rose-500 text-[11px] font-medium align-middle">필수</span>
                 </span>
@@ -162,9 +162,9 @@ const ProductDetailWebView = () => {
             {/* 옵션 선택 - 커스텀 드롭다운 */}
             {!isEmpty(optionalOptions) && (
               <div className="mb-4">
-                <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-1 mb-1.5 inline-block">
+                <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-1 mb-1.5 inline-block">
                   추가상품{' '}
-                  <span className="text-gray-400 text-[11px] font-normal align-middle">선택</span>
+                  <span className="text-warm-400 text-[11px] font-normal align-middle">선택</span>
                 </span>
                 <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
               </div>
@@ -178,11 +178,11 @@ const ProductDetailWebView = () => {
                   ({ productOptionId, optionName, quantity, optionPrice, isRequired }, index) => (
                     <div
                       key={`${productOptionId}-${index}`}
-                      className="border border-gray-200 bg-gray-50 p-4 space-y-3"
+                      className="border border-brand-200/60 bg-brand-50 p-4 space-y-3"
                     >
                       {/* 이름 + X버튼 */}
                       <div className="flex items-start justify-between">
-                        <span className="text-sm font-medium text-gray-800">{optionName}</span>
+                        <span className="text-sm font-medium text-brand-800">{optionName}</span>
                         {(size(requiredOptions) > 1 || !isRequired) && (
                           <button
                             type="button"
@@ -191,7 +191,7 @@ const ProductDetailWebView = () => {
                               updatedCart.splice(index, 1);
                               setPurchaseList(updatedCart);
                             }}
-                            className="text-gray-400 hover:text-gray-600"
+                            className="text-warm-400 hover:text-warm-600"
                           >
                             <X size={20} strokeWidth={1.5} />
                           </button>
@@ -205,18 +205,18 @@ const ProductDetailWebView = () => {
                             size="icon"
                             onClick={() => handleQuantityChange(index, quantity - 1)}
                             disabled={quantity <= 1}
-                            className="h-8 w-8 rounded-none border-r-0 cursor-pointer text-lg bg-white"
+                            className="h-8 w-8 rounded-none border-r-0 cursor-pointer text-lg bg-warm-50"
                           >
                             -
                           </Button>
-                          <div className="w-12 text-center h-8 rounded-none border-x border-y border-gray-300 text-[14px] bg-white flex items-center justify-center select-none">
+                          <div className="w-12 text-center h-8 rounded-none border-x border-y border-brand-200 text-[14px] bg-warm-50 flex items-center justify-center select-none">
                             {quantity}
                           </div>
                           <Button
                             variant="outline"
                             size="icon"
                             onClick={() => handleQuantityChange(index, quantity + 1)}
-                            className="h-8 w-8 rounded-none border-l-0 cursor-pointer text-lg bg-white"
+                            className="h-8 w-8 rounded-none border-l-0 cursor-pointer text-lg bg-warm-50"
                           >
                             +
                           </Button>
@@ -233,7 +233,7 @@ const ProductDetailWebView = () => {
 
             {/* 상품금액 합계 */}
             <div className="flex items-center justify-between py-4 mb-6">
-              <span className="text-base font-medium text-gray-700">상품금액 합계</span>
+              <span className="text-base font-medium text-warm-700">상품금액 합계</span>
               <span className="text-2xl font-bold">{localeFormat(totalPrice)}원</span>
             </div>
 
@@ -241,13 +241,13 @@ const ProductDetailWebView = () => {
             <div className="flex">
               <Button
                 onClick={handleAddToCart}
-                className="flex-[0_0_35%] h-12 text-base bg-black text-white hover:bg-gray-800 rounded-none rounded-l-none cursor-pointer"
+                className="flex-[0_0_35%] h-12 text-base bg-brand-900 text-white hover:bg-brand-800 rounded-none rounded-l-none cursor-pointer"
               >
                 장바구니
               </Button>
               <Button
                 onClick={handlePurchase}
-                className="flex-[0_0_65%] h-12 text-base bg-teal-600 text-white hover:bg-teal-700 rounded-none rounded-r-none cursor-pointer"
+                className="flex-[0_0_65%] h-12 text-base bg-tea-500 text-white hover:bg-tea-600 rounded-none rounded-r-none cursor-pointer"
               >
                 구매하기
               </Button>
@@ -262,15 +262,15 @@ const ProductDetailWebView = () => {
         <div className="relative flex items-center justify-center mb-12">
           {/* 양쪽 라인 */}
           <div className="absolute inset-0 flex items-center px-8">
-            <div className="w-full border-t border-gray-400" />
+            <div className="w-full border-t border-brand-300" />
           </div>
 
           {/* 타이틀 영역 */}
-          <div className="relative bg-white px-8">
+          <div className="relative bg-warm-50 px-8">
             <div className="flex flex-col items-center">
-              <span className="text-[10px] tracking-[0.3em] text-gray-400 mb-1">PRODUCT</span>
-              <h2 className="text-3xl font-light tracking-[0.2em] text-gray-900">DETAIL</h2>
-              <div className="mt-3 w-8 h-[2px] bg-teal-600" />
+              <span className="text-[10px] tracking-[0.3em] text-warm-400 mb-1">PRODUCT</span>
+              <h2 className="text-3xl font-light tracking-[0.2em] text-brand-900">DETAIL</h2>
+              <div className="mt-3 w-8 h-[2px] bg-tea-500" />
             </div>
           </div>
         </div>

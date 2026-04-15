@@ -109,7 +109,7 @@ const MainContainer = () => {
       </div>
 
       {/* Mobile View Main Page */}
-      <div className="md:hidden relative w-full bg-gray-50 overflow-hidden">
+      <div className="md:hidden relative w-full bg-brand-50 overflow-hidden">
         <Carousel
           setApi={setApi}
           opts={{
@@ -142,12 +142,14 @@ const MainContainer = () => {
               <button
                 onClick={() => api?.scrollPrev()}
                 className="absolute left-3 top-1/2 -translate-y-1/2 z-20"
+                aria-label="이전 영상"
               >
                 <ChevronLeft className="h-8 w-8 text-white stroke-[3] drop-shadow-[0_0_2px_rgba(0,0,0,0.8)]" />
               </button>
               <button
                 onClick={() => api?.scrollNext()}
                 className="absolute right-3 top-1/2 -translate-y-1/2 z-20"
+                aria-label="다음 영상"
               >
                 <ChevronRight className="h-8 w-8 text-white stroke-[3] drop-shadow-[0_0_2px_rgba(0,0,0,0.8)]" />
               </button>
@@ -158,7 +160,8 @@ const MainContainer = () => {
           {currentVideoHasSound && (
             <button
               onClick={() => setIsSoundOn(!isSoundOn)}
-              className="absolute bottom-3 right-3 h-10 w-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 z-20 transition-colors"
+              className="absolute bottom-3 right-3 h-10 w-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 z-20 transition-colors duration-200"
+              aria-label={isSoundOn ? '음소거' : '소리 켜기'}
             >
               {isSoundOn ? (
                 <Volume2 className="h-5 w-5 text-white" />
@@ -184,26 +187,26 @@ const MainContainer = () => {
         </Carousel>
 
         {/* 인기상품 섹션 */}
-        <div className="bg-white px-4 pt-25">
+        <div className="bg-white px-4 pt-20">
           {/* 타이틀 */}
-          <h2 className="text-[25px] font-bold text-gray-700 mb-12 tracking-wider flex items-center justify-center">
+          <h2 className="text-[25px] font-bold text-brand-800 mb-12 flex items-center justify-center">
             <span>관아수제차 인기 상품</span>
           </h2>
 
           {/* 탭 & 전체보기 */}
           <div className="flex justify-between items-center mb-5">
-            <div className="flex items-center gap-1 text-[13px] text-gray-500">
+            <div className="flex items-center gap-1 text-[13px] text-warm-500">
               <button
                 onClick={() => setRankingTab('realtime')}
-                className={`flex items-center gap-0.5 ${rankingTab === 'realtime' ? 'text-gray-900 font-semibold' : 'text-gray-400'}`}
+                className={`flex items-center gap-0.5 ${rankingTab === 'realtime' ? 'text-brand-800 font-semibold' : 'text-warm-400'}`}
               >
                 {rankingTab === 'realtime' && <Check className="w-3.5 h-3.5" />}
                 실시간
               </button>
-              <span className="text-gray-300 mx-1">|</span>
+              <span className="text-brand-200 mx-1">|</span>
               <button
                 onClick={() => setRankingTab('monthly')}
-                className={`flex items-center gap-0.5 ${rankingTab === 'monthly' ? 'text-gray-900 font-semibold' : 'text-gray-400'}`}
+                className={`flex items-center gap-0.5 ${rankingTab === 'monthly' ? 'text-brand-800 font-semibold' : 'text-warm-400'}`}
               >
                 {rankingTab === 'monthly' && <Check className="w-3.5 h-3.5" />}
                 월간
@@ -211,10 +214,10 @@ const MainContainer = () => {
             </div>
             <button
               onClick={onClickViewAll}
-              className="flex items-center text-[12px] text-gray-400 font-medium gap-[4px]"
+              className="flex items-center text-[12px] text-warm-400 font-medium gap-[4px]"
             >
               전체보기
-              <ArrowRight className="w-3.5 h-3.5 text-amber-700" />
+              <ArrowRight className="w-3.5 h-3.5 text-brand-500" />
             </button>
           </div>
 
@@ -231,7 +234,7 @@ const MainContainer = () => {
         </div>
 
         <div className="bg-white px-4 pt-20 pb-30">
-          <h2 className="text-[25px] font-bold text-gray-700 mb-12 tracking-wider flex items-center justify-center">
+          <h2 className="text-[25px] font-bold text-brand-800 mb-12 flex items-center justify-center">
             <span>대용차 (논카페인)</span>
           </h2>
           <div className="grid grid-cols-2 gap-x-[25px] gap-y-10">

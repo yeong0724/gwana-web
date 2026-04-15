@@ -87,7 +87,7 @@ const MainLayout = ({ children }: Props) => {
   }, []);
 
   return isNoMainHeaderPage ? (
-    <div className="h-dvh  flex flex-col relative overflow-hidden bg-white">
+    <div className="h-dvh flex flex-col relative overflow-hidden bg-warm-50">
       <SubHeader />
       {children}
     </div>

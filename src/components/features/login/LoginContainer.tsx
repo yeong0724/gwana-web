@@ -26,7 +26,7 @@ const LoginContainer = () => {
   return (
     <>
       {/* 메인 컨텐츠 */}
-      <div className="flex bg-white flex-col items-center px-6 w-full max-w-[500px] mx-auto flex-1 overflow-hidden border-x border-gray-100">
+      <div className="flex bg-warm-50 flex-col items-center px-6 w-full max-w-[500px] mx-auto flex-1 overflow-hidden border-x border-brand-100">
         {/* 로고 */}
         <div className="mt-20 flex-shrink-0">
           <Image
@@ -42,8 +42,8 @@ const LoginContainer = () => {
         <div className="w-full mt-auto mb-6 sm:mb-8 md:mb-10 flex-shrink-0">
           {/* 안내 문구 */}
           <div className="text-center mb-6 sm:mb-6">
-            <p className="text-sm sm:text-base text-gray-700">간편하게 로그인하고</p>
-            <p className="text-sm sm:text-base text-gray-700 font-semibold">
+            <p className="text-sm sm:text-base text-warm-500">간편하게 로그인하고</p>
+            <p className="text-sm sm:text-base text-brand-800 font-semibold">
               다양한 혜택을 받아보세요!
             </p>
           </div>
@@ -53,7 +53,7 @@ const LoginContainer = () => {
             {/* 카카오 로그인 */}
             <button
               onClick={onKakaoLogin}
-              className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#FEE500] hover:bg-[#FDD835] text-gray-900 border border-gray-300"
+              className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#FEE500] hover:bg-[#FDD835] text-brand-900 border border-brand-200 active:scale-[0.98] cursor-pointer"
             >
               <Image
                 src={`${AWS_S3_DOMAIN}images/socialLoginLogo/kakao_logo.webp`}
@@ -68,7 +68,7 @@ const LoginContainer = () => {
             {/* 네이버 로그인 */}
             <button
               onClick={onNaverLogin}
-              className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#03C75A] hover:bg-[#02B350] text-white border border-gray-300"
+              className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#03C75A] hover:bg-[#02B350] text-white border border-brand-200 active:scale-[0.98] cursor-pointer"
             >
               <Image
                 src={`${AWS_S3_DOMAIN}images/socialLoginLogo/naver_logo.png`}
@@ -83,7 +83,7 @@ const LoginContainer = () => {
             {/* 구글 로그인 */}
             {/* <button
               onClick={onGoogleLogin}
-              className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-white hover:bg-gray-50 text-gray-900 border border-gray-300"
+              className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-white hover:bg-brand-50 text-brand-900 border border-brand-200 active:scale-[0.98] cursor-pointer"
             >
               <Image
                 src="/images/chrome_logo.webp"

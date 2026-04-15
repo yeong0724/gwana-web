@@ -141,7 +141,7 @@ const ProductContainer = ({ categoryId }: Props) => {
       }}
       controller={{ onClickCategory, onClickProduct }}
     >
-      <div className="flex min-h-screen bg-gray-50 max-w-[1800px] mx-auto">
+      <div className="flex min-h-screen bg-warm-50 max-w-[1800px] mx-auto">
         <ResponsiveFrame
           mobileComponent={<ProductMobileView />}
           webComponent={<ProductWebView />}

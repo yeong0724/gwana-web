@@ -16,11 +16,12 @@ const ProductMobileView = () => {
   const { onClickCategory, onClickProduct } = useControllerContext();
 
   return (
-    <div className="flex-1 px-[15px] pb-40 min-w-0 lg:ml-80 bg-white">
-      <div className="sticky top-[48px] -mx-[15px] bg-white z-10 mb-5">
+    <div className="flex-1 pb-40 min-w-0 lg:ml-80 bg-warm-50">
+      {/* 카테고리 탭 */}
+      <div className="sticky top-[48px] bg-white/80 backdrop-blur-md z-10 border-b border-brand-200/50">
         <nav
           ref={categoryTabScroll.scrollRef}
-          className="flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing relative px-[15px]"
+          className="flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing relative px-4"
           {...categoryTabScroll.dragHandlers}
         >
           {map(productCategory, ({ menuId, menuName }) => (
@@ -28,42 +29,62 @@ const ProductMobileView = () => {
               key={menuId}
               data-category-id={menuId}
               className={cn(
-                'py-[10px] w-[100px]',
-                'cursor-pointer transition-colors duration-300 flex-shrink-0',
-                'text-[13px] text-center font-medium',
-                categoryId === menuId ? 'text-black' : 'text-gray-500'
+                'py-4 px-5 min-w-fit',
+                'cursor-pointer transition-all duration-300 flex-shrink-0',
+                'text-[13px] text-center tracking-wide',
+                categoryId === menuId
+                  ? 'text-brand-900 font-semibold'
+                  : 'text-warm-400 font-medium'
               )}
               onClick={() => onClickCategory(menuId)}
             >
               {menuName}
             </button>
           ))}
-          {/* 탭 밑줄 인디케이터 - nav 안쪽에서 스크롤과 함께 이동 */}
-          <div
-            className="absolute bottom-0 h-[2px] bg-black transition-all duration-300 ease-out"
-            style={{
-              width: '100px',
-              left: `${15 + findIndex(productCategory, ({ menuId }) => menuId === categoryId) * 100}px`,
-            }}
-          />
+          {/* 탭 밑줄 인디케이터 */}
+          {(() => {
+            const activeIndex = findIndex(productCategory, ({ menuId }) => menuId === categoryId);
+            const buttons = categoryTabScroll.scrollRef.current?.querySelectorAll('button');
+            if (buttons && buttons[activeIndex]) {
+              const btn = buttons[activeIndex] as HTMLElement;
+              return (
+                <div
+                  className="absolute bottom-0 h-[2px] bg-brand-800 transition-all duration-300 ease-out"
+                  style={{
+                    width: `${btn.offsetWidth}px`,
+                    left: `${btn.offsetLeft}px`,
+                  }}
+                />
+              );
+            }
+            return (
+              <div
+                className="absolute bottom-0 h-[2px] bg-brand-800 transition-all duration-300 ease-out"
+                style={{
+                  width: '80px',
+                  left: `${16 + activeIndex * 80}px`,
+                }}
+              />
+            );
+          })()}
         </nav>
-        {/* 하단 배경 라인 */}
-        <div className="h-[2px] bg-gray-200" />
       </div>
-      <div className="mb-6">
-        <div className="text-gray-700 pl-[5px] mb-2 text-[15px]">
-          <span className="mr-[10px]">티 제품</span>
-          {`>`}
-          <span className="mx-[10px] font-bold text-[15px]">
-            {find(productCategory, { menuId: categoryId })?.menuName}
-          </span>
-        </div>
+
+      {/* 현재 카테고리 라벨 */}
+      <div className="px-4 pt-6 pb-5">
+        <p className="text-[11px] tracking-widest text-warm-400 uppercase">
+          tea collection
+        </p>
+        <h2 className="text-[20px] font-bold text-brand-900 mt-0.5 tracking-tight">
+          {find(productCategory, { menuId: categoryId })?.menuName}
+        </h2>
       </div>
-      {/* ProductList - 동시 슬라이드 애니메이션 */}
-      <div className="relative overflow-hidden">
+
+      {/* 상품 그리드 */}
+      <div className="relative overflow-hidden px-4">
         {currentCategory && (
           <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
-            <div className="grid grid-cols-2 gap-x-[16px] gap-y-10">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8" style={{ gridTemplateRows: 'repeat(auto-fill, auto auto auto)' }}>
               {map(productList, (product) => (
                 <ProductCard
                   key={product.productId}

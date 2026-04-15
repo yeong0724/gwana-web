@@ -18,8 +18,8 @@ const UserDropdownContent = ({ handleLogout, moveToMyPage, moveToOrderHistory }:
     height: 0,
     borderLeft: '8px solid transparent',
     borderRight: '8px solid transparent',
-    borderBottom: '8px solid white',
-    filter: 'drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1))',
+    borderBottom: '8px solid oklch(0.985 0.003 70)',
+    filter: 'drop-shadow(0 -2px 2px oklch(0.35 0.07 40 / 0.08))',
   };
 
   const arrowBorderStyle = {
@@ -27,14 +27,14 @@ const UserDropdownContent = ({ handleLogout, moveToMyPage, moveToOrderHistory }:
     height: 0,
     borderLeft: '9px solid transparent',
     borderRight: '9px solid transparent',
-    borderBottom: '9px solid #e5e7eb',
+    borderBottom: '9px solid oklch(0.87 0.03 65)',
   };
 
   return (
     <DropdownMenuContent
       align="end"
       sideOffset={4}
-      className="w-48 scale-110 relative bg-white rounded-xl shadow-lg border border-gray-200 p-2 !overflow-visible origin-top-right"
+      className="w-48 scale-110 relative bg-warm-50 rounded-xl shadow-lg shadow-brand-900/10 border border-brand-200/60 p-2 !overflow-visible origin-top-right"
     >
       {/* 삼각형 화살표 */}
       <div className="absolute -top-2 right-[10%] z-10 pointer-events-none" style={arrowStyle} />
@@ -44,20 +44,20 @@ const UserDropdownContent = ({ handleLogout, moveToMyPage, moveToOrderHistory }:
       />
       <DropdownMenuItem
         onClick={moveToMyPage}
-        className="cursor-pointer text-base py-2.5 px-3 rounded-lg hover:bg-gray-100 transition-colors"
+        className="cursor-pointer text-base py-2.5 px-3 rounded-lg text-brand-800 hover:bg-brand-100 transition-colors duration-200"
       >
         마이페이지
       </DropdownMenuItem>
       <DropdownMenuItem
         onClick={moveToOrderHistory}
-        className="cursor-pointer text-base py-2.5 px-3 rounded-lg hover:bg-gray-100 transition-colors"
+        className="cursor-pointer text-base py-2.5 px-3 rounded-lg text-brand-800 hover:bg-brand-100 transition-colors duration-200"
       >
         주문조회
       </DropdownMenuItem>
-      <DropdownMenuSeparator className="my-1" />
+      <DropdownMenuSeparator className="my-1 bg-brand-200/40" />
       <DropdownMenuItem
         onClick={handleLogout}
-        className="cursor-pointer text-base py-2.5 px-3 rounded-lg hover:bg-red-50 transition-colors text-red-600 focus:text-red-600 focus:bg-red-50"
+        className="cursor-pointer text-base py-2.5 px-3 rounded-lg hover:bg-red-50 transition-colors duration-200 text-red-600 focus:text-red-600 focus:bg-red-50"
       >
         로그아웃
       </DropdownMenuItem>

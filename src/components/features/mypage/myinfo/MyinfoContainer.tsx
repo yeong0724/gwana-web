@@ -177,24 +177,24 @@ const MyinfoContainer = () => {
   };
 
   return (
-    <div className="bg-white h-[calc(100dvh-56px)] flex flex-col overflow-hidden">
+    <div className="bg-warm-50 h-[calc(100dvh-56px)] flex flex-col overflow-hidden">
       {/* 폼 영역 */}
       <FormProvider {...form}>
         <form
           onSubmit={handleSubmit(onSubmit, onError)}
           className="flex flex-col flex-1 overflow-hidden"
         >
-          <div className="w-full flex-1 flex flex-col min-h-0 bg-white">
+          <div className="w-full flex-1 flex flex-col min-h-0 bg-warm-50">
             <div className="flex-1 min-h-0 overflow-y-auto">
               <div className="p-4 space-y-6">
                 {/* 프로필 이미지 */}
                 <div className="flex justify-center py-4">
                   <div className="relative">
                     {/* 프로필 이미지 원형 */}
-                    <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+                    <div className="w-28 h-28 rounded-full overflow-hidden bg-brand-100 border-2 border-brand-200">
                       {!previewImg && !profileImage ? (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                          <span className="text-gray-400 text-4xl font-bold">
+                        <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                          <span className="text-brand-400 text-4xl font-bold">
                             {watch('username')?.substring(1, 3)}
                           </span>
                         </div>
@@ -212,7 +212,7 @@ const MyinfoContainer = () => {
                     <button
                       type="button"
                       onClick={previewImg ? handleClearPreview : handleFileInputClick}
-                      className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-900 flex items-center justify-center transition-colors shadow-md"
+                      className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-brand-800 hover:bg-brand-900 flex items-center justify-center transition-colors shadow-md"
                     >
                       {previewImg ? (
                         <X className="w-4 h-4 text-white" />
@@ -235,27 +235,27 @@ const MyinfoContainer = () => {
                 {/* 이메일 */}
                 <div className="space-y-2">
                   <div className="px-[5px]">
-                    <label className="text-gray-800 font-medium text-base">이메일</label>
+                    <label className="text-brand-800 font-medium text-base">이메일</label>
                   </div>
                   <ControllerInput
                     type="text"
                     name="email"
                     placeholder="이메일"
                     disabled
-                    className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                    className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                   />
                 </div>
 
                 {/* 이름 */}
                 <div className="space-y-2">
                   <div className="px-[5px]">
-                    <label className="text-gray-800 font-medium text-base">이름</label>
+                    <label className="text-brand-800 font-medium text-base">이름</label>
                   </div>
                   <ControllerInput
                     type="text"
                     name="username"
                     placeholder="이름"
-                    className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                    className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                     disabled
                     inputRef={setInputRef('username')}
                   />
@@ -264,31 +264,31 @@ const MyinfoContainer = () => {
                 {/* 휴대폰 번호 */}
                 <div className="space-y-1 mb-[0px]">
                   <div className="px-[5px] mb-1">
-                    <label className="text-gray-800 font-medium text-base">휴대폰 번호</label>
+                    <label className="text-brand-800 font-medium text-base">휴대폰 번호</label>
                   </div>
                   <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-2">
                     <ControllerInput
                       type="tel"
                       name="phoneFirst"
-                      className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                      className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                       disableErrorMessage
                       maxLength={3}
                       inputRef={setInputRef('phoneFirst')}
                     />
-                    <span className="text-gray-400 text-lg">-</span>
+                    <span className="text-warm-300 text-lg">-</span>
                     <ControllerInput
                       type="tel"
                       name="phoneMiddle"
-                      className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                      className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                       disableErrorMessage
                       maxLength={4}
                       inputRef={setInputRef('phoneMiddle')}
                     />
-                    <span className="text-gray-400 text-lg">-</span>
+                    <span className="text-warm-300 text-lg">-</span>
                     <ControllerInput
                       type="tel"
                       name="phoneLast"
-                      className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                      className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                       disableErrorMessage
                       maxLength={4}
                       inputRef={setInputRef('phoneLast')}
@@ -307,19 +307,19 @@ const MyinfoContainer = () => {
 
                 {/* 우편번호 */}
                 <div className="space-y-2">
-                  <div className="px-[5px] text-gray-800 font-medium text-base">우편번호</div>
+                  <div className="px-[5px] text-brand-800 font-medium text-base">우편번호</div>
                   <div className="flex items-start gap-2">
                     <ControllerInput
                       type="tel"
                       name="zonecode"
-                      className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                      className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                       readOnly
                       inputRef={setInputRef('zonecode')}
                     />
                     <button
                       type="button"
                       onClick={addressSearchOpenHandler}
-                      className="px-6 py-[6px] border border-gray-800 text-gray-800 rounded-md font-medium text-[14px] hover:bg-gray-800 hover:text-white transition-colors whitespace-nowrap"
+                      className="px-6 py-[6px] border border-brand-800 text-brand-800 font-medium text-[14px] hover:bg-brand-800 hover:text-white transition-colors whitespace-nowrap cursor-pointer"
                     >
                       검색하기
                     </button>
@@ -328,11 +328,11 @@ const MyinfoContainer = () => {
 
                 {/* 주소 */}
                 <div className="space-y-2">
-                  <div className="px-[5px] text-gray-800 font-medium text-base">주소</div>
+                  <div className="px-[5px] text-brand-800 font-medium text-base">주소</div>
                   <ControllerInput
                     type="text"
                     name="roadAddress"
-                    className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                    className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                     readOnly
                     inputRef={setInputRef('roadAddress')}
                   />
@@ -341,7 +341,7 @@ const MyinfoContainer = () => {
                     name="detailAddress"
                     placeholder="상세주소를 입력해주세요"
                     maxLength={30}
-                    className="w-full px-4 py-2 border-1 border-gray-400 rounded-md text-gray-700 text-base"
+                    className="w-full px-4 py-2 border-1 border-brand-300 text-brand-700 text-base bg-white"
                     inputRef={setInputRef('detailAddress')}
                   />
                 </div>
@@ -349,10 +349,10 @@ const MyinfoContainer = () => {
             </div>
 
             {/* 수정하기 버튼 - 하단 고정 */}
-            <div className="flex-shrink-0 bg-white p-4 border-t border-gray-200">
+            <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200">
               <button
                 type="submit"
-                className="w-full bg-gray-800 hover:bg-gray-900 text-white rounded-full py-3 flex items-center justify-center gap-2 transition-colors"
+                className="w-full bg-brand-800 hover:bg-brand-900 text-white rounded-full py-3 flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <PenLine className="size-4" />
                 <span className="text-[15px] font-semibold">수정하기</span>

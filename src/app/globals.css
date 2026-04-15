@@ -49,19 +49,98 @@
 }
 
 @theme inline {
+  /* ===== Typography ===== */
+  /* 본문: Pretendard (한국어 최적화 산세리프) */
   --font-family-pretendard:
     var(--font-pretendard), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 
-  /* Serif 폰트들 */
-  --font-family-cormorant: var(--font-cormorant), 'Georgia', serif;
-  --font-family-playfair: var(--font-playfair), 'Georgia', serif;
-  --font-family-eb-garamond: var(--font-eb-garamond), 'Georgia', serif;
-  --font-family-libre-baskerville: var(--font-libre-baskerville), 'Georgia', serif;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* 헤드라인/브랜드: Playfair Display (고급스러운 serif) */
+  --font-family-serif: var(--font-playfair), 'Georgia', serif;
+
+  /* 가격/숫자: tabular figures용 */
+  --font-family-mono: 'Pretendard Variable', 'SF Mono', 'Fira Code', monospace;
+
+  /* ===== Typography Scale ===== */
+  --text-display: 2.25rem;     /* 36px — 히어로 타이틀 */
+  --text-heading-1: 1.75rem;   /* 28px — 페이지 타이틀 */
+  --text-heading-2: 1.375rem;  /* 22px — 섹션 타이틀 */
+  --text-heading-3: 1.125rem;  /* 18px — 서브 타이틀 */
+  --text-body-lg: 1rem;        /* 16px — 강조 본문 */
+  --text-body: 0.9375rem;      /* 15px — 기본 본문 */
+  --text-body-sm: 0.8125rem;   /* 13px — 보조 텍스트 */
+  --text-caption: 0.75rem;     /* 12px — 캡션, 라벨 */
+  --text-overline: 0.6875rem;  /* 11px — 오버라인, 태그 */
+
+  /* ===== Letter Spacing ===== */
+  --tracking-display: -0.02em;   /* 대형 타이틀 — 약간 좁게 */
+  --tracking-heading: -0.01em;   /* 일반 제목 — 미세하게 좁게 */
+  --tracking-body: 0em;          /* 본문 — 기본값 (한글 최적) */
+  --tracking-wide: 0.05em;       /* 영문 레이블, 오버라인 */
+  --tracking-wider: 0.1em;       /* 영문 대문자 레이블 */
+
+  /* ===== Line Height ===== */
+  --leading-tight: 1.3;    /* 제목 */
+  --leading-normal: 1.6;   /* 본문 */
+  --leading-relaxed: 1.8;  /* 긴 본문, 설명 */
+
+  /* ===== Brand Colors — 관아수제차 palette ===== */
+  /*
+   * 따뜻한 대지색(earth tone) 기반
+   * primary: 깊은 갈색 — 발효차, 전통, 신뢰
+   * accent:  차밭 녹색 — 자연, 신선함 (기존 #A8BF6A / teal-600 통합)
+   * gold:    황금색 — 우려낸 차, 프리미엄 (기존 #F9BC36 / amber-700 통합)
+   */
+
+  /* --- Primary (Earth Brown) --- */
+  --color-brand-50: oklch(0.97 0.008 65);     /* #FAF7F5 — 배경 틴트 */
+  --color-brand-100: oklch(0.94 0.015 65);    /* #F2EBE5 — 카드 배경 */
+  --color-brand-200: oklch(0.87 0.03 65);     /* #DFD1C5 — 보더, 구분선 */
+  --color-brand-300: oklch(0.76 0.05 55);     /* #BFA48B — 비활성 텍스트 */
+  --color-brand-400: oklch(0.62 0.07 50);     /* #957358 — 보조 텍스트 */
+  --color-brand-500: oklch(0.50 0.08 45);     /* #74533A — 기본 브랜드 */
+  --color-brand-600: oklch(0.42 0.08 42);     /* #5E412B — CTA, 강조 */
+  --color-brand-700: oklch(0.35 0.07 40);     /* #4A3220 — 진한 강조 */
+  --color-brand-800: oklch(0.28 0.05 38);     /* #3A2518 — 헤더, 네비게이션 */
+  --color-brand-900: oklch(0.22 0.04 35);     /* #2C1B10 — 텍스트, 다크 포인트 */
+
+  /* --- Accent (Tea Green) — 기존 #A8BF6A, teal-600 통합 --- */
+  --color-tea-50: oklch(0.97 0.02 130);       /* #F6F9F0 */
+  --color-tea-100: oklch(0.93 0.04 130);      /* #E8F0D8 */
+  --color-tea-200: oklch(0.86 0.07 128);      /* #CEDFAE */
+  --color-tea-300: oklch(0.78 0.10 125);      /* #B3CC84 */
+  --color-tea-400: oklch(0.72 0.12 122);      /* #A0BB66 — ≈ 기존 #A8BF6A */
+  --color-tea-500: oklch(0.64 0.12 120);      /* #8AA84F — 기본 accent */
+  --color-tea-600: oklch(0.55 0.11 118);      /* #6E8D3B */
+  --color-tea-700: oklch(0.46 0.09 115);      /* #55712D */
+  --color-tea-800: oklch(0.38 0.07 112);      /* #415822 */
+  --color-tea-900: oklch(0.30 0.05 110);      /* #2F4118 */
+
+  /* --- Gold (Tea Liquor) — 기존 #F9BC36, 별점 등 통합 --- */
+  --color-gold-50: oklch(0.97 0.02 85);       /* #FDF8ED */
+  --color-gold-100: oklch(0.94 0.04 85);      /* #FAEFD0 */
+  --color-gold-200: oklch(0.89 0.08 82);      /* #F3DDA3 */
+  --color-gold-300: oklch(0.83 0.12 78);      /* #EECB73 */
+  --color-gold-400: oklch(0.80 0.14 75);      /* #E9BC4A — ≈ 기존 #F9BC36 */
+  --color-gold-500: oklch(0.74 0.14 70);      /* #D4A52E */
+  --color-gold-600: oklch(0.65 0.13 65);      /* #B08822 */
+  --color-gold-700: oklch(0.55 0.11 60);      /* #8C6B1A */
+  --color-gold-800: oklch(0.45 0.08 55);      /* #6A5115 */
+  --color-gold-900: oklch(0.35 0.06 50);      /* #4E3B10 */
+
+  /* --- Warm Neutrals (따뜻한 회색 — 순수 gray 대체) --- */
+  --color-warm-50: oklch(0.985 0.003 70);     /* #FDFCFB */
+  --color-warm-100: oklch(0.96 0.006 68);     /* #F7F5F3 */
+  --color-warm-200: oklch(0.92 0.008 65);     /* #EBE8E4 */
+  --color-warm-300: oklch(0.85 0.01 60);      /* #D5D0CA */
+  --color-warm-400: oklch(0.72 0.012 55);     /* #ADA69E */
+  --color-warm-500: oklch(0.60 0.012 50);     /* #8A837B */
+  --color-warm-600: oklch(0.50 0.01 48);      /* #6B655E */
+  --color-warm-700: oklch(0.40 0.008 45);     /* #504B46 */
+  --color-warm-800: oklch(0.30 0.006 42);     /* #3A3633 */
+  --color-warm-900: oklch(0.20 0.005 40);     /* #252220 */
+
+  /* ===== Semantic Colors (shadcn/ui 호환) ===== */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -93,76 +172,72 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ===== Border Radius ===== */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+
+  /* 배경: 미세한 따뜻한 크림 (순백 → warm white) */
+  --background: oklch(0.985 0.003 70);        /* warm-50 */
+  --foreground: oklch(0.20 0.005 40);         /* warm-900 */
+
+  /* 카드: 약간 밝은 warm white */
+  --card: oklch(0.985 0.003 70);              /* warm-50 */
+  --card-foreground: oklch(0.20 0.005 40);    /* warm-900 */
+
+  /* 팝오버 */
+  --popover: oklch(0.985 0.003 70);           /* warm-50 */
+  --popover-foreground: oklch(0.20 0.005 40); /* warm-900 */
+
+  /* Primary: 깊은 갈색 (brand-700) — 주요 CTA, 버튼 */
+  --primary: oklch(0.35 0.07 40);             /* brand-700 */
+  --primary-foreground: oklch(0.97 0.008 65); /* brand-50 */
+
+  /* Secondary: 연한 크림 — 부드러운 배경 강조 */
+  --secondary: oklch(0.94 0.015 65);          /* brand-100 */
+  --secondary-foreground: oklch(0.35 0.07 40);/* brand-700 */
+
+  /* Muted: warm neutral 배경 */
+  --muted: oklch(0.96 0.006 68);              /* warm-100 */
+  --muted-foreground: oklch(0.60 0.012 50);   /* warm-500 */
+
+  /* Accent: 차밭 녹색 — 강조 포인트 */
+  --accent: oklch(0.93 0.04 130);             /* tea-100 */
+  --accent-foreground: oklch(0.46 0.09 115);  /* tea-700 */
+
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* 보더/인풋: 따뜻한 회색 계열 */
+  --border: oklch(0.92 0.008 65);             /* warm-200 */
+  --input: oklch(0.92 0.008 65);              /* warm-200 */
+  --ring: oklch(0.50 0.08 45);               /* brand-500 */
+
+  /* 차트 — 브랜드 계열 색상 */
+  --chart-1: oklch(0.50 0.08 45);             /* brand-500 */
+  --chart-2: oklch(0.64 0.12 120);            /* tea-500 */
+  --chart-3: oklch(0.74 0.14 70);             /* gold-500 */
+  --chart-4: oklch(0.62 0.07 50);             /* brand-400 */
+  --chart-5: oklch(0.55 0.11 118);            /* tea-600 */
+
+  /* 사이드바 */
+  --sidebar: oklch(0.97 0.008 65);            /* brand-50 */
+  --sidebar-foreground: oklch(0.20 0.005 40); /* warm-900 */
+  --sidebar-primary: oklch(0.35 0.07 40);     /* brand-700 */
+  --sidebar-primary-foreground: oklch(0.97 0.008 65);
+  --sidebar-accent: oklch(0.94 0.015 65);     /* brand-100 */
+  --sidebar-accent-foreground: oklch(0.35 0.07 40);
+  --sidebar-border: oklch(0.92 0.008 65);     /* warm-200 */
+  --sidebar-ring: oklch(0.50 0.08 45);        /* brand-500 */
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
+/* 다크모드 미지원 — CLAUDE.md 참고 */
 
 @layer base {
   * {
@@ -233,7 +308,7 @@
 
 /* Sonner Toast 스타일 */
 [data-sonner-toast] {
-  @apply !bg-white !border !border-gray-200 !shadow-lg;
+  @apply !bg-warm-50 !border !border-brand-200/60 !shadow-lg !shadow-brand-900/10;
 }
 
 /* 모바일에서 토스트 너비 조정 */
@@ -685,4 +760,41 @@
 .ios-spinner-bar:nth-child(12) {
   transform: rotate(-330deg);
   animation: spinner-fade 1s -1s infinite;
+}
+
+/* ===== About Page — Grain & Texture ===== */
+.about-grain {
+  position: relative;
+}
+.about-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* About Page — Horizontal Rule */
+.about-hr {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.about-hr::before,
+.about-hr::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(0.80 0.14 75 / 0.5), transparent);
+}
+
+/* About Page — Stagger children utility */
+.about-stagger > * {
+  will-change: transform, opacity;
 }

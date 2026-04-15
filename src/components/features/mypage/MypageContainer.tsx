@@ -27,22 +27,22 @@ const statsData = [
     icon: Truck,
     count: 3,
     label: '주문내역',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-100',
+    color: 'text-tea-600',
+    bgColor: 'bg-tea-50',
   },
   {
     icon: ClipboardList,
     count: 1,
     label: '내가 쓴 리뷰',
-    color: 'text-amber-500',
-    bgColor: 'bg-amber-100',
+    color: 'text-gold-500',
+    bgColor: 'bg-gold-50',
   },
   {
     icon: MessageCircleQuestion,
     count: 0,
     label: '문의내역',
-    color: 'text-yellow-500',
-    bgColor: 'bg-yellow-100',
+    color: 'text-brand-500',
+    bgColor: 'bg-brand-50',
   },
 ];
 
@@ -78,16 +78,16 @@ const MypageContainer = () => {
   };
 
   return (
-    <div className="bg-white py-6 px-4 flex flex-col overflow-y-auto flex-1">
+    <div className="bg-warm-50 py-6 px-4 flex flex-col overflow-y-auto flex-1">
       <div className="max-w-md mx-auto space-y-3 flex-1 w-full">
         {/* 섹션 1: 유저 정보 */}
-        <Card className="py-0 overflow-hidden">
-          <div className="p-6">
+        <Card className="py-0 overflow-hidden border-brand-200">
+          <div className="p-6 bg-white">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200 mr-[10px]">
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-brand-100 border-2 border-brand-200 mr-[10px]">
                 {!user.profileImage ? (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                    <span className="text-gray-400 text-2xl font-bold">
+                  <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                    <span className="text-brand-400 text-2xl font-bold">
                       {user.username?.substring(0, 2)}
                     </span>
                   </div>
@@ -100,17 +100,17 @@ const MypageContainer = () => {
                   />
                 )}
               </div>
-              <div className="text-gray-600 tracking-wider">
-                <p className="text-[20px] font-bold opacity-90">WELCOME</p>
-                <p className="text-xl font-medium">{user.username} 님</p>
+              <div className="text-warm-500 tracking-wider">
+                <p className="text-[20px] font-bold text-brand-800 opacity-90">WELCOME</p>
+                <p className="text-xl font-medium text-brand-700">{user.username} 님</p>
               </div>
             </div>
           </div>
         </Card>
 
         {/* 섹션 2: 통계 */}
-        <Card>
-          <CardContent className="p-4">
+        <Card className="border-brand-200">
+          <CardContent className="p-4 bg-white">
             <div className="grid grid-cols-3 gap-4">
               {statsData.map((stat, index) => (
                 <div
@@ -120,8 +120,8 @@ const MypageContainer = () => {
                   <div className={`p-3 rounded-xl ${stat.bgColor}`}>
                     <stat.icon className={`size-6 ${stat.color}`} />
                   </div>
-                  <span className="text-2xl font-bold text-gray-800">{stat.count}</span>
-                  <span className="text-xs text-gray-500">{stat.label}</span>
+                  <span className="text-2xl font-bold text-brand-800 tabular-nums">{stat.count}</span>
+                  <span className="text-xs text-warm-400">{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -129,21 +129,21 @@ const MypageContainer = () => {
         </Card>
 
         {/* 섹션 3: 메뉴 리스트 */}
-        <Card className="py-0">
-          <CardContent className="p-0">
-            <ul className="divide-y divide-gray-100">
+        <Card className="py-0 border-brand-200">
+          <CardContent className="p-0 bg-white">
+            <ul className="divide-y divide-brand-100">
               {menuItems.map(({ icon: Icon, label, url }, index) => (
                 <li key={index}>
                   <Button
                     variant="ghost"
-                    className="w-full flex items-center justify-between px-4 py-4 h-auto hover:bg-gray-50 transition-colors rounded-none"
+                    className="w-full flex items-center justify-between px-4 py-4 h-auto hover:bg-brand-50 transition-colors rounded-none"
                     onClick={() => handleMenuClick(url)}
                   >
                     <div className="flex items-center gap-3">
-                      <Icon className="size-5 text-gray-400" />
-                      <span className="text-gray-700">{label}</span>
+                      <Icon className="size-5 text-brand-400" />
+                      <span className="text-brand-700">{label}</span>
                     </div>
-                    <ChevronRight className="size-5 text-gray-400" />
+                    <ChevronRight className="size-5 text-warm-300" />
                   </Button>
                 </li>
               ))}
@@ -157,8 +157,8 @@ const MypageContainer = () => {
         <Button
           className={cn(
             'flex items-center justify-center',
-            'text-[15px] text-red-400 hover:text-gray-500',
-            'gap-2 transition-colors bg-white border-0 tracking-wider'
+            'text-[15px] text-red-400 hover:text-warm-500',
+            'gap-2 transition-colors bg-transparent border-0 tracking-wider'
           )}
         >
           <UserX2Icon className="size-4" />

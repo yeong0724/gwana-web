@@ -90,7 +90,7 @@ const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
   return (
     <div className="flex h-[calc(100dvh-60px)] flex-col overflow-hidden">
       {/* 제목 입력 영역 */}
-      <div className="flex shrink-0 items-center gap-2 border-x border-t border-gray-200 bg-white px-4 py-2.5">
+      <div className="flex shrink-0 items-center gap-2 border-x border-t border-brand-200 bg-white px-4 py-2.5">
         <Input
           type="text"
           placeholder={isFocus ? '' : '제목 (20자 이내)'}
@@ -103,7 +103,7 @@ const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
         <button
           type="button"
           onClick={handleSubmit}
-          className="shrink-0 rounded-md border border-gray-300 bg-transparent px-4 py-1.5 text-sm lg:text-[17px] font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          className="shrink-0 border border-brand-300 bg-transparent px-4 py-1.5 text-sm lg:text-[17px] font-medium text-brand-700 transition-colors hover:bg-brand-50 cursor-pointer"
         >
           제출
         </button>
@@ -115,8 +115,8 @@ const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
       </div>
 
       {/* 하단 안내 영역 */}
-      <div className="flex shrink-0 items-center justify-between border-x border-b border-gray-200 bg-gray-50/50 px-4 py-2.5">
-        <p className="text-[13px] text-gray-400">이미지는 최대 5MB까지 첨부 가능합니다</p>
+      <div className="flex shrink-0 items-center justify-between border-x border-b border-brand-200 bg-brand-50/50 px-4 py-2.5">
+        <p className="text-[13px] text-warm-400">이미지는 최대 5MB까지 첨부 가능합니다</p>
         {!isAdmin && (
           <label className="flex cursor-pointer items-center gap-1.5">
             <Checkbox
@@ -124,7 +124,7 @@ const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
               checked={isSecret === 'Y'}
               onCheckedChange={(checked) => setIsSecret(checked ? YesOrNoEnum.YES : YesOrNoEnum.NO)}
             />
-            <span className="text-[14px] text-gray-600">비밀글로 작성</span>
+            <span className="text-[14px] text-brand-600">비밀글로 작성</span>
           </label>
         )}
       </div>
