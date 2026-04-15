@@ -97,29 +97,39 @@ const CartModileView = () => {
                           </div>
                         </div>
 
-                        {/* 메인 상품 영역 - optionRequired가 false일 때만 표시 */}
-                        {!item.optionRequired && (
-                          <div className="flex flex-col gap-2 mt-3 py-2">
+                        {map(item.cartItems, (cartItem, cartItemIndex) => (
+                          <div
+                            key={`${cartItem.cartItemId}-${cartItemIndex}`}
+                            className="flex flex-col gap-2 mt-1 py-2"
+                          >
                             <div className="flex items-baseline gap-1">
-                              <span className="text-[11px] text-teal-600 font-medium">
-                                메인 상품
-                              </span>
+                              {cartItem.isRequired ? (
+                                <span className="text-[11px] text-teal-600 font-medium">
+                                  메인 상품
+                                </span>
+                              ) : (
+                                <span className="text-[11px] text-teal-600 font-medium">
+                                  선택 옵션
+                                </span>
+                              )}
+
                               <span className="text-[11px] text-gray-400">|</span>
-                              <span className="text-[12px] text-gray-700">{item.productName}</span>
+                              <span className="text-[12px] text-gray-700">
+                                {cartItem.optionName}
+                              </span>
                             </div>
                             <div className="flex items-center justify-between">
                               {/* 수량 조절 */}
                               <div className="flex items-center border border-gray-300 rounded overflow-hidden">
                                 <button
                                   className="w-7 h-6 hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center disabled:opacity-50"
-                                  disabled={item.quantity <= 1}
+                                  disabled={cartItem.quantity <= 1}
                                   onClick={() =>
                                     onUpdateCartQuantity(
-                                      item.productId,
-                                      '',
-                                      item.quantity,
+                                      cartItem.cartItemId,
                                       index,
-                                      item.optionRequired,
+                                      cartItemIndex,
+                                      cartItem.quantity,
                                       -1
                                     )
                                   }
@@ -127,7 +137,7 @@ const CartModileView = () => {
                                   <Minus size={12} className="text-gray-600" />
                                 </button>
                                 <span className="w-8 h-6 text-[12px] text-gray-900 flex items-center justify-center">
-                                  {item.quantity}
+                                  {cartItem.quantity}
                                 </span>
                                 <button className="w-7 h-6 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center">
                                   <Plus
@@ -135,11 +145,10 @@ const CartModileView = () => {
                                     className="text-gray-600"
                                     onClick={() =>
                                       onUpdateCartQuantity(
-                                        item.productId,
-                                        '',
-                                        item.quantity,
+                                        cartItem.cartItemId,
                                         index,
-                                        item.optionRequired,
+                                        cartItemIndex,
+                                        cartItem.quantity,
                                         1
                                       )
                                     }
@@ -149,98 +158,28 @@ const CartModileView = () => {
                               <div className="flex items-center gap-2">
                                 {/* 금액 */}
                                 <span className="text-[13px] font-semibold text-gray-900">
-                                  {localeFormat(item.price)}원
+                                  {localeFormat(cartItem.optionPrice)}원
                                 </span>
                                 {/* 삭제 버튼 */}
                                 <button
                                   className="p-1 hover:bg-gray-100 rounded active:scale-90 transition-transform"
-                                  onClick={() => onDeleteCart(item.cartId, '', index)}
+                                  onClick={() =>
+                                    onDeleteCart(
+                                      item.cartId,
+                                      cartItem.cartItemId,
+                                      index,
+                                      cartItemIndex
+                                    )
+                                  }
                                 >
                                   <X size={14} className="text-gray-400" />
                                 </button>
                               </div>
                             </div>
                           </div>
-                        )}
+                        ))}
 
                         {/* 옵션 상품 영역 */}
-                        {item.options && item.options.length > 0 && (
-                          <div className="flex flex-col">
-                            {map(
-                              item.options,
-                              (
-                                { cartId, optionId, optionName, optionPrice, quantity },
-                                optionIndex
-                              ) => (
-                                <div
-                                  key={`${item.cartId}-option-${optionIndex}`}
-                                  className="flex flex-col gap-2 py-2"
-                                >
-                                  <div className="flex items-baseline gap-1">
-                                    <span className="text-[11px] text-teal-600 font-medium">
-                                      옵션
-                                    </span>
-                                    <span className="text-[11px] text-gray-400">|</span>
-                                    <span className="text-[12px] text-gray-700">{optionName}</span>
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    {/* 수량 조절 */}
-                                    <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                                      <button
-                                        className="w-7 h-6 hover:bg-gray-50 border-r border-gray-300 flex items-center justify-center disabled:opacity-50"
-                                        disabled={quantity <= 1}
-                                        onClick={() =>
-                                          onUpdateCartQuantity(
-                                            item.productId,
-                                            optionId,
-                                            quantity,
-                                            index,
-                                            item.optionRequired,
-                                            -1
-                                          )
-                                        }
-                                      >
-                                        <Minus size={12} className="text-gray-600" />
-                                      </button>
-                                      <span className="w-8 h-6 text-[12px] text-gray-900 flex items-center justify-center">
-                                        {quantity}
-                                      </span>
-                                      <button className="w-7 h-6 hover:bg-gray-50 border-l border-gray-300 flex items-center justify-center">
-                                        <Plus
-                                          size={12}
-                                          className="text-gray-600"
-                                          onClick={() =>
-                                            onUpdateCartQuantity(
-                                              item.productId,
-                                              optionId,
-                                              quantity,
-                                              index,
-                                              item.optionRequired,
-                                              1
-                                            )
-                                          }
-                                        />
-                                      </button>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      {/* 금액 */}
-                                      <span className="text-[13px] font-semibold text-gray-900">
-                                        {localeFormat(optionPrice)}원
-                                      </span>
-                                      {/* 삭제 버튼 */}
-                                      <button
-                                        className="p-1 hover:bg-gray-100 rounded active:scale-90 transition-transform"
-                                        onClick={() => onDeleteCart(cartId, optionId, index)}
-                                      >
-                                        <X size={14} className="text-gray-400" />
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              )
-                            )}
-                          </div>
-                        )}
                       </div>
                     </div>
 

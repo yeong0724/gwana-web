@@ -2,7 +2,7 @@ import createGenericContext from '@/providers/ContextProvider';
 import {
   DropdownOption,
   ProductDetailResponse,
-  PurchaseList,
+  Purchase,
   Review,
   ReviewListSearchRequest,
   RoleEnum,
@@ -10,10 +10,11 @@ import {
 
 type ProductDetailStateContextType = {
   product: ProductDetailResponse;
-  optionList: DropdownOption[];
+  optionalOptions: DropdownOption[];
+  requiredOptions: DropdownOption[];
   isMounted: boolean;
   isBottomPanelOpen: boolean;
-  purchaseList: PurchaseList[];
+  purchaseList: Purchase[];
   totalPrice: number;
   reviewList: Review[];
   totalReviewCount: number;
@@ -25,7 +26,7 @@ type ProductDetailControllerContextType = {
   handleShare: () => void;
   setIsBottomPanelOpen: (isBottomPanelOpen: boolean) => void;
   onOptionSelect: (value: string) => void;
-  setPurchaseList: (purchaseList: PurchaseList[]) => void;
+  setPurchaseList: (Purchase: Purchase[]) => void;
   handleQuantityChange: (index: number, quantity: number) => void;
   onCartMobileHandler: () => void;
   onPurchaseMobileHandler: () => void;

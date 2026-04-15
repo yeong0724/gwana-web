@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { cloneDeep, filter, findIndex, isEmpty, map, reject, some, sumBy } from 'lodash-es';
+import { cloneDeep, filter, isEmpty, map, some, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
 import { ResponsiveFrame } from '@/components/common/frame';
@@ -15,7 +15,7 @@ import useNativeRouter from '@/hooks/useNativeRouter';
 import { setRedirectUrl } from '@/lib/utils';
 import { useCartService, usePaymentService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
-import { AddToCartRequest, Breakpoint, Cart, CartState } from '@/types';
+import { Breakpoint, Cart, CartState, UpdateCartItemQuantityRequest } from '@/types';
 
 const FREE_SHIPPING_THRESHOLD = 50000;
 
@@ -28,10 +28,11 @@ const CartContainer = () => {
   const [purchaseGuideModalOpen, setPurchaseGuideModalOpen] = useState<boolean>(false);
 
   const {
+    useDeleteCartItemMutation,
     useDeleteCartMutation,
     useDeleteCartListMutation,
     useGetCartListQuery,
-    useAddToCartMutation,
+    useUpdateCartItemQuantityMutation,
   } = useCartService();
 
   const { useCreatePaymentSessionMutation } = usePaymentService();
@@ -40,9 +41,10 @@ const CartContainer = () => {
     enabled: isLoggedIn,
   });
 
+  const { mutate: deleteCartItemMutate } = useDeleteCartItemMutation();
   const { mutate: deleteCartMutate } = useDeleteCartMutation();
   const { mutate: deleteCartListMutate } = useDeleteCartListMutation();
-  const { mutateAsync: addToCartAsync, isPending: isPendingAddToCart } = useAddToCartMutation();
+  const { mutateAsync: updateCartItemQuantityMutate } = useUpdateCartItemQuantityMutation();
   const { mutateAsync: createPaymentSessionAsync } = useCreatePaymentSessionMutation();
 
   const [cart, setCart] = useState<Array<CartState>>([]);
@@ -53,7 +55,9 @@ const CartContainer = () => {
     );
 
     const totalShippingPrice =
-      totalProductPrice >= 50000 ? 0 : sumBy(filter(cart, { checked: true }), 'shippingPrice');
+      totalProductPrice >= FREE_SHIPPING_THRESHOLD
+        ? 0
+        : sumBy(filter(cart, { checked: true }), 'shippingPrice');
 
     return {
       totalProductPrice,
@@ -77,36 +81,55 @@ const CartContainer = () => {
     return map(cartList, (cart) => ({ ...cart, checked: false }));
   }
 
-  const onDeleteCart = async (cartId: string, optionId: string, index: number) => {
-    const confirmed = await showConfirmAlert({
-      title: '안내',
-      description: '해당 상품을 삭제하시겠습니까?',
-      confirmText: '삭제',
-      cancelText: '취소',
-    });
+  const onDeleteCart = async (
+    cartId: string,
+    cartItemId: string,
+    index: number,
+    cartItemIndex: number
+  ) => {
+    const newCart = removeCartItem<CartState>(cart, index, cartItemIndex);
 
-    if (!confirmed) return;
+    /**
+     * shouldRemoveCart: 해당 상품이 필수 옵션만 남아있는지 여부 (true: 선택옵션만 남은 경우)
+     * - 선택 옵션만 남는 경우는 해당 장바구니 상품은 삭제
+     */
+    const shouldRemoveCart = isEmpty(filter(newCart[index].cartItems, { isRequired: true }));
+
+    if (shouldRemoveCart) {
+      const confirmed = await showConfirmAlert({
+        title: '안내',
+        description: '해당 상품을 장바구니에서 삭제하시겠습니까?',
+        confirmText: '삭제',
+        cancelText: '취소',
+      });
+
+      if (!confirmed) return;
+
+      setCart((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      setCart(newCart);
+    }
 
     if (isLoggedIn) {
-      deleteCartMutate({ cartId, optionId });
+      if (shouldRemoveCart) {
+        deleteCartMutate({ cartId });
+      } else {
+        deleteCartItemMutate({ cartItemId });
+      }
     } else {
-      setCartStore(removeCartItem(cartStore, optionId, index));
+      if (shouldRemoveCart) {
+        const copyCartStore = cloneDeep(cartStore);
+        copyCartStore.splice(index, 1);
+        setCartStore(copyCartStore);
+      } else {
+        setCartStore(removeCartItem(cartStore, index, cartItemIndex));
+      }
     }
-
-    setCart((prev) => removeCartItem<CartState>(prev, optionId, index));
   };
 
-  function removeCartItem<T extends Cart>(items: Array<T>, optionId: string, index: number) {
+  function removeCartItem<T extends Cart>(items: Array<T>, index: number, cartItemIndex: number) {
     const copyCart = cloneDeep(items);
-
-    if (optionId) {
-      copyCart[index].options = reject(copyCart[index].options, { optionId });
-    }
-
-    if ((!copyCart[index].quantity && isEmpty(copyCart[index].options)) || !optionId) {
-      copyCart.splice(index, 1);
-    }
-
+    copyCart[index].cartItems.splice(cartItemIndex, 1);
     return copyCart;
   }
 
@@ -122,64 +145,52 @@ const CartContainer = () => {
 
     const selectedCart = filter(cart, { checked: true });
     if (isLoggedIn) {
-      deleteCartListMutate(map(selectedCart, 'productId'));
+      deleteCartListMutate(map(selectedCart, 'cartId'));
     } else {
-      setCartStore(
-        cloneDeep(cartStore).filter(({ productId }) => !some(selectedCart, { productId }))
-      );
+      setCartStore(cloneDeep(cartStore).filter(({ cartId }) => !some(selectedCart, { cartId })));
     }
 
     setCart(filter(cart, { checked: false }));
   };
 
   const onUpdateCartQuantity = async (
-    productId: string,
-    optionId: string,
-    quantity: number,
+    cartItemId: string,
     index: number,
-    optionRequired: boolean,
+    cartItemIndex: number,
+    quantity: number,
     quantityDelta: number
   ) => {
-    const payload: AddToCartRequest = { productId, optionId, quantity: quantityDelta };
+    const updatedQuantity = quantity + quantityDelta;
+
+    const payload: UpdateCartItemQuantityRequest = {
+      cartItemId,
+      quantity: updatedQuantity,
+    };
 
     if (isLoggedIn) {
-      if (!isPendingAddToCart) addToCartAsync(payload);
+      updateCartItemQuantityMutate(payload);
     } else {
       const cloneCartStore = cloneDeep(cartStore);
-      if (optionRequired) {
-        const optionIndex = findIndex(cloneCartStore[index].options, { optionId });
-        cartStore[index].options[optionIndex].quantity = quantity + quantityDelta;
-      } else {
-        cloneCartStore[index].quantity = quantity + quantityDelta;
-      }
+      cloneCartStore[index].cartItems[cartItemIndex].quantity = updatedQuantity;
       setCartStore(cloneCartStore);
     }
 
     const cloneCart = cloneDeep(cart);
-    if (optionRequired) {
-      const optionIndex = findIndex(cloneCart[index].options, { optionId });
-      cloneCart[index].options[optionIndex].quantity = quantity + quantityDelta;
-    } else {
-      cloneCart[index].quantity = quantity + quantityDelta;
-    }
-
+    cloneCart[index].cartItems[cartItemIndex].quantity = updatedQuantity;
     setCart(cloneCart);
   };
 
   const moveToOrderPage = async () => {
-    if (!isLoggedIn) {
-      setPurchaseGuideModalOpen(true);
-      return;
-    }
-
-    const payload = filter(cart, { checked: true }).map(({ productId, quantity }) => ({
-      productId,
-      quantity,
-    }));
-
-    const { data: sessionId } = await createPaymentSessionAsync(payload);
-
-    forward(`/payment?sessionId=${sessionId}`);
+    // if (!isLoggedIn) {
+    //   setPurchaseGuideModalOpen(true);
+    //   return;
+    // }
+    // const payload = filter(cart, { checked: true }).map(({ productId, quantity }) => ({
+    //   productId,
+    //   quantity,
+    // }));
+    // const { data: sessionId } = await createPaymentSessionAsync(payload);
+    // forward(`/payment?sessionId=${sessionId}`);
   };
 
   const moveToLoginPage = () => {
@@ -188,12 +199,8 @@ const CartContainer = () => {
   };
 
   function getSumProductPrice(item: Cart) {
-    const { price, quantity, options } = item;
-
-    return (
-      price * quantity +
-      sumBy(options, ({ optionPrice, quantity: optionQuantity }) => optionPrice * optionQuantity)
-    );
+    const { cartItems } = item;
+    return sumBy(cartItems, ({ optionPrice, quantity }) => optionPrice * quantity);
   }
 
   const getShippingPrice = (item: Cart) => {
@@ -247,6 +254,7 @@ const CartContainer = () => {
         mobileComponent={<CartModileView />}
         webComponent={<CartWebView />}
         breakpoint={Breakpoint.LG}
+        webClassName="lg:flex-1 lg:min-h-0 lg:overflow-y-scroll"
       />
       {/* 비로그인시 구매가이드 모달 */}
       <PurchaseGuideModal

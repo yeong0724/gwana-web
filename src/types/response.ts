@@ -1,4 +1,4 @@
-import { RoleEnum, SocialProviderEnum } from '@/types';
+import { ProductOption, RoleEnum, SocialProviderEnum } from '@/types';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -92,13 +92,6 @@ export interface RequestPaymentApproveResponse {
   };
 }
 
-export interface ProductOption {
-  optionId: string;
-  optionName: string;
-  productId: string;
-  optionPrice: number;
-}
-
 export interface ProductDetailResponse {
   productId: string;
   productName: string;
@@ -108,46 +101,8 @@ export interface ProductDetailResponse {
   infos: string[];
   price: number;
   shippingPrice: number;
-  optionRequired: boolean;
   options: ProductOption[];
 }
-
-export type PurchaseList = {
-  productId: string;
-  productName: string;
-  categoryName: string;
-  optionRequired: boolean;
-  price: number;
-  shippingPrice: number;
-  images: string[];
-  quantity: number;
-  optionId: string | null;
-  optionName: string;
-  optionPrice: number;
-};
-
-export type CartOption = {
-  cartId: string;
-  optionId: string;
-  optionName: string;
-  quantity: number;
-  optionPrice: number;
-};
-
-export type Cart = {
-  cartId: string;
-  productId: string;
-  productName: string;
-  quantity: number;
-  categoryName: string;
-  price: number;
-  shippingPrice: number;
-  images: string[];
-  optionRequired: boolean;
-  options: CartOption[];
-};
-
-export type CartState = Cart & { checked: boolean };
 
 export interface UpdateMyinfoResponse {
   phone: string;

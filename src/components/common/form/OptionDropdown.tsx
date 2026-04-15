@@ -29,7 +29,7 @@ const OptionDropdown = ({
       <button
         type="button"
         onClick={() => setIsOptionOpen(!isOptionOpen)}
-        className="w-full h-11 px-3 flex items-center justify-between bg-gray-50 text-sm"
+        className="w-full h-11 px-3 flex items-center justify-between bg-gray-50 text-[15px]"
       >
         <span className="text-gray-500">{placeholder}</span>
         {isOptionOpen ? (
@@ -51,7 +51,7 @@ const OptionDropdown = ({
               key={option.value}
               type="button"
               onClick={() => handleSelect(option.value)}
-              className="w-full px-3 py-3 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+              className="w-full px-3 py-3 text-left text-[15px] hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
             >
               {/* {option.optionName} (+ {localeFormat(option.optionPrice)}) */}
               {option.label}

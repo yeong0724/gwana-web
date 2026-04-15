@@ -1,23 +1,30 @@
 import { getAxios, postAxios } from '@/lib/api';
-import { AddToCartRequest, ApiResponse, Cart, DeleteCartRequest, UpdateCartRequest } from '@/types';
-
-const addToCart = async (params: AddToCartRequest) => {
-  return postAxios<ApiResponse<void>>({
-    url: '/cart/add',
-    params,
-  });
-};
-
-const updateCartList = async (params: UpdateCartRequest[]) => {
-  return postAxios<ApiResponse<void>>({
-    url: '/cart/update',
-    params,
-  });
-};
+import {
+  ApiResponse,
+  Cart,
+  DeleteCartItemRequest,
+  DeleteCartRequest,
+  UpdateCartItemQuantityRequest,
+  UpsertCartRequest,
+} from '@/types';
 
 const getCartList = async () => {
   return getAxios<ApiResponse<Cart[]>>({
-    url: '/cart/list',
+    url: '/cart/list/search',
+  });
+};
+
+const upsertCart = async (params: UpsertCartRequest) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/cart/upsert',
+    params,
+  });
+};
+
+const upsertCartList = async (params: UpsertCartRequest[]) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/cart/list/upsert',
+    params,
   });
 };
 
@@ -28,18 +35,33 @@ const deleteCart = async (params: DeleteCartRequest) => {
   });
 };
 
+const deleteCartItem = async (params: DeleteCartItemRequest) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/cart/cart-item/delete',
+    params,
+  });
+};
+
 const deleteCartList = async (params: string[]) => {
   return postAxios<ApiResponse<void>>({
-    url: '/cart/delete/list',
+    url: '/cart/list/delete',
     params,
   });
 };
 
-const updateCartQuantity = async (params: AddToCartRequest) => {
+const updateCartItemQuantity = async (params: UpdateCartItemQuantityRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/cart/update/quantity',
+    url: '/cart/quantity/update',
     params,
   });
 };
 
-export { addToCart, deleteCart, deleteCartList, getCartList, updateCartList, updateCartQuantity };
+export {
+  upsertCart,
+  deleteCart,
+  deleteCartList,
+  getCartList,
+  upsertCartList,
+  deleteCartItem,
+  updateCartItemQuantity,
+};

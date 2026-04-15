@@ -243,25 +243,35 @@ export const compressImage = async (
   });
 };
 
+const asyncFn = async <T>(promise: Promise<T>): Promise<[null, T] | [Error, null]> => {
+  try {
+    const data = await promise;
+    return [null, data];
+  } catch (error) {
+    return [error as Error, null];
+  }
+};
+
 export {
-  clearLoginInfo,
   allClearPersistStore,
-  getRegexpByType,
-  validateByType,
-  localeFormat,
-  pwdSpecialCharValidate,
-  validateToken,
+  asyncFn,
+  clearLoginInfo,
   decodeToken,
   delayAsync,
-  noMainHeaderPage,
-  setAccessToken,
-  getAccessToken,
-  removeAccessToken,
-  renewLoginInfo,
-  getRedirectUrl,
-  setRedirectUrl,
   formatDate,
   formatRelativeTime,
+  getAccessToken,
   getCleanHtmlContent,
   getPhoneNumber,
+  getRedirectUrl,
+  getRegexpByType,
+  localeFormat,
+  noMainHeaderPage,
+  pwdSpecialCharValidate,
+  removeAccessToken,
+  renewLoginInfo,
+  setAccessToken,
+  setRedirectUrl,
+  validateByType,
+  validateToken,
 };

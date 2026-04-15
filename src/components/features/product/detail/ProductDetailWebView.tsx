@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { clone, isEmpty, map } from 'lodash-es';
+import { clone, isEmpty, map, size } from 'lodash-es';
 import { Share2, X } from 'lucide-react';
 
 import { OptionDropdown } from '@/components/common/form';
@@ -18,7 +18,7 @@ import { useControllerContext, useStateContext } from '@/context/productDetailCo
 import { localeFormat } from '@/lib/utils';
 
 const ProductDetailWebView = () => {
-  const { product, optionList, purchaseList, totalPrice } = useStateContext();
+  const { product, optionalOptions, requiredOptions, purchaseList, totalPrice } = useStateContext();
   const {
     handleShare,
     onOptionSelect,
@@ -145,9 +145,28 @@ const ProductDetailWebView = () => {
             </div>
 
             {/* 옵션 선택 - 커스텀 드롭다운 */}
-            {!isEmpty(product.options) && (
+            {size(requiredOptions) > 1 && (
               <div className="mb-4">
-                <OptionDropdown options={optionList} onOptionSelect={onOptionSelect} />
+                <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-1 mb-1.5 inline-block">
+                  옵션선택{' '}
+                  <span className="text-rose-500 text-[11px] font-medium align-middle">필수</span>
+                </span>
+                <OptionDropdown
+                  options={requiredOptions}
+                  onOptionSelect={onOptionSelect}
+                  placeholder="구성 선택"
+                />
+              </div>
+            )}
+
+            {/* 옵션 선택 - 커스텀 드롭다운 */}
+            {!isEmpty(optionalOptions) && (
+              <div className="mb-4">
+                <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-1 mb-1.5 inline-block">
+                  추가상품{' '}
+                  <span className="text-gray-400 text-[11px] font-normal align-middle">선택</span>
+                </span>
+                <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
               </div>
             )}
 
@@ -156,14 +175,15 @@ const ProductDetailWebView = () => {
               <div className="space-y-3 mb-6">
                 {map(
                   purchaseList,
-                  ({ productName, optionId, optionName, quantity, price }, index) => (
-                    <div key={index} className="border border-gray-200 bg-gray-50 p-4 space-y-3">
+                  ({ productOptionId, optionName, quantity, optionPrice, isRequired }, index) => (
+                    <div
+                      key={`${productOptionId}-${index}`}
+                      className="border border-gray-200 bg-gray-50 p-4 space-y-3"
+                    >
                       {/* 이름 + X버튼 */}
                       <div className="flex items-start justify-between">
-                        <span className="text-sm font-medium text-gray-800">
-                          {optionId ? optionName : productName}
-                        </span>
-                        {optionId && (
+                        <span className="text-sm font-medium text-gray-800">{optionName}</span>
+                        {(size(requiredOptions) > 1 || !isRequired) && (
                           <button
                             type="button"
                             onClick={() => {
@@ -202,7 +222,7 @@ const ProductDetailWebView = () => {
                           </Button>
                         </div>
                         <span className="text-base font-semibold">
-                          {localeFormat(price * quantity)}원
+                          {localeFormat(optionPrice * quantity)}원
                         </span>
                       </div>
                     </div>

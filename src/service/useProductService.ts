@@ -1,11 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getProductDetail, getProductList } from '@/api/product';
-import { ProductDetailRequest, ProductListRequest } from '@/types';
-import { UseQueryOptionsType } from '@/types/type';
+import {
+  Product,
+  ProductDetailRequest,
+  ProductDetailResponse,
+  ProductListRequest,
+  UseQueryCustomOptions,
+} from '@/types';
 
 const useProductService = () => {
-  const useProductListQuery = (payload: ProductListRequest, options?: UseQueryOptionsType) => {
+  const useProductListQuery = (
+    payload: ProductListRequest,
+    options?: UseQueryCustomOptions<Product[]>
+  ) => {
     return useQuery({
       queryKey: ['productList', payload.categoryId],
       queryFn: () => getProductList(payload),
@@ -13,7 +21,10 @@ const useProductService = () => {
     });
   };
 
-  const useProductDetailQuery = (payload: ProductDetailRequest, options?: UseQueryOptionsType) => {
+  const useProductDetailQuery = (
+    payload: ProductDetailRequest,
+    options?: UseQueryCustomOptions<ProductDetailResponse>
+  ) => {
     return useQuery({
       queryKey: ['productList', payload.productId],
       queryFn: () => getProductDetail(payload),

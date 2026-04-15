@@ -3,85 +3,77 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { forEach, isEmpty, reduce } from 'lodash-es';
+import { isEmpty, map, reduce } from 'lodash-es';
+import { toast } from 'sonner';
 
-import { getRedirectUrl, renewLoginInfo, setRedirectUrl } from '@/lib/utils';
+import { asyncFn, getRedirectUrl, renewLoginInfo, setRedirectUrl } from '@/lib/utils';
 import { useCartService, useLoginService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
-import { ResultCode, UpdateCartRequest } from '@/types';
+import { ResultCode, UpsertCartRequest } from '@/types';
 
 interface Props {
   code: string;
 }
 
-const KakaoRedirectContainer = ({ code }: Props) => {
+const KakaoRedirectContainer = ({ code: kakaoCode }: Props) => {
   const router = useRouter();
   const { showConfirmAlert } = useAlertStore();
   const { cart, _hasHydrated } = useCartStore();
   const { clearLogout } = useLoginStore();
 
   const { useGetAccessTokenByKakaoCode } = useLoginService();
-  const { useUpdateCartListMutation } = useCartService();
+  const { useUpsertCartListMutation } = useCartService();
 
-  const { mutate: getAccessTokenByKakaoCode, isPending } = useGetAccessTokenByKakaoCode();
-  const { mutateAsync: updateCartListAsync } = useUpdateCartListMutation();
+  const { mutateAsync: getAccessTokenByKakaoCodeAsync, isPending } = useGetAccessTokenByKakaoCode();
+  const { mutateAsync: upsertCartListAsync } = useUpsertCartListMutation();
 
-  const callbackKakaoLogin = () => {
-    getAccessTokenByKakaoCode(
-      { code },
-      {
-        onSuccess: async ({ code, data }) => {
-          if (code === ResultCode.SUCCESS) {
-            renewLoginInfo(data);
-
-            if (!isEmpty(cart)) {
-              const updateCartList = reduce(
-                cart,
-                (acc, cur) => {
-                  const { productId, quantity, optionRequired, options } = cur;
-                  if (!optionRequired) {
-                    acc.push({
-                      productId,
-                      quantity,
-                      optionId: null,
-                    });
-                  }
-
-                  forEach(options, (option) => {
-                    acc.push({
-                      productId,
-                      optionId: option.optionId,
-                      quantity: option.quantity,
-                    });
-                  });
-
-                  return acc;
-                },
-                [] as UpdateCartRequest[]
-              );
-
-              await updateCartListAsync(updateCartList);
-            }
-
-            const redirectUrl = getRedirectUrl();
-            router.replace(redirectUrl);
-            setRedirectUrl('/');
-          }
-        },
-        onError: async () => {
-          const confirm = await showConfirmAlert({
-            title: '에러',
-            description: '카카오 로그인을 실패하였습니다.',
-            size: 'sm',
-          });
-
-          if (confirm) {
-            clearLogout();
-            router.push('/login');
-          }
-        },
-      }
+  const callbackKakaoLogin = async () => {
+    const [getAccessTokenByKakaoCodeError, getAccessTokenByKakaoCodeResponse] = await asyncFn(
+      getAccessTokenByKakaoCodeAsync({ code: kakaoCode })
     );
+
+    if (!getAccessTokenByKakaoCodeError) {
+      const { code, data } = getAccessTokenByKakaoCodeResponse;
+      if (code === ResultCode.SUCCESS) {
+        renewLoginInfo(data);
+
+        if (!isEmpty(cart)) {
+          const upsertCartList = reduce(
+            cart,
+            (acc, { productId, cartItems }) => {
+              return acc.concat({
+                productId,
+                cartItems: map(cartItems, ({ productOptionId, quantity }) => ({
+                  productOptionId,
+                  quantity,
+                })),
+              });
+            },
+            [] as UpsertCartRequest[]
+          );
+
+          const [error] = await asyncFn(upsertCartListAsync(upsertCartList));
+          if (error) {
+            toast.error('장바구니 동기화에 실패하였습니다.');
+          }
+        }
+
+        const redirectUrl = getRedirectUrl();
+        router.replace(redirectUrl);
+        setRedirectUrl('/');
+      }
+    } else {
+      const confirm = await showConfirmAlert({
+        title: '에러',
+        description: '카카오 로그인을 실패하였습니다.',
+        size: 'sm',
+      });
+
+      if (confirm) {
+        clearLogout();
+        router.push('/login');
+      }
+    }
   };
 
   useEffect(() => {

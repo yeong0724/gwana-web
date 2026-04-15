@@ -9,7 +9,6 @@ import { ChevronDown, ChevronRight, MessageCircleQuestion, PenLine, Search } fro
 import { useInView } from 'react-intersection-observer';
 
 import { DatePicker } from '@/components/common/form';
-import { GlobalLoading } from '@/components/common/global';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {

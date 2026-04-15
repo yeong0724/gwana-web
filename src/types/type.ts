@@ -136,3 +136,34 @@ export type DragScrollType = {
     onTouchEnd: () => void;
   };
 };
+
+export interface ProductOption {
+  productOptionId: string;
+  productId: string | null;
+  optionName: string;
+  optionPrice: number;
+  isRequired: boolean;
+  isQuantityAdjustable: boolean;
+}
+
+export interface Purchase extends ProductOption {
+  quantity: number;
+}
+
+export interface CartItem extends Purchase {
+  cartItemId: string;
+}
+
+export type Cart = {
+  cartId: string;
+  productId: string;
+  productName: string;
+  categoryId: string;
+  categoryName: string;
+  images: string[];
+  price: number;
+  shippingPrice: number;
+  cartItems: CartItem[];
+};
+
+export type CartState = Cart & { checked: boolean };

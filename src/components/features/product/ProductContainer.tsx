@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { concat, filter, forEach } from 'lodash-es';
+import { toast } from 'sonner';
 
 import { productMockData } from '@/api/mock';
 import { ResponsiveFrame } from '@/components/common/frame';
@@ -11,8 +12,9 @@ import ProductMobileView from '@/components/features/product/ProductMobileView';
 import { Provider } from '@/context/productContext';
 import { useDragScroll } from '@/hooks/useDragScroll';
 import useNativeRouter from '@/hooks/useNativeRouter';
+import { useProductService } from '@/service';
 import { useMenuStore } from '@/stores';
-import { DragScrollType } from '@/types';
+import { DragScrollType, Product } from '@/types';
 
 import ProductWebView from './ProductWebView';
 
@@ -27,16 +29,22 @@ const ProductContainer = ({ categoryId }: Props) => {
   // 드래그 스크롤 훅들
   const categoryTabScroll: DragScrollType = useDragScroll();
   const pathname = usePathname();
+  const router = useRouter();
   const { forward } = useNativeRouter();
+  const {
+    menu: { category },
+  } = useMenuStore();
+
+  const { useProductListQuery } = useProductService();
 
   // 동시 슬라이드를 위한 상태
   const [currentCategory, setCurrentCategory] = useState<string>(categoryId);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const router = useRouter();
+  const [productList, setProductList] = useState<Product[]>([]);
 
-  const {
-    menu: { category },
-  } = useMenuStore();
+  const { data: productListData, error: productListError } = useProductListQuery({
+    categoryId: categoryId === 'all' ? '' : categoryId,
+  });
 
   const productCategory = useMemo(() => {
     const allCategory = [{ menuName: '전체 상품 보기', menuId: 'all', upperMenuId: null }];
@@ -44,9 +52,24 @@ const ProductContainer = ({ categoryId }: Props) => {
     return concat(allCategory, filter(category, { upperMenuId: pathname.replace('/', '') }));
   }, [category, pathname]);
 
-  const productList = useMemo(() => {
-    return categoryId === 'all' ? productMockData : filter(productMockData, { categoryId });
-  }, [categoryId]);
+  const onClickCategory = (menuId: string) => {
+    if (menuId === categoryId || isTransitioning) return; // 같은 카테고리거나 전환 중이면 무시
+    router.push(`/product?category=${menuId}`);
+  };
+
+  const onClickProduct = (productId: string) => {
+    forward(`/product/${productId}`);
+  };
+
+  useEffect(() => {
+    if (productListData) {
+      const { data } = productListData;
+      setProductList(data);
+    } else if (productListError) {
+      setProductList([]);
+      toast.error('상품 상세 정보를 불러오는데 실패하였습니다.');
+    }
+  }, [productListData, productListError]);
 
   // 선택된 탭이 보이도록 자동 스크롤
   useEffect(() => {
@@ -105,15 +128,6 @@ const ProductContainer = ({ categoryId }: Props) => {
       router.prefetch(`/product/${productId}`);
     });
   }, []);
-
-  const onClickCategory = (menuId: string) => {
-    if (menuId === categoryId || isTransitioning) return; // 같은 카테고리거나 전환 중이면 무시
-    router.push(`/product?category=${menuId}`);
-  };
-
-  const onClickProduct = (productId: string) => {
-    forward(`/product/${productId}`);
-  };
 
   return (
     <Provider
