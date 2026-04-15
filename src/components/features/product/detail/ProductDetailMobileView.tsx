@@ -500,7 +500,7 @@ const ProductDetailMobileView = () => {
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {size(requiredOptions) > 1 && (
                     <>
-                      <span className="text-[15px] ml-[2px]">옵션선택 (필수)</span>
+                      <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-0.5 mb-1.5 inline-block">옵션선택 <span className="text-rose-500 text-[11px] font-medium align-middle">필수</span></span>
                       <OptionDropdown
                         options={requiredOptions}
                         onOptionSelect={onOptionSelect}
@@ -511,7 +511,7 @@ const ProductDetailMobileView = () => {
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {!isEmpty(optionalOptions) && (
                     <>
-                      <span className="text-[15px] ml-[2px]">추가상품</span>
+                      <span className="text-[13px] font-semibold tracking-tight text-gray-700 ml-0.5 mb-1.5 inline-block">추가상품 <span className="text-gray-400 text-[11px] font-normal align-middle">선택</span></span>
                       <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
                     </>
                   )}

@@ -53,7 +53,7 @@ const KakaoRedirectContainer = ({ code: kakaoCode }: Props) => {
           );
 
           const [error] = await asyncFn(upsertCartListAsync(upsertCartList));
-          if (!error) {
+          if (error) {
             toast.error('장바구니 동기화에 실패하였습니다.');
           }
         }

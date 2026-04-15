@@ -8,7 +8,7 @@ import { twMerge } from 'tailwind-merge';
 import { cartActions } from '@/stores/useCartStore';
 import { loginActions } from '@/stores/useLoginStore';
 import { userActions } from '@/stores/useUserStore';
-import { ApiResponse, LoginResponse } from '@/types';
+import { LoginResponse } from '@/types';
 import { DecodedToken, FormatEnum } from '@/types/type';
 
 export function cn(...inputs: ClassValue[]) {
@@ -243,9 +243,7 @@ export const compressImage = async (
   });
 };
 
-const asyncFn = async <T>(
-  promise: Promise<ApiResponse<T>>
-): Promise<[null, ApiResponse<T>] | [Error, null]> => {
+const asyncFn = async <T>(promise: Promise<T>): Promise<[null, T] | [Error, null]> => {
   try {
     const data = await promise;
     return [null, data];
@@ -255,25 +253,25 @@ const asyncFn = async <T>(
 };
 
 export {
-  clearLoginInfo,
   allClearPersistStore,
-  getRegexpByType,
-  validateByType,
-  localeFormat,
-  pwdSpecialCharValidate,
-  validateToken,
+  asyncFn,
+  clearLoginInfo,
   decodeToken,
   delayAsync,
-  noMainHeaderPage,
-  setAccessToken,
-  getAccessToken,
-  removeAccessToken,
-  renewLoginInfo,
-  getRedirectUrl,
-  setRedirectUrl,
   formatDate,
   formatRelativeTime,
+  getAccessToken,
   getCleanHtmlContent,
   getPhoneNumber,
-  asyncFn,
+  getRedirectUrl,
+  getRegexpByType,
+  localeFormat,
+  noMainHeaderPage,
+  pwdSpecialCharValidate,
+  removeAccessToken,
+  renewLoginInfo,
+  setAccessToken,
+  setRedirectUrl,
+  validateByType,
+  validateToken,
 };
