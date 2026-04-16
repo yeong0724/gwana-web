@@ -12,6 +12,23 @@ const Footer = () => {
       className={`relative z-[60] w-full bg-brand-50 border-t border-brand-200/60 min-h-[200px] py-8 ${isProductDetail ? 'pb-18' : ''}`}
     >
       <div className="mx-auto px-6 max-w-7xl">
+        {/* 약관 링크 (웹/모바일 공통 상단) */}
+        <div className="flex items-center justify-center gap-5 mb-5 pb-5 border-b border-brand-200/50">
+          <Link
+            href="/terms"
+            className="text-brand-800 text-[15px] sm:text-[16px] font-bold hover:text-brand-900 transition-colors"
+          >
+            이용약관
+          </Link>
+          <span className="text-brand-200 text-[14px]">|</span>
+          <Link
+            href="/privacy"
+            className="text-brand-800 text-[15px] sm:text-[16px] font-bold hover:text-brand-900 transition-colors"
+          >
+            개인정보처리방침
+          </Link>
+        </div>
+
         {/* 웹 뷰 */}
         <address className="hidden md:flex flex-col space-y-4 text-sm text-warm-700 not-italic">
           <div className="flex flex-wrap flex-col items-center gap-2.5 leading-relaxed text-[15px]">
@@ -30,14 +47,6 @@ const Footer = () => {
             </div>
             <div>
               <span className="font-semibold text-brand-800">사업자등록번호: 613-19-89889</span>
-            </div>
-            <div className="mt-2">
-              <Link
-                href="/privacy"
-                className="text-warm-500 text-[13px] underline underline-offset-2 decoration-warm-300 hover:text-brand-700 transition-colors"
-              >
-                개인정보처리방침
-              </Link>
             </div>
             <div className="mt-1">
               <span className="text-warm-400 text-[13px]">
@@ -68,15 +77,7 @@ const Footer = () => {
             <div>
               <span className="font-medium text-warm-600">사업자등록번호: 613-19-89889</span>
             </div>
-            <div className="mt-2">
-              <Link
-                href="/privacy"
-                className="text-warm-500 text-[12px] underline underline-offset-2 decoration-warm-300 hover:text-brand-700 transition-colors"
-              >
-                개인정보처리방침
-              </Link>
-            </div>
-            <div className="flex flex-col items-center mt-1">
+            <div className="flex flex-col items-center mt-2">
               <span className="text-warm-400 text-[12px]">Copyright &copy; Gwana Tea House.</span>
               <span className="text-warm-400 text-[12px]">All rights reserved.</span>
             </div>
