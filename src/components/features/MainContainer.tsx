@@ -231,14 +231,12 @@ const MainContainer = () => {
       if (index === heroIndex) {
         video.currentTime = 0;
         video.muted = heroSlides[index].hasSound ? !isSoundOn : true;
-        const playVideo = () => {
-          video.play().catch(() => {});
-        };
-        if (video.readyState >= 3) {
-          playVideo();
-        } else {
-          video.addEventListener('canplay', playVideo, { once: true });
-        }
+
+        // 먼저 play() 시도, 실패 시 로드 후 재시도
+        video.play().catch(() => {
+          if (video.readyState === 0) video.load();
+          video.addEventListener('canplay', () => video.play().catch(() => {}), { once: true });
+        });
       } else {
         video.pause();
         video.muted = true;
@@ -314,10 +312,12 @@ const MainContainer = () => {
                 <motion.video
                   ref={(el) => {
                     videoRefs.current[i] = el;
+                    // React hydration bug: muted prop이 DOM에 반영되지 않는 문제 해결
+                    if (el) el.muted = true;
                   }}
                   src={`${AWS_S3_DOMAIN}${slide.src}`}
                   preload="auto"
-                  muted={slide.hasSound ? !isSoundOn : true}
+                  muted
                   playsInline
                   className="w-full h-full object-cover"
                   style={{ y: heroParallaxY }}
