@@ -22,6 +22,8 @@ const getRegexpByType = (type: FormatEnum = 'text') => {
       return /^[0-9]+$/g;
     case 'text':
       return /^[가-힣ㄱ-ㅎㅏ-ㅣ·:a-zA-Z\s0-9]+$/;
+    case 'email':
+      return /^[a-zA-Z0-9@._+\-]+$/;
     case 'alphanumericWithSymbols':
       return /^[a-zA-Zㄱ-ㅎㅏ-ㅣㆍ가-힣0-9~?\-_!^.,·:\s()]*$/;
   }
@@ -96,7 +98,7 @@ const delayAsync = (delay: number = 1000): Promise<number> => {
 };
 
 const noMainHeaderPage = (pathname: string) => {
-  return some(['/cart', '/login', '/payment', '/fail', '/mypage', '/mypage/inquiry'], (path) =>
+  return some(['/cart', '/login', '/signup', '/payment', '/fail', '/mypage', '/mypage/inquiry'], (path) =>
     startsWith(pathname, path)
   );
 };

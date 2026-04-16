@@ -28,10 +28,11 @@ export default function PrivacyPolicyPage() {
         <article className="space-y-10 text-body text-warm-700 leading-relaxed">
           {/* 서문 */}
           <p className="text-body-lg text-warm-600 leading-relaxed">
-            관아수제차는 (이하 &apos;회사&apos;는) 고객님의 개인정보를 중요시하며, &ldquo;정보통신망
-            이용촉진 및 정보보호&rdquo;에 관한 법률을 준수하고 있습니다. 회사는 개인정보처리방침을
-            통하여 고객님께서 제공하시는 개인정보가 어떠한 용도와 방식으로 이용되고 있으며,
-            개인정보보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.
+            {`관아수제차(이하 '회사')는 고객님의 개인정보를 소중히 여기며, 「개인정보 보호법」 및
+            「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 등 관련 법령에 따라 이용자의
+            개인정보를 안전하게 보호하고 있습니다. 회사는 개인정보처리방침을 통하여 고객님께서
+            제공하시는 개인정보가 어떠한 용도와 방식으로 이용되고 있으며, 개인정보보호를 위해 어떠한
+            조치가 취해지고 있는지 알려드립니다.`}
           </p>
           <p className="text-body-sm text-warm-500">
             회사는 개인정보처리방침을 개정하는 경우 웹사이트 공지사항(또는 개별공지)을 통하여 공지할
@@ -234,7 +235,9 @@ export default function PrivacyPolicyPage() {
                     </tr>
                     <tr>
                       <td className="px-4 py-2.5 text-warm-600">결제 서비스</td>
-                      <td className="px-4 py-2.5 text-warm-700 font-medium">토스페이먼츠</td>
+                      <td className="px-4 py-2.5 text-warm-700 font-medium">
+                        토스페이먼츠, (주)포트원
+                      </td>
                     </tr>
                     <tr>
                       <td className="px-4 py-2.5 text-warm-600">휴대폰 본인확인 서비스</td>

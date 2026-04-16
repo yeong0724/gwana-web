@@ -50,3 +50,12 @@ export interface MyinfoForm {
   detailAddress: string;
 }
 
+export interface SignupForm {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  zonecode: string;
+  roadAddress: string;
+  detailAddress: string;
+}
+

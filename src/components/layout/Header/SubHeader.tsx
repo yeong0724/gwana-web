@@ -31,6 +31,8 @@ const SubHeader = ({ viewTransitionName = 'header' }: Props) => {
         return '개인 정보 수정';
       case pathname === '/mypage/review':
         return '리뷰 작성';
+      case pathname === '/signup':
+        return '회원가입';
       default:
         return '';
     }

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { AWS_S3_DOMAIN } from '@/constants';
 
@@ -12,9 +13,9 @@ const LoginContainer = () => {
   /**
    * TODO: 네이버 로그인 구현
    */
-  const onNaverLogin = async () => {
-    console.log('네이버 로그인');
-  };
+  // const onNaverLogin = async () => {
+  //   console.log('네이버 로그인');
+  // };
 
   /**
    * TODO: 구글 로그인 구현
@@ -66,7 +67,7 @@ const LoginContainer = () => {
             </button>
 
             {/* 네이버 로그인 */}
-            <button
+            {/* <button
               onClick={onNaverLogin}
               className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-[#03C75A] hover:bg-[#02B350] text-white border border-brand-200 active:scale-[0.98] cursor-pointer"
             >
@@ -78,7 +79,7 @@ const LoginContainer = () => {
                 className="w-5 h-5 sm:w-6 sm:h-6"
               />
               <span>네이버로 계속하기</span>
-            </button>
+            </button> */}
 
             {/* 구글 로그인 */}
             {/* <button
@@ -95,6 +96,23 @@ const LoginContainer = () => {
               <span>Google로 계속하기</span>
             </button> */}
           </div>
+
+          {/* 구분선 */}
+          <div className="flex items-center gap-3 my-5 sm:my-6">
+            <div className="flex-1 h-px bg-brand-200/60" />
+            <span className="text-[12px] sm:text-[13px] text-warm-400 tracking-wide">
+              또는
+            </span>
+            <div className="flex-1 h-px bg-brand-200/60" />
+          </div>
+
+          {/* 회원가입 버튼 */}
+          <Link
+            href="/signup"
+            className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-white hover:bg-brand-50 text-brand-800 border border-brand-300/80 active:scale-[0.98] cursor-pointer"
+          >
+            <span>회원가입 하기</span>
+          </Link>
         </div>
       </div>
     </>

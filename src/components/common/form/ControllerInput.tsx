@@ -91,7 +91,7 @@ const ControllerInput = <T extends FieldValues>({
         className={`${className} outline-none ${error?.message ? '!border-red-500 focus:!border-red-500' : ''} ${disabled ? 'bg-gray-100 text-gray-700 cursor-not-allowed' : ''}`}
         readOnly={readOnly}
         disabled={disabled}
-        type={type}
+        type={type === 'email' ? 'text' : type}
         maxLength={maxLength}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
