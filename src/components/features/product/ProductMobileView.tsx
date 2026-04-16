@@ -84,7 +84,7 @@ const ProductMobileView = () => {
       <div className="relative overflow-hidden px-4">
         {currentCategory && (
           <div className={isTransitioning ? 'animate-tab-slide-left-in' : ''}>
-            <div className="grid grid-cols-2 gap-x-3 gap-y-8" style={{ gridTemplateRows: 'repeat(auto-fill, auto auto auto)' }}>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8 items-start">
               {map(productList, (product) => (
                 <ProductCard
                   key={product.productId}

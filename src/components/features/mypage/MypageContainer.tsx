@@ -69,7 +69,7 @@ const MypageContainer = () => {
 
   const handleMenuClick = (url: string) => {
     // router.push(url);
-    const productId = '1';
+    const productId = '2';
     if (url === '/mypage/review') {
       forward(`${url}?productId=${productId}`);
     } else {
@@ -120,7 +120,9 @@ const MypageContainer = () => {
                   <div className={`p-3 rounded-xl ${stat.bgColor}`}>
                     <stat.icon className={`size-6 ${stat.color}`} />
                   </div>
-                  <span className="text-2xl font-bold text-brand-800 tabular-nums">{stat.count}</span>
+                  <span className="text-2xl font-bold text-brand-800 tabular-nums">
+                    {stat.count}
+                  </span>
                   <span className="text-xs text-warm-400">{stat.label}</span>
                 </div>
               ))}
@@ -129,7 +131,7 @@ const MypageContainer = () => {
         </Card>
 
         {/* 섹션 3: 메뉴 리스트 */}
-        <Card className="py-0 border-brand-200">
+        <Card className="py-0 border-brand-200 overflow-hidden">
           <CardContent className="p-0 bg-white">
             <ul className="divide-y divide-brand-100">
               {menuItems.map(({ icon: Icon, label, url }, index) => (

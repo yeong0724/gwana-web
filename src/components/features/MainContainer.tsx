@@ -21,11 +21,11 @@ import {
   VolumeX,
 } from 'lucide-react';
 
-import { productMockData } from '@/api/mock';
 import { ProductCard } from '@/components/common';
 import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { HeroSlide } from '@/types';
+import useProductService from '@/service/useProductService';
+import { HeroSlide, Product } from '@/types';
 
 const FloatingLeaf = React.memo(function FloatingLeaf({
   delay,
@@ -173,6 +173,7 @@ const brandStory = [
 const MainContainer = () => {
   const router = useRouter();
   const { forward } = useNativeRouter();
+  const { useProductListQuery } = useProductService();
 
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroAutoplay, setHeroAutoplay] = useState(true);
@@ -191,12 +192,19 @@ const MainContainer = () => {
 
   const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], ['0%', '20%']);
 
-  const [popularProducts, setPopularProducts] = useState(() => take(productMockData, 4));
+  const { data: productListData } = useProductListQuery({ categoryId: '' });
+
+  const [productList, setProductList] = useState<Product[]>([]);
+  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
 
   // Shuffle on client only to avoid hydration mismatch
   useEffect(() => {
-    setPopularProducts(take(shuffle([...productMockData]), 4));
-  }, []);
+    if (productListData) {
+      const { data } = productListData;
+      setPopularProducts(take(shuffle([...data]), 4));
+      setProductList(data);
+    }
+  }, [productListData]);
 
   const onClickProduct = (productId: string) => {
     forward(`/product/${productId}`);
@@ -263,10 +271,10 @@ const MainContainer = () => {
   // Prefetching
   useEffect(() => {
     router.prefetch('/product?category=all');
-    forEach(productMockData, ({ productId }) => {
+    forEach(productList, ({ productId }) => {
       router.prefetch(`/product/${productId}`);
     });
-  }, [router]);
+  }, [router, productList]);
 
   const currentSlide = heroSlides[heroIndex];
 
@@ -459,7 +467,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-80px' }}
+            viewport={{ margin: '-80px' }}
             className="space-y-6"
           >
             <motion.p
@@ -496,7 +504,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
             className="px-6 mb-8"
           >
             <motion.p
@@ -523,7 +531,7 @@ const MainContainer = () => {
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="show"
-                viewport={{ once: true }}
+                viewport={{}}
                 className="snap-start shrink-0 grow-0 basis-[68vw] min-w-0 space-y-3"
               >
                 <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
@@ -558,7 +566,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
           >
             <motion.div variants={fadeUp} className="flex items-end justify-between mb-8">
               <div>
@@ -578,7 +586,7 @@ const MainContainer = () => {
               </button>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 items-start">
               {map(popularProducts, (product) => (
                 <ProductCard
                   key={product.productId}
@@ -598,7 +606,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
             className="px-6 mb-8"
           >
             <motion.p
@@ -619,7 +627,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true }}
+            viewport={{}}
             className="space-y-4 px-6"
           >
             {categories.map((cat) => (
@@ -660,7 +668,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
           >
             <motion.div variants={fadeUp} className="mb-8">
               <p className="text-[11px] tracking-[0.15em] uppercase text-tea-600 font-medium mb-2">
@@ -672,8 +680,8 @@ const MainContainer = () => {
               <p className="text-[13px] text-warm-400 mt-2">카페인 없이 즐기는 자연의 맛</p>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8">
-              {filter(productMockData, { categoryId: 'substituteTea' }).map((product) => (
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 items-start">
+              {filter(productList, { categoryId: 'substituteTea' }).map((product) => (
                 <ProductCard
                   key={product.productId}
                   product={product}
@@ -701,7 +709,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
             className="relative text-center space-y-6"
           >
             <motion.div variants={fadeUp}>

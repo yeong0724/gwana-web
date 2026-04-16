@@ -246,7 +246,7 @@ const ProductDetailMobileView = () => {
       </div>
 
       {/* 상세정보 섹션 - 모바일뷰 */}
-      <div ref={detailSectionRef} className="max-w-[800px] pb-16">
+      <div ref={detailSectionRef} className="max-w-[800px]">
         {/* 상세정보 타이틀 */}
         {/* <div className="relative flex items-center justify-center mb-15">
           <div className="absolute inset-0 flex items-center">
@@ -290,7 +290,7 @@ const ProductDetailMobileView = () => {
           {/* 펼치기/접기 버튼 */}
           <div
             className={`flex justify-center ${
-              isDetailExpanded ? 'mt-8' : 'absolute bottom-4 left-0 right-0'
+              isDetailExpanded ? 'my-8' : 'absolute bottom-4 left-0 right-0'
             }`}
           >
             <button
