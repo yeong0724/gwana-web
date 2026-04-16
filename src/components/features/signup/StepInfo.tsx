@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useRef, useState } from 'react';
 
 import { Check, Eye, EyeOff, MapPin } from 'lucide-react';
 import { Address } from 'react-daum-postcode';
@@ -17,15 +17,17 @@ import type { IdentityData } from './SignupContainer';
 type Props = {
   identityData: IdentityData;
   onComplete: () => void;
+  header: ReactNode;
 };
 
-const StepInfo = ({ identityData, onComplete }: Props) => {
+const StepInfo = ({ identityData, onComplete, header }: Props) => {
   const { isMobile } = useIsMobile();
   const { form, setValue, handleSubmit, clearErrors, errors, watch } = useSignupForm();
 
   const [addressOpen, setAddressOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const setInputRef = (name: string) => (el: HTMLInputElement | null) => {
@@ -41,37 +43,16 @@ const StepInfo = ({ identityData, onComplete }: Props) => {
     allValues.roadAddress &&
     allValues.detailAddress;
 
-  // 주소 검색 히스토리 관리: 모달이 열릴 때 pushState, 닫힐 때 back()
-  const isAddressOpenRef = useRef(false);
-
   const handleAddressOpen = () => {
-    window.history.pushState({ addressModal: true }, '');
-    isAddressOpenRef.current = true;
     setAddressOpen(true);
   };
 
   // 뒤로가기(popstate)로 닫히는 경우 → history.back() 불필요
   // X버튼/오버레이/주소선택으로 닫히는 경우 → history.back() 필요
   const handleAddressClose = useCallback((open: boolean) => {
-    if (!open && isAddressOpenRef.current) {
-      isAddressOpenRef.current = false;
+    if (!open) {
       setAddressOpen(false);
-      // popstate가 아닌 경로로 닫힌 경우 pushState 엔트리 정리
-      if (window.history.state?.addressModal) {
-        window.history.back();
-      }
     }
-  }, []);
-
-  useEffect(() => {
-    const onPopState = () => {
-      if (isAddressOpenRef.current) {
-        isAddressOpenRef.current = false;
-        setAddressOpen(false);
-      }
-    };
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   const handleAddressComplete = (addressData: Address) => {
@@ -122,12 +103,10 @@ const StepInfo = ({ identityData, onComplete }: Props) => {
   return (
     <>
       <FormProvider {...form}>
-        <form
-          onSubmit={handleSubmit(onSubmit, onError)}
-          className="flex flex-col flex-1 min-h-0"
-        >
+        <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col flex-1 min-h-0">
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="px-5 pb-6 space-y-5">
+            {header}
+            <div className="px-5 pb-6 space-y-5 max-w-[500px] w-full mx-auto">
               {/* 본인인증 완료 정보 */}
               <div className="rounded-lg bg-brand-50 border border-brand-200/40 px-4 py-3.5">
                 <p className="text-[12px] text-tea-600 font-medium mb-2">본인인증 완료</p>
@@ -225,7 +204,7 @@ const StepInfo = ({ identityData, onComplete }: Props) => {
                 {allValues.passwordConfirm &&
                   allValues.password === allValues.passwordConfirm &&
                   !errors.passwordConfirm && (
-                    <p className="flex items-center gap-1 text-tea-600 text-[12px] pl-1">
+                    <p className="flex items-center gap-1 text-tea-600 text-[12px] lg:text-[14px] pl-1">
                       <Check className="size-3" />
                       비밀번호가 일치합니다
                     </p>
@@ -289,14 +268,15 @@ const StepInfo = ({ identityData, onComplete }: Props) => {
           </div>
 
           {/* 하단 버튼 */}
-          <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200/60">
+          <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200/60  flex justify-center">
             <button
-              type="submit"
-              disabled={!allFieldsFilled}
-              className={`w-full rounded-full py-3.5 flex items-center justify-center gap-2 transition-all text-[15px] font-semibold ${
-                allFieldsFilled
-                  ? 'bg-brand-800 hover:bg-brand-900 text-white active:scale-[0.98] cursor-pointer'
-                  : 'bg-warm-200 text-warm-400 cursor-not-allowed'
+              type="button"
+              onClick={handleSubmit(onSubmit, onError)}
+              onPointerDown={() => setIsPressed(true)}
+              onPointerUp={() => setIsPressed(false)}
+              onPointerLeave={() => setIsPressed(false)}
+              className={`max-w-[500px] w-full rounded-full py-3.5 flex items-center justify-center gap-2 transition-transform duration-150 text-[15px] font-semibold bg-brand-800 hover:bg-brand-900 text-white cursor-pointer ${
+                isPressed ? 'scale-95 brightness-90' : ''
               }`}
             >
               <span>가입하기</span>
@@ -342,7 +322,7 @@ function PasswordStrengthHint({ password }: { password: string }) {
       {rules.map((rule) => (
         <span
           key={rule.label}
-          className={`text-[11px] flex items-center gap-0.5 transition-colors ${
+          className={`text-[11px] lg:text-[13px] flex items-center gap-0.5 transition-colors ${
             rule.passed ? 'text-tea-600' : 'text-warm-300'
           }`}
         >

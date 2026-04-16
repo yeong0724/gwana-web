@@ -34,7 +34,8 @@ const StepIdentity = ({ onComplete }: Props) => {
   });
   const [viewingTerms, setViewingTerms] = useState<TermsType | null>(null);
 
-  const allChecked = agreements.terms && agreements.privacy && agreements.identity && agreements.marketing;
+  const allChecked =
+    agreements.terms && agreements.privacy && agreements.identity && agreements.marketing;
   const canProceed = agreements.terms && agreements.privacy && agreements.identity;
 
   const handleAllChange = (checked: boolean) => {
@@ -60,9 +61,9 @@ const StepIdentity = ({ onComplete }: Props) => {
   };
 
   return (
-    <div className="flex flex-col flex-1 px-5">
+    <div className="flex flex-col flex-1 min-h-0">
       {/* 약관 동의 영역 */}
-      <div className="flex-1 overflow-y-auto py-4">
+      <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 max-w-[500px] w-full mx-auto">
         {/* 전체 동의 */}
         <label className="flex items-center gap-3 px-4 py-4 rounded-xl bg-brand-50 border border-brand-200/50 cursor-pointer">
           <Checkbox
@@ -105,12 +106,12 @@ const StepIdentity = ({ onComplete }: Props) => {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200/60">
+      <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200/60 flex justify-center">
         <button
           type="button"
           onClick={handleDanalAuth}
           disabled={!canProceed}
-          className={`w-full rounded-full py-3.5 text-[15px] font-semibold flex items-center justify-center gap-2 transition-all ${
+          className={`w-full rounded-full py-3.5 text-[15px] font-semibold flex items-center justify-center gap-2 transition-all max-w-[500px] ${
             canProceed
               ? 'bg-brand-800 hover:bg-brand-900 text-white active:scale-[0.98] cursor-pointer'
               : 'bg-warm-200 text-warm-400 cursor-not-allowed'
@@ -122,8 +123,8 @@ const StepIdentity = ({ onComplete }: Props) => {
       </div>
 
       {/* 약관 상세 보기 - Modal (웹) / Sheet (모바일) */}
-      {viewingTerms !== null && (
-        isMobile ? (
+      {viewingTerms !== null &&
+        (isMobile ? (
           <TermsViewerSheet
             open={true}
             onOpenChange={(open) => !open && setViewingTerms(null)}
@@ -135,8 +136,7 @@ const StepIdentity = ({ onComplete }: Props) => {
             onOpenChange={(open) => !open && setViewingTerms(null)}
             type={viewingTerms}
           />
-        )
-      )}
+        ))}
     </div>
   );
 };

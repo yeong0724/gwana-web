@@ -20,6 +20,7 @@ const SearchPostcodeSheet = ({ addressOpen, setAddressOpen, handleAddressComplet
         <DaumPostcode
           style={{ width: '100%', height: '100%' }}
           onComplete={handleAddressComplete}
+          submitMode={false}
         />
       </SheetContent>
     </Sheet>

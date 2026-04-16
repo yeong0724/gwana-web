@@ -3,9 +3,9 @@
 import { useState } from 'react';
 
 import SignupStepper from './SignupStepper';
+import StepComplete from './StepComplete';
 import StepIdentity from './StepIdentity';
 import StepInfo from './StepInfo';
-import StepComplete from './StepComplete';
 
 export type IdentityData = {
   name: string;
@@ -31,26 +31,37 @@ const SignupContainer = () => {
     setCurrentStep(2);
   };
 
-  return (
-    <div className="bg-warm-50 flex flex-col flex-1 min-h-0 overflow-hidden h-full">
-      {/* 헤더 */}
-      <div className="px-5 pt-8 pb-2 max-w-[500px] w-full mx-auto">
+  const header = (
+    <>
+      {/* <div className="px-5 pt-8 pb-2 max-w-[500px] w-full mx-auto">
         <p className="text-caption font-medium tracking-wide text-tea-600 mb-1">Sign Up</p>
         <h1 className="text-heading-2 font-bold tracking-heading text-brand-800">회원가입</h1>
-      </div>
-
-      {/* 스텝 인디케이터 */}
+      </div> */}
       <div className="px-5 py-5 max-w-[500px] w-full mx-auto">
         <SignupStepper steps={STEPS} currentStep={currentStep} />
       </div>
+    </>
+  );
 
+  return (
+    <div className="bg-warm-50 flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* 스텝 컨텐츠 */}
-      <div className="flex flex-col flex-1 min-h-0 max-w-[500px] w-full mx-auto">
-        {currentStep === 0 && <StepIdentity onComplete={handleIdentityComplete} />}
-        {currentStep === 1 && (
-          <StepInfo identityData={identityData!} onComplete={handleInfoComplete} />
+      <div className="flex flex-col flex-1 min-h-0 w-full">
+        {currentStep === 0 && (
+          <>
+            {header}
+            <StepIdentity onComplete={handleIdentityComplete} />
+          </>
         )}
-        {currentStep === 2 && <StepComplete />}
+        {currentStep === 1 && (
+          <StepInfo identityData={identityData!} onComplete={handleInfoComplete} header={header} />
+        )}
+        {currentStep === 2 && (
+          <>
+            {header}
+            <StepComplete />
+          </>
+        )}
       </div>
     </div>
   );

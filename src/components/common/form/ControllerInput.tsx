@@ -95,9 +95,10 @@ const ControllerInput = <T extends FieldValues>({
         maxLength={maxLength}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
+        autoComplete="off"
       />
       {!disableErrorMessage && error?.message && (
-        <div className="text-red-500 pt-1 pl-2 text-[12px] sm:text-[8px]">{error.message}</div>
+        <div className="text-red-500 pt-1 pl-2 text-[12px] sm:text-[14px]">{error.message}</div>
       )}
     </div>
   );
