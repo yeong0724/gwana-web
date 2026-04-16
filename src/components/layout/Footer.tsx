@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const Footer = () => {
@@ -31,6 +32,14 @@ const Footer = () => {
               <span className="font-semibold text-brand-800">사업자등록번호: 613-19-89889</span>
             </div>
             <div className="mt-2">
+              <Link
+                href="/privacy"
+                className="text-warm-500 text-[13px] underline underline-offset-2 decoration-warm-300 hover:text-brand-700 transition-colors"
+              >
+                개인정보처리방침
+              </Link>
+            </div>
+            <div className="mt-1">
               <span className="text-warm-400 text-[13px]">
                 Copyright &copy; Gwana Tea House. All rights reserved.
               </span>
@@ -59,7 +68,15 @@ const Footer = () => {
             <div>
               <span className="font-medium text-warm-600">사업자등록번호: 613-19-89889</span>
             </div>
-            <div className="flex flex-col items-center mt-2">
+            <div className="mt-2">
+              <Link
+                href="/privacy"
+                className="text-warm-500 text-[12px] underline underline-offset-2 decoration-warm-300 hover:text-brand-700 transition-colors"
+              >
+                개인정보처리방침
+              </Link>
+            </div>
+            <div className="flex flex-col items-center mt-1">
               <span className="text-warm-400 text-[12px]">Copyright &copy; Gwana Tea House.</span>
               <span className="text-warm-400 text-[12px]">All rights reserved.</span>
             </div>
