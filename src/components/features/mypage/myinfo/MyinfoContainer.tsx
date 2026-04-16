@@ -3,7 +3,7 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Camera, PenLine, X } from 'lucide-react';
+import { Camera, MapPin, PenLine, X } from 'lucide-react';
 import { Address } from 'react-daum-postcode';
 import { FieldErrors, FormProvider } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -308,7 +308,7 @@ const MyinfoContainer = () => {
                 {/* 우편번호 */}
                 <div className="space-y-2">
                   <div className="px-[5px] text-brand-800 font-medium text-base">우편번호</div>
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-center gap-2">
                     <ControllerInput
                       type="tel"
                       name="zonecode"
@@ -319,9 +319,10 @@ const MyinfoContainer = () => {
                     <button
                       type="button"
                       onClick={addressSearchOpenHandler}
-                      className="px-6 py-[6px] border border-brand-800 text-brand-800 font-medium text-[14px] hover:bg-brand-800 hover:text-white transition-colors whitespace-nowrap cursor-pointer"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-brand-800 text-white rounded-lg text-[13px] font-medium hover:bg-brand-900 active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer shadow-sm"
                     >
-                      검색하기
+                      <MapPin className="size-3.5" />
+                      <span>검색</span>
                     </button>
                   </div>
                 </div>

@@ -47,7 +47,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
         <div className="mt-1.5 flex items-center gap-1">
           <Star className="w-3 h-3 text-gold-400 fill-gold-400 shrink-0 translate-y-[-0.5px]" />
           <span className="text-[12px] lg:text-[14px] leading-none text-brand-600 tabular-nums font-medium">
-            {product.avgRating}
+            {product.avgRating.toFixed(1)}
           </span>
           <span className="text-[12px] lg:text-[14px] leading-none text-warm-400">
             ({product.reviewCount})

@@ -474,7 +474,7 @@ const MainContainer = () => {
               variants={fadeUp}
               className="text-[11px] tracking-[0.15em] uppercase text-tea-600 font-medium"
             >
-              Since 2020
+              Since 1994
             </motion.p>
             <motion.h2
               variants={fadeUp}
