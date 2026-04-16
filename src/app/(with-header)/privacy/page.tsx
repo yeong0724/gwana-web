@@ -18,6 +18,10 @@ export default function PrivacyPolicyPage() {
             개인정보처리방침
           </h1>
           <div className="mt-4 h-px bg-gradient-to-r from-brand-300/60 to-transparent" />
+          <div className="mt-2 text-body-sm text-warm-500">
+            <p>시행일자: 2026년 4월 16일</p>
+            <p>최종 개정일: 2026년 4월 16일</p>
+          </div>
         </header>
 
         {/* Content */}
@@ -37,22 +41,26 @@ export default function PrivacyPolicyPage() {
           {/* 수집하는 개인정보 항목 */}
           <Section title="수집하는 개인정보 항목">
             <p>
-              회사는 회원가입, 상담, 서비스 신청 등을 위해 아래와 같은 개인정보를 수집하고 있습니다.
+              회사는 회원가입, 상담, 서비스 신청, 본인확인 등을 위해 아래와 같은 개인정보를 수집하고
+              있습니다.
             </p>
             <DefinitionList
               items={[
                 {
-                  term: '수집항목',
+                  term: '일반 수집항목',
                   desc: '이름, 생년월일, 성별, 로그인ID, 비밀번호, 주소, 휴대전화번호, 이메일, 결제기록',
                 },
                 {
+                  term: '본인확인 수집항목',
+                  desc: '이름, 생년월일, 성별, 휴대전화번호, 통신사, 내외국인 여부, 연계정보(CI), 중복가입확인정보(DI)',
+                },
+                {
                   term: '개인정보 수집방법',
-                  desc: '홈페이지(회원가입)',
+                  desc: '홈페이지(회원가입), 본인확인 서비스(다날)를 통한 수집',
                 },
               ]}
             />
           </Section>
-
           {/* 개인정보의 수집 및 이용목적 */}
           <Section title="개인정보의 수집 및 이용목적">
             <p>회사는 수집한 개인정보를 다음의 목적을 위해 활용합니다.</p>
@@ -63,6 +71,14 @@ export default function PrivacyPolicyPage() {
                   {' '}
                   — 회원가입시 본인여부 확인, 서비스 이용 및 상담, 공지사항 전달, SNS 및 제3자
                   계정을 연계하여 간편로그인 서비스 제공
+                </span>
+              </li>
+              <li>
+                <strong className="text-warm-800">본인확인</strong>
+                <span className="text-warm-600">
+                  {' '}
+                  — 휴대폰 본인확인 서비스를 통한 실명확인 및 부정이용 방지, 만 14세 미만 아동
+                  회원가입 제한, 중복가입 확인(DI), 서비스 간 연계(CI)를 통한 본인 식별
                 </span>
               </li>
               <li>
@@ -96,9 +112,49 @@ export default function PrivacyPolicyPage() {
           {/* 개인정보의 보유 및 이용기간 */}
           <Section title="개인정보의 보유 및 이용기간">
             <p>
-              회사는 개인정보 수집 및 이용목적이 달성된 후에는 예외 없이 해당 정보를 지체 없이
-              파기합니다.
+              회사는 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.
+              다만, 관계 법령에 의해 보존할 필요가 있는 경우 아래와 같이 일정 기간 보관합니다.
             </p>
+            <div className="mt-4 overflow-hidden rounded-lg border border-warm-200/60">
+              <table className="w-full text-body-sm">
+                <thead>
+                  <tr className="bg-warm-100/50">
+                    <th className="px-4 py-2.5 text-left font-semibold text-warm-800">보존 항목</th>
+                    <th className="px-4 py-2.5 text-left font-semibold text-warm-800">보존 기간</th>
+                    <th className="px-4 py-2.5 text-left font-semibold text-warm-800">근거 법령</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-warm-100">
+                  <tr>
+                    <td className="px-4 py-2.5 text-warm-600">계약 또는 청약철회 등에 관한 기록</td>
+                    <td className="px-4 py-2.5 text-warm-700">5년</td>
+                    <td className="px-4 py-2.5 text-warm-600">전자상거래법</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2.5 text-warm-600">대금결제 및 재화 공급에 관한 기록</td>
+                    <td className="px-4 py-2.5 text-warm-700">5년</td>
+                    <td className="px-4 py-2.5 text-warm-600">전자상거래법</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2.5 text-warm-600">
+                      소비자 불만 또는 분쟁처리에 관한 기록
+                    </td>
+                    <td className="px-4 py-2.5 text-warm-700">3년</td>
+                    <td className="px-4 py-2.5 text-warm-600">전자상거래법</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2.5 text-warm-600">로그인 기록</td>
+                    <td className="px-4 py-2.5 text-warm-700">3개월</td>
+                    <td className="px-4 py-2.5 text-warm-600">통신비밀보호법</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2.5 text-warm-600">본인확인정보(CI, DI)</td>
+                    <td className="px-4 py-2.5 text-warm-700">회원 탈퇴 시까지</td>
+                    <td className="px-4 py-2.5 text-warm-600">정보통신망법</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </Section>
 
           {/* 개인정보의 파기절차 및 방법 */}
@@ -179,6 +235,12 @@ export default function PrivacyPolicyPage() {
                     <tr>
                       <td className="px-4 py-2.5 text-warm-600">결제 서비스</td>
                       <td className="px-4 py-2.5 text-warm-700 font-medium">토스페이먼츠</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-2.5 text-warm-600">휴대폰 본인확인 서비스</td>
+                      <td className="px-4 py-2.5 text-warm-700 font-medium">
+                        (주)다날, (주)포트원
+                      </td>
                     </tr>
                   </tbody>
                 </table>
