@@ -246,15 +246,12 @@ const ProductDetailMobileView = () => {
       </div>
 
       {/* 상세정보 섹션 - 모바일뷰 */}
-      <div ref={detailSectionRef} className="max-w-[800px] pt-18 pb-16 px-5">
+      <div ref={detailSectionRef} className="max-w-[800px] pb-16">
         {/* 상세정보 타이틀 */}
-        <div className="relative flex items-center justify-center mb-15">
-          {/* 양쪽 라인 */}
+        {/* <div className="relative flex items-center justify-center mb-15">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-brand-300" />
           </div>
-
-          {/* 타이틀 영역 */}
           <div className="relative bg-warm-50 px-8">
             <div className="flex flex-col items-center">
               <span className="text-[10px] tracking-[0.3em] text-warm-400 mb-1">PRODUCT</span>
@@ -262,7 +259,7 @@ const ProductDetailMobileView = () => {
               <div className="mt-3 w-8 h-[2px] bg-tea-500" />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* 상세 이미지 영역 */}
         <div className="relative">
@@ -397,7 +394,9 @@ const ProductDetailMobileView = () => {
                       </div>
                     )}
                   </div>
-                  {index !== reviewList.length - 1 && <div className="border-t border-brand-200/60" />}
+                  {index !== reviewList.length - 1 && (
+                    <div className="border-t border-brand-200/60" />
+                  )}
                 </Fragment>
               );
             })}
@@ -500,7 +499,12 @@ const ProductDetailMobileView = () => {
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {size(requiredOptions) > 1 && (
                     <>
-                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">옵션선택 <span className="text-rose-500 text-[11px] font-medium align-middle">필수</span></span>
+                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">
+                        옵션선택{' '}
+                        <span className="text-rose-500 text-[11px] font-medium align-middle">
+                          필수
+                        </span>
+                      </span>
                       <OptionDropdown
                         options={requiredOptions}
                         onOptionSelect={onOptionSelect}
@@ -511,7 +515,12 @@ const ProductDetailMobileView = () => {
                   {/* 옵션 선택 - 커스텀 드롭다운 */}
                   {!isEmpty(optionalOptions) && (
                     <>
-                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">추가상품 <span className="text-warm-400 text-[11px] font-normal align-middle">선택</span></span>
+                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">
+                        추가상품{' '}
+                        <span className="text-warm-400 text-[11px] font-normal align-middle">
+                          선택
+                        </span>
+                      </span>
                       <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
                     </>
                   )}
