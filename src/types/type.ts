@@ -167,3 +167,14 @@ export type Cart = {
 };
 
 export type CartState = Cart & { checked: boolean };
+
+export type HeroSlide = {
+  type: 'video' | 'image';
+  src: string;
+  hasSound: boolean;
+  /** 슬라이드 유지 시간(초) — 직접 지정 */
+  duration: number;
+  subtitle: string;
+  title: string;
+  cta?: string;
+};

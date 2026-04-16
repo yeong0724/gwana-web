@@ -6,14 +6,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { AnimatePresence, motion, useMotionValue, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import { filter, forEach, map, shuffle, take } from 'lodash-es';
-import { ArrowRight, ArrowUpRight, Leaf, Pause, Play, Volume2, VolumeX } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Leaf,
+  Pause,
+  Play,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 
-import { productMockData } from '@/api/mock';
 import { ProductCard } from '@/components/common';
 import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
+import useProductService from '@/service/useProductService';
+import { HeroSlide, Product } from '@/types';
 
 const FloatingLeaf = React.memo(function FloatingLeaf({
   delay,
@@ -84,33 +96,13 @@ const fadeUp = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring' as const, stiffness: 100, damping: 20 },
+    transition: { duration: 0.5, ease: [0, 0, 0.2, 1] as const },
   },
 };
 
-const fadeIn = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-/* ─────────────────────────────────────────────
-   Data
-   ───────────────────────────────────────────── */
-
-type HeroSlide = {
-  type: 'video' | 'image';
-  src: string;
-  hasSound: boolean;
-  /** 슬라이드 유지 시간(초) — 직접 지정 */
-  duration: number;
-  subtitle: string;
-  title: string;
-  cta?: string;
-};
-
+/**
+ * Main Hero Slide Data Structure
+ */
 const heroSlides: HeroSlide[] = [
   {
     type: 'video',
@@ -127,16 +119,16 @@ const heroSlides: HeroSlide[] = [
     duration: 10, // TODO: 실제 영상 길이에 맞게 수정
     subtitle: '유기농 녹차 드립백',
     title: '느리게,\n정성으로',
-    cta: '상품 둘러보기',
+    cta: '녹차 드립백 보러가기',
   },
   {
     type: 'image',
     src: 'https://picsum.photos/seed/gwana-tea-hero3/800/1200',
     hasSound: false,
-    duration: 5,
+    duration: 8,
     subtitle: '2025 봄 신차',
     title: '첫물의\n싱그러움',
-    cta: '신상품 보기',
+    cta: '상품 둘러보기',
   },
 ];
 
@@ -178,13 +170,10 @@ const brandStory = [
   },
 ];
 
-/* ─────────────────────────────────────────────
-   Main Component
-   ───────────────────────────────────────────── */
-
 const MainContainer = () => {
   const router = useRouter();
   const { forward } = useNativeRouter();
+  const { useProductListQuery } = useProductService();
 
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroAutoplay, setHeroAutoplay] = useState(true);
@@ -203,12 +192,19 @@ const MainContainer = () => {
 
   const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], ['0%', '20%']);
 
-  const [popularProducts, setPopularProducts] = useState(() => take(productMockData, 4));
+  const { data: productListData } = useProductListQuery({ categoryId: '' });
+
+  const [productList, setProductList] = useState<Product[]>([]);
+  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
 
   // Shuffle on client only to avoid hydration mismatch
   useEffect(() => {
-    setPopularProducts(take(shuffle([...productMockData]), 4));
-  }, []);
+    if (productListData) {
+      const { data } = productListData;
+      setPopularProducts(take(shuffle([...data]), 4));
+      setProductList(data);
+    }
+  }, [productListData]);
 
   const onClickProduct = (productId: string) => {
     forward(`/product/${productId}`);
@@ -228,11 +224,12 @@ const MainContainer = () => {
     forward('/product?category=all');
   };
 
-  // Video playback control — play current, pause others
+  // Video playback control — restart & play current, pause others
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
       if (index === heroIndex) {
+        video.currentTime = 0;
         video.muted = heroSlides[index].hasSound ? !isSoundOn : true;
         const playVideo = () => {
           video.play().catch(() => {});
@@ -247,7 +244,14 @@ const MainContainer = () => {
         video.muted = true;
       }
     });
-  }, [heroIndex, isSoundOn]);
+  }, [heroIndex]);
+
+  // Sound toggle — only update muted, don't restart video
+  useEffect(() => {
+    const video = videoRefs.current[heroIndex];
+    if (!video) return;
+    video.muted = heroSlides[heroIndex].hasSound ? !isSoundOn : true;
+  }, [isSoundOn, heroIndex]);
 
   // Hero auto-advance — duration driven by heroSlides[].duration
   useEffect(() => {
@@ -267,10 +271,10 @@ const MainContainer = () => {
   // Prefetching
   useEffect(() => {
     router.prefetch('/product?category=all');
-    forEach(productMockData, ({ productId }) => {
+    forEach(productList, ({ productId }) => {
       router.prefetch(`/product/${productId}`);
     });
-  }, [router]);
+  }, [router, productList]);
 
   const currentSlide = heroSlides[heroIndex];
 
@@ -293,158 +297,165 @@ const MainContainer = () => {
             SECTION 1 — Cinematic Hero
             ══════════════════════════════════ */}
         <section className="relative min-h-[100dvh] w-full overflow-hidden">
-          {/* Background media — video or image per slide */}
-          <AnimatePresence mode="wait">
+          {/* Background media — all slides pre-rendered, cross-fade via opacity */}
+          {heroSlides.map((slide, i) => (
             <motion.div
-              key={heroIndex}
+              key={i}
               className="absolute inset-0"
-              initial={{ opacity: 0, scale: 1.08 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
+              initial={false}
+              animate={{
+                opacity: i === heroIndex ? 1 : 0,
+                scale: i === heroIndex ? 1 : 1.08,
+              }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              style={{ zIndex: i === heroIndex ? 1 : 0 }}
             >
-              {currentSlide.type === 'video' ? (
+              {slide.type === 'video' ? (
                 <motion.video
                   ref={(el) => {
-                    videoRefs.current[heroIndex] = el;
+                    videoRefs.current[i] = el;
                   }}
-                  src={`${AWS_S3_DOMAIN}${currentSlide.src}`}
-                  autoPlay
-                  muted
-                  loop={!heroAutoplay}
+                  src={`${AWS_S3_DOMAIN}${slide.src}`}
+                  preload="auto"
+                  muted={slide.hasSound ? !isSoundOn : true}
                   playsInline
                   className="w-full h-full object-cover"
                   style={{ y: heroParallaxY }}
                 />
               ) : (
                 <motion.img
-                  src={currentSlide.src}
+                  src={slide.src}
                   alt=""
+                  loading="eager"
                   className="w-full h-full object-cover"
                   style={{ y: heroParallaxY }}
                 />
               )}
             </motion.div>
-          </AnimatePresence>
+          ))}
 
           {/* Gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-900/80 via-brand-900/20 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-900/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 z-[2] bg-gradient-to-t from-brand-900/80 via-brand-900/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 z-[2] bg-gradient-to-r from-brand-900/40 to-transparent pointer-events-none" />
 
-          {/* Hero content — swipe enabled */}
-          <motion.div
-            className="absolute inset-0 flex flex-col justify-end px-6 pb-28"
-            onPanEnd={(_, info) => {
-              const swipeThreshold = 50;
-              if (info.offset.x < -swipeThreshold) {
-                setHeroIndex((prev) => (prev + 1) % heroSlides.length);
-              } else if (info.offset.x > swipeThreshold) {
-                setHeroIndex((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-              }
-            }}
+          {/* Hero nav arrows */}
+          <button
+            onClick={() =>
+              setHeroIndex((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)
+            }
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-[4] p-2 active:scale-[0.9] transition-transform"
+            aria-label="이전 슬라이드"
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroIndex}
-                variants={staggerContainer}
-                initial="hidden"
-                animate="show"
-                exit="hidden"
-                className="space-y-4"
-              >
-                {/* Overline */}
-                <motion.div variants={fadeUp} className="flex items-center gap-2">
-                  <PulsingDot />
-                  <span className="text-[11px] tracking-[0.1em] uppercase text-gold-300 font-medium">
-                    {currentSlide.subtitle}
-                  </span>
-                </motion.div>
+            <ChevronLeft className="w-6 h-6 text-white/70" />
+          </button>
+          <button
+            onClick={() => setHeroIndex((prev) => (prev + 1) % heroSlides.length)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-[4] p-2 active:scale-[0.9] transition-transform"
+            aria-label="다음 슬라이드"
+          >
+            <ChevronRight className="w-6 h-6 text-white/70" />
+          </button>
 
-                {/* Title */}
-                <motion.h1
-                  variants={fadeUp}
-                  className="font-serif text-[2.5rem] leading-[1.15] tracking-tight text-white whitespace-pre-line"
+          {/* Hero content */}
+          <div className="absolute inset-0 z-[3] flex flex-col justify-end px-6 pb-28 pointer-events-none">
+            <div className="pointer-events-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={heroIndex}
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
+                  className="space-y-4"
                 >
-                  {currentSlide.title}
-                </motion.h1>
+                  {/* Overline */}
+                  <motion.div variants={fadeUp} className="flex items-center gap-2">
+                    <PulsingDot />
+                    <span className="text-[11px] tracking-[0.1em] uppercase text-gold-300 font-medium">
+                      {currentSlide.subtitle}
+                    </span>
+                  </motion.div>
 
-                {/* CTA */}
-                {currentSlide.cta && (
-                  <motion.button
+                  {/* Title */}
+                  <motion.h1
                     variants={fadeUp}
-                    onClick={onMoveToProductPage}
-                    className="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium backdrop-blur-sm active:scale-[0.97] transition-transform"
+                    className="font-serif text-[2.5rem] leading-[1.15] tracking-tight text-white whitespace-pre-line"
                   >
-                    {currentSlide.cta}
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
-                )}
-              </motion.div>
-            </AnimatePresence>
+                    {currentSlide.title}
+                  </motion.h1>
 
-            {/* Slide indicator + autoplay toggle */}
-            <div className="mt-8 flex items-center gap-3">
-              {heroSlides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setHeroIndex(i)}
-                  className="relative h-[2px] flex-1 max-w-12 bg-white/30 rounded-full overflow-hidden"
-                  aria-label={`슬라이드 ${i + 1}`}
-                >
-                  {i === heroIndex && (
-                    <motion.div
-                      key={`progress-${heroIndex}`}
-                      className="absolute inset-y-0 left-0 bg-white rounded-full"
-                      initial={{ width: '0%' }}
-                      animate={{ width: '100%' }}
-                      transition={{ duration: slideDuration, ease: 'linear' }}
-                    />
+                  {/* CTA */}
+                  {currentSlide.cta && (
+                    <motion.button
+                      variants={fadeUp}
+                      onClick={onMoveToProductPage}
+                      className="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium backdrop-blur-sm active:scale-[0.97] transition-transform"
+                    >
+                      {currentSlide.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.button>
                   )}
-                  {i < heroIndex && <div className="absolute inset-0 bg-white rounded-full" />}
-                </button>
-              ))}
-              <button
-                onClick={() => setHeroAutoplay((prev) => !prev)}
-                className="ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
-                aria-label={heroAutoplay ? '자동 재생 정지' : '자동 재생 시작'}
-              >
-                {heroAutoplay ? (
-                  <Pause className="w-3 h-3 text-white" />
-                ) : (
-                  <Play className="w-3 h-3 text-white ml-[1px]" />
-                )}
-              </button>
+                </motion.div>
+              </AnimatePresence>
 
-              {/* Sound toggle — only for video slides with sound */}
-              {currentSlide.type === 'video' && currentSlide.hasSound && (
+              {/* Slide indicator + autoplay toggle */}
+              <div className="mt-8 flex items-center gap-3">
+                {heroSlides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setHeroIndex(i)}
+                    className="relative h-[2px] flex-1 max-w-12 bg-white/30 rounded-full overflow-hidden"
+                    aria-label={`슬라이드 ${i + 1}`}
+                  >
+                    {i === heroIndex && (
+                      <motion.div
+                        key={`progress-${heroIndex}`}
+                        className="absolute inset-y-0 left-0 bg-white rounded-full"
+                        initial={{ width: '0%' }}
+                        animate={{ width: '100%' }}
+                        transition={{ duration: slideDuration, ease: 'linear' }}
+                      />
+                    )}
+                    {i < heroIndex && <div className="absolute inset-0 bg-white rounded-full" />}
+                  </button>
+                ))}
                 <button
-                  onClick={() => setIsSoundOn((prev) => !prev)}
-                  className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
-                  aria-label={isSoundOn ? '음소거' : '소리 켜기'}
+                  onClick={() => setHeroAutoplay((prev) => !prev)}
+                  className="ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
+                  aria-label={heroAutoplay ? '자동 재생 정지' : '자동 재생 시작'}
                 >
-                  {isSoundOn ? (
-                    <Volume2 className="w-3 h-3 text-white" />
+                  {heroAutoplay ? (
+                    <Pause className="w-3 h-3 text-white" />
                   ) : (
-                    <VolumeX className="w-3 h-3 text-white" />
+                    <Play className="w-3 h-3 text-white ml-[1px]" />
                   )}
                 </button>
-              )}
+
+                {/* Sound toggle — only for video slides with sound */}
+                {currentSlide.type === 'video' && currentSlide.hasSound && (
+                  <button
+                    onClick={() => setIsSoundOn((prev) => !prev)}
+                    className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
+                    aria-label={isSoundOn ? '음소거' : '소리 켜기'}
+                  >
+                    {isSoundOn ? (
+                      <Volume2 className="w-3 h-3 text-white" />
+                    ) : (
+                      <VolumeX className="w-3 h-3 text-white" />
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Scroll hint */}
           <motion.div
-            className="absolute bottom-6 left-1/2 -translate-x-1/2"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[3]"
+            animate={{ y: [0, 3, 0] }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <div className="w-5 h-8 rounded-full border-2 border-white/30 flex justify-center pt-1.5">
-              <motion.div
-                className="w-1 h-1.5 rounded-full bg-white/60"
-                animate={{ opacity: [1, 0], y: [0, 10] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              />
-            </div>
+            <ChevronDown className="w-6 h-6 text-white/50" strokeWidth={2} />
           </motion.div>
         </section>
 
@@ -456,7 +467,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-80px' }}
+            viewport={{ margin: '-80px' }}
             className="space-y-6"
           >
             <motion.p
@@ -493,7 +504,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
             className="px-6 mb-8"
           >
             <motion.p
@@ -520,7 +531,7 @@ const MainContainer = () => {
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="show"
-                viewport={{ once: true }}
+                viewport={{}}
                 className="snap-start shrink-0 grow-0 basis-[68vw] min-w-0 space-y-3"
               >
                 <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
@@ -555,7 +566,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
           >
             <motion.div variants={fadeUp} className="flex items-end justify-between mb-8">
               <div>
@@ -575,7 +586,7 @@ const MainContainer = () => {
               </button>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 items-start">
               {map(popularProducts, (product) => (
                 <ProductCard
                   key={product.productId}
@@ -595,7 +606,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
             className="px-6 mb-8"
           >
             <motion.p
@@ -616,7 +627,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true }}
+            viewport={{}}
             className="space-y-4 px-6"
           >
             {categories.map((cat) => (
@@ -657,7 +668,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
           >
             <motion.div variants={fadeUp} className="mb-8">
               <p className="text-[11px] tracking-[0.15em] uppercase text-tea-600 font-medium mb-2">
@@ -669,8 +680,8 @@ const MainContainer = () => {
               <p className="text-[13px] text-warm-400 mt-2">카페인 없이 즐기는 자연의 맛</p>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8">
-              {filter(productMockData, { categoryId: 'substituteTea' }).map((product) => (
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 items-start">
+              {filter(productList, { categoryId: 'substituteTea' }).map((product) => (
                 <ProductCard
                   key={product.productId}
                   product={product}
@@ -698,7 +709,7 @@ const MainContainer = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
+            viewport={{ margin: '-60px' }}
             className="relative text-center space-y-6"
           >
             <motion.div variants={fadeUp}>

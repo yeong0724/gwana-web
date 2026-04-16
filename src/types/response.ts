@@ -43,6 +43,8 @@ export type Product = {
   infos: string[];
   price: number;
   shippingPrice: number;
+  avgRating: number;
+  reviewCount: number;
   createdAt: string;
   createdBy: string | null;
   modifiedAt: string;
