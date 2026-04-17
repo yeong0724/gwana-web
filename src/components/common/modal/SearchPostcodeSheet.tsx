@@ -13,7 +13,7 @@ type Props = {
 const SearchPostcodeSheet = ({ addressOpen, setAddressOpen, handleAddressComplete }: Props) => {
   return (
     <Sheet open={addressOpen} onOpenChange={setAddressOpen}>
-      <SheetContent side="bottom" className="h-full">
+      <SheetContent side="bottom" className="h-full gap-0">
         <SheetHeader className="border-b">
           <SheetTitle>주소찾기</SheetTitle>
         </SheetHeader>

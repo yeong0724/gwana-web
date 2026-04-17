@@ -54,7 +54,7 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   };
 
   const goToLoginPage = () => {
-    toggleMenu();
+    setIsMenuOpen(false);
     router.push('/login');
   };
 
