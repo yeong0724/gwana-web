@@ -1,8 +1,9 @@
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
-import { ChevronLeft, MenuIcon, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, MenuIcon } from 'lucide-react';
 
+import CartButton from '@/components/layout/Header/CartButton';
 import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/headerContext';
 
@@ -55,24 +56,12 @@ const MobileMainHeader = () => {
           </a>
 
           {/* 우측 아이콘들 */}
-          <div className="flex items-center space-x-6 z-10">
-            <button
-              className="relative py-2 hover:bg-brand-100/60 rounded-lg transition-colors duration-200"
+          <div className="flex items-center gap-3 z-10">
+            <CartButton
+              count={cartCount}
               onClick={goToCartPage}
-              aria-label="장바구니"
-            >
-              <ShoppingCart
-                size={20}
-                className={`${pathname === '/about' ? 'text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]' : 'text-brand-900'}`}
-              />
-              {cartCount > 0 && (
-                <span
-                  className={`absolute top-[1px] flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-destructive text-white text-[10px] font-bold rounded-full ${cartCount > 99 ? 'right-[-5px]' : 'right-[-8px]'}`}
-                >
-                  {cartCount > 99 ? '99+' : cartCount}
-                </span>
-              )}
-            </button>
+              variant={pathname === '/about' ? 'light' : pathname === '/' ? 'ghost' : 'default'}
+            />
             <button
               className="relative py-1 hover:bg-brand-100/60 rounded-lg transition-colors duration-200"
               onClick={toggleMenu}
