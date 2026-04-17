@@ -5,12 +5,26 @@ export const metadata: Metadata = {
   description: '관아수제차 개인정보처리방침',
 };
 
+const retentionRows = [
+  { item: '계약 또는 청약철회 등에 관한 기록', period: '5년', law: '전자상거래법' },
+  { item: '대금결제 및 재화 공급에 관한 기록', period: '5년', law: '전자상거래법' },
+  { item: '소비자 불만 또는 분쟁처리에 관한 기록', period: '3년', law: '전자상거래법' },
+  { item: '로그인 기록', period: '3개월', law: '통신비밀보호법' },
+  { item: '본인확인정보(CI, DI)', period: '회원 탈퇴 시까지', law: '정보통신망법' },
+];
+
+const consignmentRows = [
+  { task: '주문 상품의 배송', company: '로젠 택배' },
+  { task: '결제 서비스', company: '토스페이먼츠, (주)포트원' },
+  { task: '휴대폰 본인확인 서비스', company: '(주)다날, (주)포트원' },
+];
+
 export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-[100dvh] bg-warm-50">
-      <div className="mx-auto max-w-3xl px-5 py-12 md:py-20">
+      <div className="mx-auto max-w-3xl px-5 py-10 md:py-20">
         {/* Header */}
-        <header className="mb-10 md:mb-14">
+        <header className="mb-8 md:mb-14">
           <p className="text-caption font-medium uppercase tracking-wide text-tea-600 mb-2">
             Privacy Policy
           </p>
@@ -49,7 +63,11 @@ export default function PrivacyPolicyPage() {
               items={[
                 {
                   term: '일반 수집항목',
-                  desc: '이름, 생년월일, 성별, 로그인ID, 비밀번호, 주소, 휴대전화번호, 이메일, 결제기록',
+                  desc: '이름, 이메일, 비밀번호, 주소, 휴대전화번호, 결제기록',
+                },
+                {
+                  term: '소셜 로그인 수집항목',
+                  desc: '이름, 이메일, 주소, 휴대전화번호 (카카오 등 외부 서비스 계정을 통해 제공받는 정보)',
                 },
                 {
                   term: '본인확인 수집항목',
@@ -57,7 +75,7 @@ export default function PrivacyPolicyPage() {
                 },
                 {
                   term: '개인정보 수집방법',
-                  desc: '홈페이지(회원가입), 본인확인 서비스(다날)를 통한 수집',
+                  desc: '홈페이지(회원가입), 카카오 등 외부 서비스 연동을 통한 수집, 본인확인 서비스(다날)를 통한 수집',
                 },
               ]}
             />
@@ -116,43 +134,36 @@ export default function PrivacyPolicyPage() {
               회사는 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.
               다만, 관계 법령에 의해 보존할 필요가 있는 경우 아래와 같이 일정 기간 보관합니다.
             </p>
+
             <div className="mt-4 overflow-hidden rounded-lg border border-warm-200/60">
-              <table className="w-full text-body-sm">
+              <table className="w-full text-caption md:text-body-sm">
                 <thead>
-                  <tr className="bg-warm-100/50">
-                    <th className="px-4 py-2.5 text-left font-semibold text-warm-800">보존 항목</th>
-                    <th className="px-4 py-2.5 text-left font-semibold text-warm-800">보존 기간</th>
-                    <th className="px-4 py-2.5 text-left font-semibold text-warm-800">근거 법령</th>
+                  <tr className="bg-warm-100/60">
+                    <th className="px-2.5 py-2 md:px-4 md:py-2.5 text-left font-semibold text-warm-800">
+                      보존 항목
+                    </th>
+                    <th className="px-2.5 py-2 md:px-4 md:py-2.5 text-left font-semibold text-warm-800 whitespace-nowrap">
+                      보존 기간
+                    </th>
+                    <th className="px-2.5 py-2 md:px-4 md:py-2.5 text-left font-semibold text-warm-800 whitespace-nowrap">
+                      근거 법령
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-warm-100">
-                  <tr>
-                    <td className="px-4 py-2.5 text-warm-600">계약 또는 청약철회 등에 관한 기록</td>
-                    <td className="px-4 py-2.5 text-warm-700">5년</td>
-                    <td className="px-4 py-2.5 text-warm-600">전자상거래법</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2.5 text-warm-600">대금결제 및 재화 공급에 관한 기록</td>
-                    <td className="px-4 py-2.5 text-warm-700">5년</td>
-                    <td className="px-4 py-2.5 text-warm-600">전자상거래법</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2.5 text-warm-600">
-                      소비자 불만 또는 분쟁처리에 관한 기록
-                    </td>
-                    <td className="px-4 py-2.5 text-warm-700">3년</td>
-                    <td className="px-4 py-2.5 text-warm-600">전자상거래법</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2.5 text-warm-600">로그인 기록</td>
-                    <td className="px-4 py-2.5 text-warm-700">3개월</td>
-                    <td className="px-4 py-2.5 text-warm-600">통신비밀보호법</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2.5 text-warm-600">본인확인정보(CI, DI)</td>
-                    <td className="px-4 py-2.5 text-warm-700">회원 탈퇴 시까지</td>
-                    <td className="px-4 py-2.5 text-warm-600">정보통신망법</td>
-                  </tr>
+                  {retentionRows.map((row) => (
+                    <tr key={row.item}>
+                      <td className="px-2.5 py-2 md:px-4 md:py-2.5 text-warm-600 leading-snug">
+                        {row.item}
+                      </td>
+                      <td className="px-2.5 py-2 md:px-4 md:py-2.5 text-warm-700 leading-snug">
+                        {row.period}
+                      </td>
+                      <td className="px-2.5 py-2 md:px-4 md:py-2.5 text-warm-600 leading-snug">
+                        {row.law}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -218,33 +229,30 @@ export default function PrivacyPolicyPage() {
               <h4 className="text-body font-semibold text-warm-800 mb-3">
                 위탁업무 내용 및 수탁자
               </h4>
+
               <div className="overflow-hidden rounded-lg border border-warm-200/60">
-                <table className="w-full text-body-sm">
+                <table className="w-full text-caption md:text-body-sm">
                   <thead>
-                    <tr className="bg-warm-100/50">
-                      <th className="px-4 py-2.5 text-left font-semibold text-warm-800">
+                    <tr className="bg-warm-100/60">
+                      <th className="px-2.5 py-2 md:px-4 md:py-2.5 text-left font-semibold text-warm-800">
                         위탁업무
                       </th>
-                      <th className="px-4 py-2.5 text-left font-semibold text-warm-800">수탁자</th>
+                      <th className="px-2.5 py-2 md:px-4 md:py-2.5 text-left font-semibold text-warm-800">
+                        수탁자
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-warm-100">
-                    <tr>
-                      <td className="px-4 py-2.5 text-warm-600">주문 상품의 배송</td>
-                      <td className="px-4 py-2.5 text-warm-700 font-medium">로젠 택배</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2.5 text-warm-600">결제 서비스</td>
-                      <td className="px-4 py-2.5 text-warm-700 font-medium">
-                        토스페이먼츠, (주)포트원
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-2.5 text-warm-600">휴대폰 본인확인 서비스</td>
-                      <td className="px-4 py-2.5 text-warm-700 font-medium">
-                        (주)다날, (주)포트원
-                      </td>
-                    </tr>
+                    {consignmentRows.map((row) => (
+                      <tr key={row.task}>
+                        <td className="px-2.5 py-2 md:px-4 md:py-2.5 text-warm-600 leading-snug">
+                          {row.task}
+                        </td>
+                        <td className="px-2.5 py-2 md:px-4 md:py-2.5 text-warm-700 font-medium leading-snug">
+                          {row.company}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -293,13 +301,19 @@ export default function PrivacyPolicyPage() {
                   설정함으로써 모든 쿠키를 허용하거나, 쿠키가 저장될 때마다 확인을 거치거나, 모든
                   쿠키의 저장을 거부할 수 있습니다.
                 </p>
-                <p className="mt-2 text-body-sm text-warm-500">
-                  설정방법 예(인터넷 익스플로어의 경우): 웹 브라우저 상단의 도구 &gt; 인터넷 옵션
-                  &gt; 개인정보
-                </p>
-                <p className="mt-1 text-body-sm text-warm-500">
-                  단, 쿠키 설치를 거부하였을 경우 서비스 제공에 어려움이 있을 수 있습니다.
-                </p>
+                <div className="mt-2 space-y-1 text-body-sm text-warm-500">
+                  <p>설정방법 예시</p>
+                  <ul className="list-disc list-outside ml-5 space-y-0.5">
+                    <li>Chrome: 설정 &gt; 개인정보 및 보안 &gt; 쿠키 및 기타 사이트 데이터</li>
+                    <li>Safari: 환경설정 &gt; 개인정보 보호 &gt; 쿠키 및 웹사이트 데이터 관리</li>
+                    <li>
+                      Edge: 설정 &gt; 쿠키 및 사이트 권한 &gt; 쿠키 및 사이트 데이터 관리 및 삭제
+                    </li>
+                  </ul>
+                  <p className="mt-1">
+                    단, 쿠키 설치를 거부하였을 경우 서비스 제공에 어려움이 있을 수 있습니다.
+                  </p>
+                </div>
               </div>
             </div>
           </Section>
@@ -307,8 +321,10 @@ export default function PrivacyPolicyPage() {
           {/* 민원서비스 */}
           <Section title="개인정보에 관한 민원서비스">
             <p>
-              회사는 고객의 개인정보를 보호하고 개인정보와 관련한 불만을 처리하기 위하여 아래와 같이
-              개인정보관리책임자를 지정하고 있습니다.
+              회사는 고객의 개인정보를 보호하고 개인정보와 관련한 불만을 처리하기 위하여
+              개인정보관리책임자를 지정하고 있습니다. <br />
+              개인정보와 관련한 문의사항이 있으시면 아래의 개인정보관리책임자에게 연락해 주시기
+              바랍니다. 접수된 문의에 대해 신속하고 성실하게 답변해 드리겠습니다.
             </p>
           </Section>
 
@@ -376,9 +392,9 @@ export default function PrivacyPolicyPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="text-heading-3 font-bold text-brand-800 mb-3 flex items-center gap-2">
-        <span className="inline-block w-1 h-5 rounded-full bg-tea-500" />
-        {title}
+      <h3 className="text-heading-3 font-bold text-brand-800 mb-3 flex items-stretch gap-2">
+        <span aria-hidden className="w-1 shrink-0 self-stretch rounded-full bg-tea-500 my-0.5" />
+        <span className="flex-1">{title}</span>
       </h3>
       <div className="space-y-2">{children}</div>
     </section>
