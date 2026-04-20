@@ -1,11 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { AWS_S3_DOMAIN } from '@/constants';
 import useNativeRouter from '@/hooks/useNativeRouter';
 
 const LoginContainer = () => {
+  const router = useRouter();
   const { forward } = useNativeRouter();
 
   const onKakaoLogin = async () => {
@@ -26,6 +29,9 @@ const LoginContainer = () => {
   //   console.log('구글 로그인');
   // };
 
+  useEffect(() => {
+    router.prefetch('/signup');
+  }, []);
   return (
     <>
       {/* 메인 컨텐츠 */}
@@ -102,9 +108,7 @@ const LoginContainer = () => {
           {/* 구분선 */}
           <div className="flex items-center gap-3 my-5 sm:my-6">
             <div className="flex-1 h-px bg-brand-200/60" />
-            <span className="text-[12px] sm:text-[13px] text-warm-400 tracking-wide">
-              또는
-            </span>
+            <span className="text-[12px] sm:text-[13px] text-warm-400 tracking-wide">또는</span>
             <div className="flex-1 h-px bg-brand-200/60" />
           </div>
 

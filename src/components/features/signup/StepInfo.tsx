@@ -135,7 +135,7 @@ const StepInfo = ({ onComplete, header }: Props) => {
   };
 
   const inputBaseClass =
-    'w-full px-4 py-2.5 border-1 border-brand-300/80 text-brand-700 text-[15px] bg-white transition-colors focus:border-brand-500';
+    'w-full px-4 py-2.5 border-1 border-brand-300/80 text-brand-700 text-[16px] bg-white transition-colors focus:border-brand-500';
 
   return (
     <>
