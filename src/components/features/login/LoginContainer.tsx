@@ -1,11 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { AWS_S3_DOMAIN } from '@/constants';
+import useNativeRouter from '@/hooks/useNativeRouter';
 
 const LoginContainer = () => {
+  const { forward } = useNativeRouter();
+
   const onKakaoLogin = async () => {
     window.location.replace(`${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao`);
   };
@@ -107,12 +109,13 @@ const LoginContainer = () => {
           </div>
 
           {/* 회원가입 버튼 */}
-          <Link
-            href="/signup"
+          <button
+            type="button"
+            onClick={() => forward('/signup')}
             className="w-full h-[50px] sm:h-[56px] px-4 sm:px-6 font-semibold text-sm sm:text-base transition-all flex items-center justify-center gap-2 sm:gap-3 bg-white hover:bg-brand-50 text-brand-800 border border-brand-300/80 active:scale-[0.98] cursor-pointer"
           >
             <span>회원가입 하기</span>
-          </Link>
+          </button>
         </div>
       </div>
     </>

@@ -54,8 +54,14 @@ export interface SignupForm {
   email: string;
   password: string;
   passwordConfirm: string;
+  username: string;
+  phone: string;
   zonecode: string;
   roadAddress: string;
   detailAddress: string;
+  agreeTerms: boolean;
+  agreePrivacy: boolean;
+  agreeAge14: boolean;
+  agreeMarketing: boolean;
 }
 

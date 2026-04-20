@@ -2,62 +2,50 @@
 
 import { useState } from 'react';
 
-import { ChevronRight, ShieldCheck } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { useFormContext } from 'react-hook-form';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import useIsMobile from '@/hooks/useIsMobile';
+import { SignupForm } from '@/types';
 
-import type { IdentityData } from './SignupContainer';
 import TermsViewerModal from './TermsViewerModal';
 import TermsViewerSheet from './TermsViewerSheet';
 
 type Props = {
-  onComplete: (data: IdentityData) => void;
+  onComplete: () => void;
 };
 
-type Agreements = {
-  terms: boolean;
-  privacy: boolean;
-  identity: boolean;
-  marketing: boolean;
-};
+type AgreementKey = 'agreeTerms' | 'agreePrivacy' | 'agreeAge14' | 'agreeMarketing';
+type TermsType = 'terms' | 'privacy';
 
-type TermsType = 'terms' | 'privacy' | 'identity';
-
-const StepIdentity = ({ onComplete }: Props) => {
+const StepAgreement = ({ onComplete }: Props) => {
   const { isMobile } = useIsMobile();
-  const [agreements, setAgreements] = useState<Agreements>({
-    terms: false,
-    privacy: false,
-    identity: false,
-    marketing: false,
-  });
+  const { setValue, watch } = useFormContext<SignupForm>();
   const [viewingTerms, setViewingTerms] = useState<TermsType | null>(null);
 
-  const allChecked =
-    agreements.terms && agreements.privacy && agreements.identity && agreements.marketing;
-  const canProceed = agreements.terms && agreements.privacy && agreements.identity;
+  const agreeTerms = watch('agreeTerms');
+  const agreePrivacy = watch('agreePrivacy');
+  const agreeAge14 = watch('agreeAge14');
+  const agreeMarketing = watch('agreeMarketing');
+
+  const allChecked = agreeTerms && agreePrivacy && agreeAge14 && agreeMarketing;
+  const canProceed = agreeTerms && agreePrivacy && agreeAge14;
+
+  const setAgreement = (key: AgreementKey, checked: boolean) => {
+    setValue(key, checked, { shouldValidate: false, shouldDirty: true });
+  };
 
   const handleAllChange = (checked: boolean) => {
-    setAgreements({
-      terms: checked,
-      privacy: checked,
-      identity: checked,
-      marketing: checked,
-    });
+    setAgreement('agreeTerms', checked);
+    setAgreement('agreePrivacy', checked);
+    setAgreement('agreeAge14', checked);
+    setAgreement('agreeMarketing', checked);
   };
 
-  const handleSingleChange = (key: keyof Agreements, checked: boolean) => {
-    setAgreements((prev) => ({ ...prev, [key]: checked }));
-  };
-
-  const handleDanalAuth = () => {
-    // TODO: 다날 본인인증 팝업 호출
-    console.log('다날 본인인증 시작');
-    onComplete({
-      name: '테스트',
-      phone: '01012345678',
-    });
+  const handleProceed = () => {
+    if (!canProceed) return;
+    onComplete();
   };
 
   return (
@@ -77,29 +65,28 @@ const StepIdentity = ({ onComplete }: Props) => {
         {/* 개별 항목 */}
         <div className="mt-4 space-y-1">
           <AgreementRow
-            checked={agreements.terms}
-            onChange={(v) => handleSingleChange('terms', v)}
+            checked={agreeTerms}
+            onChange={(v) => setAgreement('agreeTerms', v)}
             required
             label="이용약관 동의"
             onViewDetail={() => setViewingTerms('terms')}
           />
           <AgreementRow
-            checked={agreements.privacy}
-            onChange={(v) => handleSingleChange('privacy', v)}
+            checked={agreePrivacy}
+            onChange={(v) => setAgreement('agreePrivacy', v)}
             required
             label="개인정보 수집 및 이용 동의"
             onViewDetail={() => setViewingTerms('privacy')}
           />
           <AgreementRow
-            checked={agreements.identity}
-            onChange={(v) => handleSingleChange('identity', v)}
+            checked={agreeAge14}
+            onChange={(v) => setAgreement('agreeAge14', v)}
             required
-            label="본인확인 서비스 이용 동의"
-            onViewDetail={() => setViewingTerms('identity')}
+            label="만 14세 이상입니다"
           />
           <AgreementRow
-            checked={agreements.marketing}
-            onChange={(v) => handleSingleChange('marketing', v)}
+            checked={agreeMarketing}
+            onChange={(v) => setAgreement('agreeMarketing', v)}
             label="마케팅 수신 동의"
           />
         </div>
@@ -109,7 +96,7 @@ const StepIdentity = ({ onComplete }: Props) => {
       <div className="flex-shrink-0 bg-white p-4 border-t border-brand-200/60 flex justify-center">
         <button
           type="button"
-          onClick={handleDanalAuth}
+          onClick={handleProceed}
           disabled={!canProceed}
           className={`w-full rounded-full py-3.5 text-[15px] font-semibold flex items-center justify-center gap-2 transition-all max-w-[500px] ${
             canProceed
@@ -117,8 +104,7 @@ const StepIdentity = ({ onComplete }: Props) => {
               : 'bg-warm-200 text-warm-400 cursor-not-allowed'
           }`}
         >
-          <ShieldCheck className="size-4" />
-          <span>본인인증 하기</span>
+          <span>회원가입 진행</span>
         </button>
       </div>
 
@@ -141,7 +127,7 @@ const StepIdentity = ({ onComplete }: Props) => {
   );
 };
 
-export default StepIdentity;
+export default StepAgreement;
 
 /* ─── 개별 동의 항목 ─── */
 

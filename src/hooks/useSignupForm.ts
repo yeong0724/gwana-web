@@ -19,9 +19,25 @@ const signupSchema = z
         message: '비밀번호에 특수문자를 포함해주세요',
       }),
     passwordConfirm: z.string().min(1, { message: '비밀번호 확인을 입력해주세요' }),
+    username: z.string().min(1, { message: '이름을 입력해주세요' }),
+    phone: z
+      .string()
+      .min(10, { message: '휴대폰 번호를 올바르게 입력해주세요' })
+      .max(11, { message: '휴대폰 번호를 올바르게 입력해주세요' })
+      .regex(/^\d+$/, { message: '숫자만 입력 가능합니다' }),
     zonecode: z.string().min(1, { message: '우편번호를 검색해주세요' }),
     roadAddress: z.string().min(1, { message: '주소를 검색해주세요' }),
     detailAddress: z.string().min(1, { message: '상세주소를 입력해주세요' }),
+    agreeTerms: z.boolean().refine((v) => v === true, {
+      message: '이용약관에 동의해주세요',
+    }),
+    agreePrivacy: z.boolean().refine((v) => v === true, {
+      message: '개인정보 수집 및 이용에 동의해주세요',
+    }),
+    agreeAge14: z.boolean().refine((v) => v === true, {
+      message: '만 14세 이상 확인에 동의해주세요',
+    }),
+    agreeMarketing: z.boolean(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: '비밀번호가 일치하지 않습니다',
@@ -35,9 +51,15 @@ const useSignupForm = () => {
       email: '',
       password: '',
       passwordConfirm: '',
+      username: '',
+      phone: '',
       zonecode: '',
       roadAddress: '',
       detailAddress: '',
+      agreeTerms: false,
+      agreePrivacy: false,
+      agreeAge14: false,
+      agreeMarketing: false,
     },
     mode: 'onSubmit',
   });
