@@ -44,8 +44,7 @@ const ControllerInput = <T extends FieldValues>({
 }) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
-  // IME(한글 등) 조합 상태 추적
-  // DOM input 내부 참조 (blur 시 조합 미완료 값 강제 동기화용)
+  // DOM input 내부 참조 (blur 시 값 동기화용)
   const internalInputRef = useRef<HTMLInputElement | null>(null);
 
   const { setValue, control, clearErrors } = useFormContext<T>();
@@ -66,9 +65,15 @@ const ControllerInput = <T extends FieldValues>({
     return field.value;
   };
 
-  // 필터링 + 검증 로직 (조합 완료 후 또는 일반 입력 시 호출)
-  const applyValue = (rawValue: string) => {
+  // 필터링 + 검증 로직 (일반 입력 시 또는 blur 시 호출)
+  const applyValue = (rawValue: string, validate = false) => {
     const value = onFilterValue(rawValue as FieldPathValue<T, FieldPath<T>>);
+
+    // 값이 그대로면 setValue 스킵: iOS 천지인 등에서 controlled input의 value prop이
+    // 재할당되며 IME/caret이 재계산돼 깜빡이는 현상 완화
+    if ((value ?? '') === (field.value ?? '')) {
+      return;
+    }
 
     if (callbackFn) {
       callbackFn(null, { name, value });
@@ -81,11 +86,12 @@ const ControllerInput = <T extends FieldValues>({
 
     setValue(name, value, {
       shouldDirty: false,
-      shouldValidate: required, // required가 false면 검증하지 않음
+      shouldValidate: validate,
     });
   };
 
   const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
+    // 타이핑 중에는 validate를 돌리지 않음 → 에러 토글로 인한 추가 리렌더/레이아웃 시프트 방지
     applyValue(event.target.value);
   };
 
@@ -97,12 +103,14 @@ const ControllerInput = <T extends FieldValues>({
   const handleBlur = () => {
     setIsFocus(false);
 
-    // 안전망: compositionend가 누락되거나 조합이 끝나지 않은 상태로 포커스가 빠지는 경우
-    // DOM의 실제 값과 RHF state가 어긋나 있으면 강제로 동기화
+    // blur 시 DOM 실제 값과 RHF state를 동기화하고, required 필드면 이 시점에 검증 수행
     if (internalInputRef.current) {
       const domValue = internalInputRef.current.value;
       if (domValue !== (field.value ?? '')) {
-        applyValue(domValue);
+        applyValue(domValue, required);
+      } else if (required) {
+        // 값은 같아도 blur 시점에 required 필드 검증은 돌려서 에러 피드백은 유지
+        setValue(name, field.value, { shouldDirty: false, shouldValidate: true });
       }
     }
   };
