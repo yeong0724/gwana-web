@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AnimatePresence, animate, motion, useMotionValue } from 'framer-motion';
 import { filter, map } from 'lodash-es';
@@ -50,6 +50,53 @@ const MainMobileView = () => {
 
   const dragX = useMotionValue(0);
   const [peekIndex, setPeekIndex] = useState((heroIndex + 1) % heroSlides.length);
+  const heroSectionRef = useRef<HTMLElement>(null);
+
+  // 히어로 터치 시 방향을 먼저 판정해서 가로로 잠기면 세로 스크롤을 차단한다.
+  // (touch-pan-y 만으로는 대각선/지그재그 입력에서 브라우저가 세로로 커밋해
+  //  framer-motion drag 이 끊기는 문제가 있어 직접 처리)
+  useEffect(() => {
+    const section = heroSectionRef.current;
+    if (!section) return;
+
+    let startX = 0;
+    let startY = 0;
+    let locked: 'horizontal' | 'vertical' | null = null;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      locked = null;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      if (locked === 'vertical') return;
+      if (locked === 'horizontal') {
+        e.preventDefault();
+        return;
+      }
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      if (absDx < 6 && absDy < 6) return;
+      if (absDx > absDy) {
+        locked = 'horizontal';
+        e.preventDefault();
+      } else {
+        locked = 'vertical';
+      }
+    };
+
+    section.addEventListener('touchstart', onTouchStart, { passive: true });
+    section.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => {
+      section.removeEventListener('touchstart', onTouchStart);
+      section.removeEventListener('touchmove', onTouchMove);
+    };
+  }, []);
 
   const commitSwipe = async (direction: 1 | -1) => {
     const target = direction > 0 ? -window.innerWidth : window.innerWidth;
@@ -93,7 +140,7 @@ const MainMobileView = () => {
 
   return (
     <div ref={scrollRef} className="relative w-full bg-warm-50 overflow-hidden">
-      <section className="relative min-h-[100dvh] w-full overflow-hidden">
+      <section ref={heroSectionRef} className="relative min-h-[100dvh] w-full overflow-hidden">
         {/* Stacked slide cards — top is draggable, underneath peek stays in place */}
         {heroSlides.map((slide, i) => {
           const isActive = i === heroIndex;
@@ -113,7 +160,8 @@ const MainMobileView = () => {
               transition={{ opacity: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
               drag={isActive ? 'x' : false}
               dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.55}
+              dragElastic={1}
+              dragMomentum={false}
               onDragStart={isActive ? handleDragStart : undefined}
               onDrag={isActive ? handleDrag : undefined}
               onDragEnd={isActive ? handleDragEnd : undefined}
