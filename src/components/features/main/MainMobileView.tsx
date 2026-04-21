@@ -63,13 +63,9 @@ const MainMobileView = () => {
   }, [videoRefs]);
 
   // 히어로 터치 시 방향을 먼저 판정해서 가로로 잠기면 세로 스크롤을 차단한다.
-  // + 좌측 가장자리(≤20px)에서 시작하는 터치는 iOS 뒤로가기 제스처 차단을 위해
-  //   touchstart 단계에서 preventDefault 한다.
   useEffect(() => {
     const section = heroSectionRef.current;
     if (!section) return;
-
-    const EDGE_BACK_GESTURE_PX = 20;
 
     let startX = 0;
     let startY = 0;
@@ -77,13 +73,8 @@ const MainMobileView = () => {
 
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
-      const { clientX, clientY } = e.touches[0];
-      if (clientX <= EDGE_BACK_GESTURE_PX) {
-        // iOS 좌측 스와이프 뒤로가기 제스처 차단
-        e.preventDefault();
-      }
-      startX = clientX;
-      startY = clientY;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
       locked = null;
     };
 
@@ -107,7 +98,7 @@ const MainMobileView = () => {
       }
     };
 
-    section.addEventListener('touchstart', onTouchStart, { passive: false });
+    section.addEventListener('touchstart', onTouchStart, { passive: true });
     section.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => {
       section.removeEventListener('touchstart', onTouchStart);
@@ -259,6 +250,13 @@ const MainMobileView = () => {
             </motion.div>
           );
         })}
+
+        {/* iOS 좌측 가장자리 뒤로가기 제스처 차단 — touch-action:none 으로 해당 영역에서 시스템 제스처 봉쇄 */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-5 z-[5]"
+          style={{ touchAction: 'none' }}
+          aria-hidden
+        />
 
         {/* Fixed UI controls — stay in place regardless of drag */}
         <div className="absolute bottom-24 left-6 right-6 z-[10] flex items-center gap-3 pointer-events-none">
