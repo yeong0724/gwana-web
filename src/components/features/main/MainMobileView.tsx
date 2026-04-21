@@ -52,12 +52,24 @@ const MainMobileView = () => {
   const [peekIndex, setPeekIndex] = useState((heroIndex + 1) % heroSlides.length);
   const heroSectionRef = useRef<HTMLElement>(null);
 
+  // 모든 히어로 비디오를 마운트 시점에 강제로 로드한다.
+  // iOS Safari 는 preload="auto" 를 metadata 수준으로만 다뤄서 드래그시
+  // 비활성 슬라이드가 빈 화면으로 보이는 문제가 있음.
+  useEffect(() => {
+    videoRefs.current.forEach((video) => {
+      if (!video) return;
+      if (video.readyState < 2) video.load();
+    });
+  }, [videoRefs]);
+
   // 히어로 터치 시 방향을 먼저 판정해서 가로로 잠기면 세로 스크롤을 차단한다.
-  // (touch-pan-y 만으로는 대각선/지그재그 입력에서 브라우저가 세로로 커밋해
-  //  framer-motion drag 이 끊기는 문제가 있어 직접 처리)
+  // + 좌측 가장자리(≤20px)에서 시작하는 터치는 iOS 뒤로가기 제스처 차단을 위해
+  //   touchstart 단계에서 preventDefault 한다.
   useEffect(() => {
     const section = heroSectionRef.current;
     if (!section) return;
+
+    const EDGE_BACK_GESTURE_PX = 20;
 
     let startX = 0;
     let startY = 0;
@@ -65,8 +77,13 @@ const MainMobileView = () => {
 
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
+      const { clientX, clientY } = e.touches[0];
+      if (clientX <= EDGE_BACK_GESTURE_PX) {
+        // iOS 좌측 스와이프 뒤로가기 제스처 차단
+        e.preventDefault();
+      }
+      startX = clientX;
+      startY = clientY;
       locked = null;
     };
 
@@ -90,7 +107,7 @@ const MainMobileView = () => {
       }
     };
 
-    section.addEventListener('touchstart', onTouchStart, { passive: true });
+    section.addEventListener('touchstart', onTouchStart, { passive: false });
     section.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => {
       section.removeEventListener('touchstart', onTouchStart);
