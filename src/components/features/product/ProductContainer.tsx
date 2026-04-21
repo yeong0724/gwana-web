@@ -14,7 +14,7 @@ import { useDragScroll } from '@/hooks/useDragScroll';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { useProductService } from '@/service';
 import { useMenuStore } from '@/stores';
-import { DragScrollType, Product } from '@/types';
+import { DragScrollType } from '@/types';
 
 import ProductWebView from './ProductWebView';
 
@@ -40,11 +40,16 @@ const ProductContainer = ({ categoryId }: Props) => {
   // 동시 슬라이드를 위한 상태
   const [currentCategory, setCurrentCategory] = useState<string>(categoryId);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [productList, setProductList] = useState<Product[]>([]);
 
-  const { data: productListData, error: productListError } = useProductListQuery({
-    categoryId: categoryId === 'all' ? '' : categoryId,
-  });
+  const { data: productListData, error: productListError } = useProductListQuery(
+    {
+      categoryId: '',
+    },
+    { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
+  );
+
+  // 캐시 데이터를 그대로 파생 — 첫 렌더부터 값이 있음
+  const productList = productListData?.data ?? [];
 
   const productCategory = useMemo(() => {
     const allCategory = [{ menuName: '전체 상품 보기', menuId: 'all', upperMenuId: null }];
@@ -62,14 +67,10 @@ const ProductContainer = ({ categoryId }: Props) => {
   };
 
   useEffect(() => {
-    if (productListData) {
-      const { data } = productListData;
-      setProductList(data);
-    } else if (productListError) {
-      setProductList([]);
+    if (productListError) {
       toast.error('상품 상세 정보를 불러오는데 실패하였습니다.');
     }
-  }, [productListData, productListError]);
+  }, [productListError]);
 
   // 선택된 탭이 보이도록 자동 스크롤
   useEffect(() => {

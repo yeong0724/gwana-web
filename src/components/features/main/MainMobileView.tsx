@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   ChevronDown,
-  Leaf,
   Pause,
   Play,
   Volume2,
@@ -14,7 +13,7 @@ import {
 } from 'lucide-react';
 
 import { ProductCard } from '@/components/common';
-import { PulsingDot, ShimmerBar } from '@/components/features/main/atoms';
+import { PulsingDot } from '@/components/features/main/atoms';
 import {
   AWS_S3_DOMAIN,
   brandStory,
@@ -260,67 +259,95 @@ const MainMobileView = () => {
       {/* ══════════════════════════════════
           SECTION 2 — Brand Introduction
           ══════════════════════════════════ */}
-      <section className="relative px-6 py-20 bg-warm-50">
+      <section className="relative px-6 pt-24 pb-20 bg-warm-50">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ margin: '-80px' }}
-          className="space-y-6"
+          className="space-y-7"
         >
-          <motion.p
-            variants={fadeUp}
-            className="text-[11px] tracking-[0.15em] uppercase text-tea-600 font-medium"
-          >
-            Since 1994
-          </motion.p>
+          <motion.div variants={fadeUp} className="flex items-center gap-3">
+            <span className="font-mono text-[11px] tracking-[0.1em] text-tea-700">01</span>
+            <span className="h-px flex-1 bg-brand-900/10" />
+            <span className="text-[11px] tracking-[0.15em] uppercase text-warm-400">
+              Since 1994
+            </span>
+          </motion.div>
+
           <motion.h2
             variants={fadeUp}
-            className="font-serif text-[1.75rem] leading-tight tracking-tight text-brand-900"
+            className="text-[2.25rem] font-light leading-[1.15] tracking-tight text-brand-900 break-keep"
           >
             차 한 잔에 담긴
             <br />
-            지리산의 시간
+            <span className="font-medium">지리산의 시간</span>
           </motion.h2>
+
           <motion.p
             variants={fadeUp}
-            className="text-[15px] leading-relaxed text-warm-500 max-w-[65ch]"
+            className="text-[14px] leading-[1.75] text-warm-500 break-keep max-w-[42ch]"
           >
             관아수제차는 경남 하동에서 유기농으로 재배한 찻잎을 전통 방식 그대로 손으로 덖어
             만듭니다. 빠르게 흘러가는 일상 속, 천천히 우려낸 한 잔이 가져다주는 고요함을 전합니다.
           </motion.p>
-        </motion.div>
 
-        <ShimmerBar />
+          <motion.dl
+            variants={fadeUp}
+            className="mt-10 grid grid-cols-3 divide-x divide-brand-900/10"
+          >
+            <div className="px-1">
+              <dd className="font-mono text-[1.5rem] font-light text-brand-900 tracking-tight">
+                1994
+              </dd>
+              <dt className="mt-1 text-[10px] tracking-[0.15em] uppercase text-warm-400">
+                Founded
+              </dt>
+            </div>
+            <div className="pl-4 pr-1">
+              <dd className="text-[1.5rem] font-light text-brand-900 tracking-tight">하동</dd>
+              <dt className="mt-1 text-[10px] tracking-[0.15em] uppercase text-warm-400">
+                Origin
+              </dt>
+            </div>
+            <div className="pl-4">
+              <dd className="text-[1.5rem] font-light text-brand-900 tracking-tight">유기농</dd>
+              <dt className="mt-1 text-[10px] tracking-[0.15em] uppercase text-warm-400">
+                Organic
+              </dt>
+            </div>
+          </motion.dl>
+        </motion.div>
       </section>
 
       {/* ══════════════════════════════════
           SECTION 3 — Brand Story (Horizontal Scroll)
           ══════════════════════════════════ */}
-      <section className="py-16 bg-brand-50">
+      <section className="py-20 bg-warm-100/60 border-y border-brand-900/5">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ margin: '-60px' }}
-          className="px-6 mb-8"
+          className="px-6 mb-10"
         >
-          <motion.p
-            variants={fadeUp}
-            className="text-[11px] tracking-[0.15em] uppercase text-brand-400 font-medium mb-3"
-          >
-            Our Process
-          </motion.p>
+          <motion.div variants={fadeUp} className="flex items-center gap-3 mb-5">
+            <span className="font-mono text-[11px] tracking-[0.1em] text-tea-700">02</span>
+            <span className="h-px w-10 bg-brand-900/15" />
+            <span className="text-[11px] tracking-[0.15em] uppercase text-warm-400">
+              Our Process
+            </span>
+          </motion.div>
           <motion.h2
             variants={fadeUp}
-            className="font-serif text-[1.5rem] leading-tight tracking-tight text-brand-900"
+            className="text-[1.75rem] font-light leading-tight tracking-tight text-brand-900 break-keep"
           >
-            만드는 사람의 이야기
+            손끝에서 <span className="font-medium">완성되는 차</span>
           </motion.h2>
         </motion.div>
 
         <div
-          className="flex gap-4 overflow-x-auto pl-6 pb-6 snap-x snap-mandatory scrollbar-hide"
+          className="flex gap-4 overflow-x-auto pl-6 pb-4 snap-x snap-mandatory scrollbar-hide"
           style={{ scrollPaddingLeft: '1.5rem' }}
         >
           {brandStory.map((story, i) => (
@@ -330,9 +357,9 @@ const MainMobileView = () => {
               initial="hidden"
               whileInView="show"
               viewport={{}}
-              className="snap-start shrink-0 grow-0 basis-[68vw] min-w-0 space-y-3"
+              className="snap-start shrink-0 grow-0 basis-[72vw] min-w-0"
             >
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden bg-brand-900/5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={story.image}
@@ -340,18 +367,18 @@ const MainMobileView = () => {
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-900/50 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <span className="text-[11px] tracking-[0.15em] text-gold-300 font-medium">
-                    {story.label}
-                  </span>
-                  <h3 className="font-serif text-xl text-white mt-1">{story.title}</h3>
-                </div>
               </div>
-              <p className="text-[13px] leading-relaxed text-warm-500">{story.text}</p>
+              <div className="mt-4 flex items-baseline gap-3">
+                <span className="font-mono text-[11px] text-tea-700">{story.label}</span>
+                <h3 className="text-[16px] font-medium text-brand-900 tracking-tight">
+                  {story.title}
+                </h3>
+              </div>
+              <p className="mt-2 text-[13px] leading-[1.7] text-warm-500 break-keep pr-4">
+                {story.text}
+              </p>
             </motion.article>
           ))}
-          {/* End spacer for last card padding */}
           <div className="shrink-0 w-2" aria-hidden="true" />
         </div>
       </section>
@@ -359,32 +386,33 @@ const MainMobileView = () => {
       {/* ══════════════════════════════════
           SECTION 4 — Popular Products
           ══════════════════════════════════ */}
-      <section className="px-6 py-20 bg-white">
+      <section className="px-6 pt-20 pb-16 bg-warm-50">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ margin: '-60px' }}
         >
-          <motion.div variants={fadeUp} className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-[11px] tracking-[0.15em] uppercase text-tea-600 font-medium mb-2">
-                Best Sellers
-              </p>
-              <h2 className="font-serif text-[1.5rem] leading-tight tracking-tight text-brand-900">
-                지금 가장 사랑받는
-              </h2>
-            </div>
+          <motion.div variants={fadeUp} className="flex items-center gap-3 mb-5">
+            <span className="font-mono text-[11px] tracking-[0.1em] text-tea-700">03</span>
+            <span className="h-px flex-1 bg-brand-900/10" />
             <button
               onClick={onClickViewAll}
-              className="flex items-center gap-1 text-[12px] text-brand-500 font-medium active:scale-[0.97] transition-transform"
+              className="inline-flex items-center gap-1 text-[11px] tracking-[0.1em] uppercase text-warm-500 active:text-brand-900 transition-colors"
             >
-              전체보기
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              All
+              <ArrowUpRight className="w-3 h-3" strokeWidth={1.5} />
             </button>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 items-start">
+          <motion.h2
+            variants={fadeUp}
+            className="text-[1.75rem] font-light leading-tight tracking-tight text-brand-900 break-keep mb-10"
+          >
+            지금 <span className="font-medium">가장 사랑받는</span>
+          </motion.h2>
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 items-start">
             {map(popularProducts, (product) => (
               <ProductCard
                 key={product.productId}
@@ -397,88 +425,109 @@ const MainMobileView = () => {
       </section>
 
       {/* ══════════════════════════════════
-          SECTION 5 — Category Browse
+          SECTION 5 — Category Browse (Editorial List)
           ══════════════════════════════════ */}
-      <section className="py-16 bg-brand-50">
+      <section className="bg-warm-50 px-6 pb-20">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ margin: '-60px' }}
-          className="px-6 mb-8"
         >
-          <motion.p
-            variants={fadeUp}
-            className="text-[11px] tracking-[0.15em] uppercase text-brand-400 font-medium mb-3"
-          >
-            Collections
-          </motion.p>
+          <motion.div variants={fadeUp} className="flex items-center gap-3 mb-5 pt-4">
+            <span className="font-mono text-[11px] tracking-[0.1em] text-tea-700">04</span>
+            <span className="h-px flex-1 bg-brand-900/10" />
+            <span className="text-[11px] tracking-[0.15em] uppercase text-warm-400">
+              Collections
+            </span>
+          </motion.div>
+
           <motion.h2
             variants={fadeUp}
-            className="font-serif text-[1.5rem] leading-tight tracking-tight text-brand-900"
+            className="text-[1.75rem] font-light leading-tight tracking-tight text-brand-900 mb-8"
           >
-            카테고리
+            카테고리 <span className="font-medium">둘러보기</span>
           </motion.h2>
-        </motion.div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{}}
-          className="space-y-4 px-6"
-        >
-          {categories.map((cat) => (
-            <motion.button
-              key={cat.id}
-              variants={fadeUp}
-              onClick={() => onClickCategory(cat.id)}
-              className="group relative w-full h-44 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={cat.image}
-                alt=""
-                loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover group-active:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-brand-900/70 via-brand-900/40 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-center px-6">
-                <span className="text-[10px] tracking-[0.15em] uppercase text-gold-300/80 font-medium">
-                  {cat.nameEn}
-                </span>
-                <h3 className="font-serif text-2xl text-white mt-1">{cat.name}</h3>
-                <p className="text-[12px] text-white/60 mt-1.5">{cat.description}</p>
-              </div>
-              <div className="absolute right-5 top-1/2 -translate-y-1/2">
-                <ArrowRight className="w-5 h-5 text-white/40 group-active:translate-x-1 transition-transform" />
-              </div>
-            </motion.button>
-          ))}
+          <motion.ul
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{}}
+            className="divide-y divide-brand-900/10 border-y border-brand-900/10"
+          >
+            {categories.map((cat) => (
+              <motion.li key={cat.id} variants={fadeUp}>
+                <button
+                  onClick={() => onClickCategory(cat.id)}
+                  className="group flex w-full items-center gap-4 py-5 active:bg-brand-900/[0.02] transition-colors"
+                >
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-brand-900/5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={cat.image}
+                      alt=""
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-warm-400">
+                      {cat.nameEn}
+                    </div>
+                    <div className="mt-0.5 text-[17px] font-medium text-brand-900 tracking-tight">
+                      {cat.name}
+                    </div>
+                    <div className="mt-1 text-[12px] text-warm-500 break-keep">
+                      {cat.description}
+                    </div>
+                  </div>
+                  <ArrowRight
+                    className="h-4 w-4 shrink-0 text-warm-400 group-active:translate-x-0.5 group-active:text-brand-900 transition-all"
+                    strokeWidth={1.5}
+                  />
+                </button>
+              </motion.li>
+            ))}
+          </motion.ul>
         </motion.div>
       </section>
 
       {/* ══════════════════════════════════
           SECTION 6 — Substitute Tea Products
           ══════════════════════════════════ */}
-      <section className="px-6 py-20 bg-white">
+      <section className="px-6 pt-20 pb-16 bg-warm-100/50">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ margin: '-60px' }}
         >
-          <motion.div variants={fadeUp} className="mb-8">
-            <p className="text-[11px] tracking-[0.15em] uppercase text-tea-600 font-medium mb-2">
+          <motion.div variants={fadeUp} className="flex items-center gap-3 mb-5">
+            <span className="font-mono text-[11px] tracking-[0.1em] text-tea-700">05</span>
+            <span className="h-px flex-1 bg-brand-900/10" />
+            <span className="text-[11px] tracking-[0.15em] uppercase text-warm-400">
               Caffeine Free
-            </p>
-            <h2 className="font-serif text-[1.5rem] leading-tight tracking-tight text-brand-900">
-              대용차 컬렉션
-            </h2>
-            <p className="text-[13px] text-warm-400 mt-2">카페인 없이 즐기는 자연의 맛</p>
+            </span>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 items-start">
+          <motion.h2
+            variants={fadeUp}
+            className="text-[1.75rem] font-light leading-tight tracking-tight text-brand-900 break-keep"
+          >
+            카페인 없이,
+            <br />
+            <span className="font-medium">대용차 컬렉션</span>
+          </motion.h2>
+
+          <motion.p
+            variants={fadeUp}
+            className="mt-3 text-[13px] leading-[1.7] text-warm-500 mb-10"
+          >
+            늦은 오후에도 부담 없이 즐기는 자연의 맛.
+          </motion.p>
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 items-start">
             {filter(productList, { categoryId: 'substituteTea' }).map((product) => (
               <ProductCard
                 key={product.productId}
@@ -493,39 +542,31 @@ const MainMobileView = () => {
       {/* ══════════════════════════════════
           SECTION 7 — Brand Promise / Footer CTA
           ══════════════════════════════════ */}
-      <section className="relative px-6 py-24 bg-brand-900 overflow-hidden">
-        {/* Background texture */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          }}
-        />
-
+      <section className="relative px-6 py-28 bg-warm-50 overflow-hidden">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ margin: '-60px' }}
-          className="relative text-center space-y-6"
+          className="relative mx-auto max-w-[400px] space-y-7"
         >
-          <motion.div variants={fadeUp}>
-            <Leaf className="w-6 h-6 text-tea-400 mx-auto mb-4" />
+          <motion.div variants={fadeUp} className="flex items-center gap-3">
+            <span className="font-mono text-[11px] tracking-[0.1em] text-tea-700">06</span>
+            <span className="h-px flex-1 bg-brand-900/10" />
           </motion.div>
 
           <motion.h2
             variants={fadeUp}
-            className="font-serif text-[1.75rem] leading-tight tracking-tight text-white"
+            className="text-[2rem] font-light leading-[1.2] tracking-tight text-brand-900 break-keep"
           >
             당신의 하루에
             <br />
-            고요한 한 잔을
+            <span className="font-medium">고요한 한 잔을</span>
           </motion.h2>
 
           <motion.p
             variants={fadeUp}
-            className="text-[13px] leading-relaxed text-warm-400 max-w-[280px] mx-auto"
+            className="text-[13px] leading-[1.8] text-warm-500 break-keep max-w-[32ch]"
           >
             지리산 자락의 정성이 담긴 차 한 잔으로 오늘 하루를 천천히 마무리해 보세요.
           </motion.p>
@@ -533,16 +574,19 @@ const MainMobileView = () => {
           <motion.button
             variants={fadeUp}
             onClick={onClickViewAll}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-gold-400 text-brand-900 text-sm font-semibold active:scale-[0.97] transition-transform"
+            className="group inline-flex items-center gap-3 border-b border-brand-900 pb-1.5 text-[14px] font-medium text-brand-900 active:-translate-y-px transition-transform"
           >
-            상품 둘러보기
-            <ArrowRight className="w-4 h-4" />
+            상품 전체 둘러보기
+            <ArrowRight
+              className="h-4 w-4 group-active:translate-x-0.5 transition-transform"
+              strokeWidth={1.5}
+            />
           </motion.button>
         </motion.div>
       </section>
 
       {/* Bottom spacing for mobile nav */}
-      <div className="h-20 bg-brand-900" />
+      <div className="h-20 bg-warm-50" />
     </div>
   );
 };

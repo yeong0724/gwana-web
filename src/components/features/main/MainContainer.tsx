@@ -13,7 +13,6 @@ import { heroSlides } from '@/constants';
 import { Provider } from '@/context/mainContext';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import useProductService from '@/service/useProductService';
-import { Product } from '@/types';
 
 const MainContainer = () => {
   const router = useRouter();
@@ -39,19 +38,13 @@ const MainContainer = () => {
 
   const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], ['0%', '20%']);
 
-  const { data: productListData } = useProductListQuery({ categoryId: '' });
+  const { data: productListData } = useProductListQuery(
+    { categoryId: '' },
+    { gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
+  );
 
-  const [productList, setProductList] = useState<Product[]>([]);
-  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
-
-  // Shuffle on client only to avoid hydration mismatch
-  useEffect(() => {
-    if (productListData) {
-      const { data } = productListData;
-      setPopularProducts(take(shuffle([...data]), 4));
-      setProductList(data);
-    }
-  }, [productListData]);
+  const productList = productListData?.data ?? [];
+  const popularProducts = take(shuffle([...productList]), 4);
 
   const onClickProduct = (productId: string) => {
     forward(`/product/${productId}`);
@@ -121,13 +114,15 @@ const MainContainer = () => {
     });
   }, [router, productList]);
 
-  // 새로고침 시 항상 최상단으로 이동
-  useEffect(() => {
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-    window.scrollTo(0, 0);
-  }, []);
+  // 새로고침일 때만 최상단으로 이동 (뒤로가기/앞으로가기는 브라우저 기본 복원에 맡김)
+  // useEffect(() => {
+  //   const nav = performance.getEntriesByType('navigation')[0] as
+  //     | PerformanceNavigationTiming
+  //     | undefined;
+  //   if (nav?.type === 'reload') {
+  //     window.scrollTo(0, 0);
+  //   }
+  // }, []);
 
   return (
     <Provider

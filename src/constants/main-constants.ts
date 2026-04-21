@@ -35,14 +35,21 @@ export const categories = [
     id: 'greenTea',
     name: '녹차',
     nameEn: 'Green Tea',
-    image: 'https://picsum.photos/seed/gwana-green-tea/600/400',
+    image: '/images/category/category_1.png',
     description: '지리산 하동의 유기농 녹차',
+  },
+  {
+    id: 'blackTea',
+    name: '발효차',
+    nameEn: 'Fermented Tea',
+    image: '/images/category/category_2.png',
+    description: '세월을 담는 차, 건강을 주는 차',
   },
   {
     id: 'substituteTea',
     name: '대용차',
     nameEn: 'Herbal Tea',
-    image: 'https://picsum.photos/seed/gwana-herbal-tea/600/400',
+    image: '/images/category/category_3.png',
     description: '논카페인 수제 블렌딩',
   },
 ];
