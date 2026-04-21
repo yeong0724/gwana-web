@@ -1,6 +1,5 @@
 'use client';
 
-// import { ChangeEvent, CompositionEvent, useRef, useState } from 'react';
 import { ChangeEvent, useRef, useState } from 'react';
 
 import { isEmpty } from 'lodash-es';
@@ -46,7 +45,6 @@ const ControllerInput = <T extends FieldValues>({
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
   // IME(한글 등) 조합 상태 추적
-  // const isComposingRef = useRef<boolean>(false);
   // DOM input 내부 참조 (blur 시 조합 미완료 값 강제 동기화용)
   const internalInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -88,26 +86,8 @@ const ControllerInput = <T extends FieldValues>({
   };
 
   const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
-    // const nativeEvent = event.nativeEvent as InputEvent;
-
-    // 조합 중에는 state 업데이트를 전혀 하지 않음
-    // iOS Safari는 controlled input의 value가 조합 중 바뀌면 조합이 취소/삭제됨
-    // compositionend 시점에 DOM의 최종 값으로 동기화함
-    // if (isComposingRef.current || nativeEvent.isComposing) {
-    //   return;
-    // }
-
     applyValue(event.target.value);
   };
-
-  // const handleCompositionStart = () => {
-  //   isComposingRef.current = true;
-  // };
-
-  // const handleCompositionEnd = (event: CompositionEvent<HTMLInputElement>) => {
-  //   isComposingRef.current = false;
-  //   applyValue((event.target as HTMLInputElement).value);
-  // };
 
   const handleRef = (el: HTMLInputElement | null) => {
     internalInputRef.current = el;
@@ -122,7 +102,6 @@ const ControllerInput = <T extends FieldValues>({
     if (internalInputRef.current) {
       const domValue = internalInputRef.current.value;
       if (domValue !== (field.value ?? '')) {
-        // isComposingRef.current = false;
         applyValue(domValue);
       }
     }
@@ -136,8 +115,6 @@ const ControllerInput = <T extends FieldValues>({
         placeholder={isFocus ? '' : placeholder}
         value={field.value ?? ''}
         onChange={onChangeHandler}
-        // onCompositionStart={handleCompositionStart}
-        // onCompositionEnd={handleCompositionEnd}
         className={`${className} outline-none ${error?.message ? '!border-red-500 focus:!border-red-500' : ''} ${disabled ? 'bg-gray-100 text-gray-700 cursor-not-allowed' : ''}`}
         readOnly={readOnly}
         disabled={disabled}
