@@ -119,6 +119,14 @@ const MainContainer = () => {
     });
   }, [router, productList]);
 
+  // 새로고침 시 항상 최상단으로 이동
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <Provider
       state={{
