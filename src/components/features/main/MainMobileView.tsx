@@ -282,8 +282,12 @@ const MainMobileView = () => {
             ))}
             <button
               onClick={() => setHeroAutoplay((prev) => !prev)}
-              className="ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
-              aria-label={heroAutoplay ? '자동 재생 정지' : '자동 재생 시작'}
+              className={`ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm ${
+                currentSlide.type === 'video' ? '' : 'invisible'
+              }`}
+              aria-label={heroAutoplay ? '재생 정지' : '재생'}
+              aria-hidden={currentSlide.type !== 'video'}
+              tabIndex={currentSlide.type === 'video' ? 0 : -1}
             >
               {heroAutoplay ? (
                 <Pause className="w-3 h-3 text-white" />
@@ -292,20 +296,22 @@ const MainMobileView = () => {
               )}
             </button>
 
-            {/* Sound toggle — only for video slides with sound */}
-            {currentSlide.type === 'video' && currentSlide.hasSound && (
-              <button
-                onClick={() => setIsSoundOn((prev) => !prev)}
-                className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
-                aria-label={isSoundOn ? '음소거' : '소리 켜기'}
-              >
-                {isSoundOn ? (
-                  <Volume2 className="w-3 h-3 text-white" />
-                ) : (
-                  <VolumeX className="w-3 h-3 text-white" />
-                )}
-              </button>
-            )}
+            {/* Sound toggle — 공간은 항상 유지, 비디오+hasSound 가 아닐 때는 invisible */}
+            <button
+              onClick={() => setIsSoundOn((prev) => !prev)}
+              className={`ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm ${
+                currentSlide.type === 'video' && currentSlide.hasSound ? '' : 'invisible'
+              }`}
+              aria-label={isSoundOn ? '음소거' : '소리 켜기'}
+              aria-hidden={!(currentSlide.type === 'video' && currentSlide.hasSound)}
+              tabIndex={currentSlide.type === 'video' && currentSlide.hasSound ? 0 : -1}
+            >
+              {isSoundOn ? (
+                <Volume2 className="w-3 h-3 text-white" />
+              ) : (
+                <VolumeX className="w-3 h-3 text-white" />
+              )}
+            </button>
           </div>
         </div>
 

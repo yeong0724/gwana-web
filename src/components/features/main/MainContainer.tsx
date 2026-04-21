@@ -91,6 +91,23 @@ const MainContainer = () => {
     video.muted = heroSlides[heroIndex].hasSound ? !isSoundOn : true;
   }, [isSoundOn, heroIndex]);
 
+  // heroAutoplay ↔ 현재 비디오 재생/일시정지 동기화 (currentTime 유지 → 이어서 재생)
+  useEffect(() => {
+    const video = videoRefs.current[heroIndex];
+    if (!video) return;
+    if (heroSlides[heroIndex].type !== 'video') return;
+    if (heroAutoplay) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, [heroAutoplay, heroIndex]);
+
+  // 슬라이드 이동시 autoplay 상태 리셋 (pause 는 현재 슬라이드에만 적용)
+  useEffect(() => {
+    setHeroAutoplay(true);
+  }, [heroIndex]);
+
   // Hero auto-advance — duration driven by heroSlides[].duration
   useEffect(() => {
     if (!heroAutoplay || isHeroDragging) return;
