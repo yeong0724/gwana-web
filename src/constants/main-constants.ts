@@ -1,3 +1,4 @@
+import { AWS_S3_DOMAIN } from '@/constants';
 import { HeroSlide } from '@/types';
 
 export const heroSlides: HeroSlide[] = [
@@ -20,7 +21,7 @@ export const heroSlides: HeroSlide[] = [
   },
   {
     type: 'image',
-    src: 'https://picsum.photos/seed/gwana-tea-hero3/800/1200',
+    src: `${AWS_S3_DOMAIN}images/about/mobile/gwana_about_01.webp`,
     hasSound: false,
     duration: 8,
     subtitle: '2025 봄 신차',

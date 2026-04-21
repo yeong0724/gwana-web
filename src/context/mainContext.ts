@@ -9,6 +9,7 @@ type MainStateContextType = {
   heroIndex: number;
   heroAutoplay: boolean;
   isSoundOn: boolean;
+  isHeroDragging: boolean;
   slideDuration: number;
   currentSlide: HeroSlide;
   scrollRef: RefObject<HTMLDivElement | null>;
@@ -22,6 +23,7 @@ type MainControllerContextType = {
   setHeroIndex: Dispatch<SetStateAction<number>>;
   setHeroAutoplay: Dispatch<SetStateAction<boolean>>;
   setIsSoundOn: Dispatch<SetStateAction<boolean>>;
+  setIsHeroDragging: Dispatch<SetStateAction<boolean>>;
   onClickProduct: (productId: string) => void;
   onMoveToProductPage: () => void;
   onClickCategory: (categoryId: string) => void;

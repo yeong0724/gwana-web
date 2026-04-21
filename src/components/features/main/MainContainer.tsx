@@ -23,6 +23,7 @@ const MainContainer = () => {
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroAutoplay, setHeroAutoplay] = useState(true);
   const [isSoundOn, setIsSoundOn] = useState(false);
+  const [isHeroDragging, setIsHeroDragging] = useState(false);
   const heroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
@@ -84,6 +85,7 @@ const MainContainer = () => {
         });
       } else {
         video.pause();
+        video.currentTime = 0;
         video.muted = true;
       }
     });
@@ -98,7 +100,7 @@ const MainContainer = () => {
 
   // Hero auto-advance — duration driven by heroSlides[].duration
   useEffect(() => {
-    if (!heroAutoplay) return;
+    if (!heroAutoplay || isHeroDragging) return;
 
     const dur = heroSlides[heroIndex].duration;
 
@@ -109,7 +111,7 @@ const MainContainer = () => {
     return () => {
       if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
     };
-  }, [heroAutoplay, heroIndex]);
+  }, [heroAutoplay, heroIndex, isHeroDragging]);
 
   // Prefetching
   useEffect(() => {
@@ -133,6 +135,7 @@ const MainContainer = () => {
         heroIndex,
         heroAutoplay,
         isSoundOn,
+        isHeroDragging,
         slideDuration,
         currentSlide,
         scrollRef,
@@ -145,6 +148,7 @@ const MainContainer = () => {
         setHeroIndex,
         setHeroAutoplay,
         setIsSoundOn,
+        setIsHeroDragging,
         onClickProduct,
         onMoveToProductPage,
         onClickCategory,

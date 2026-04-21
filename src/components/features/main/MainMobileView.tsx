@@ -1,11 +1,11 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+
+import { AnimatePresence, animate, motion, useMotionValue } from 'framer-motion';
 import { filter, map } from 'lodash-es';
 import {
   ArrowRight,
   ArrowUpRight,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Leaf,
   Pause,
   Play,
@@ -42,170 +42,214 @@ const MainMobileView = () => {
     setHeroIndex,
     setHeroAutoplay,
     setIsSoundOn,
+    setIsHeroDragging,
     onClickProduct,
     onMoveToProductPage,
     onClickCategory,
     onClickViewAll,
   } = useControllerContext();
 
+  const dragX = useMotionValue(0);
+  const [peekIndex, setPeekIndex] = useState((heroIndex + 1) % heroSlides.length);
+
+  const commitSwipe = async (direction: 1 | -1) => {
+    const target = direction > 0 ? -window.innerWidth : window.innerWidth;
+    await animate(dragX, target, { duration: 0.32, ease: [0.32, 0.72, 0, 1] });
+    dragX.set(0);
+    setHeroIndex((prev) => (prev + direction + heroSlides.length) % heroSlides.length);
+  };
+
+  const handleDragStart = () => {
+    setIsHeroDragging(true);
+  };
+
+  const handleDrag = (
+    _: unknown,
+    info: { offset: { x: number } }
+  ) => {
+    if (info.offset.x < -4) {
+      setPeekIndex((heroIndex + 1) % heroSlides.length);
+    } else if (info.offset.x > 4) {
+      setPeekIndex((heroIndex - 1 + heroSlides.length) % heroSlides.length);
+    }
+  };
+
+  const handleDragEnd = (
+    _: unknown,
+    info: { offset: { x: number }; velocity: { x: number } }
+  ) => {
+    setIsHeroDragging(false);
+    const distanceThreshold = 80;
+    const velocityThreshold = 500;
+    const { offset, velocity } = info;
+
+    if (offset.x < -distanceThreshold || velocity.x < -velocityThreshold) {
+      commitSwipe(1);
+    } else if (offset.x > distanceThreshold || velocity.x > velocityThreshold) {
+      commitSwipe(-1);
+    } else {
+      animate(dragX, 0, { type: 'spring', stiffness: 320, damping: 32 });
+    }
+  };
+
   return (
     <div ref={scrollRef} className="relative w-full bg-warm-50 overflow-hidden">
       <section className="relative min-h-[100dvh] w-full overflow-hidden">
-        {/* Background media — all slides pre-rendered, cross-fade via opacity */}
-        {heroSlides.map((slide, i) => (
-          <motion.div
-            key={i}
-            className="absolute inset-0"
-            initial={false}
-            animate={{
-              opacity: i === heroIndex ? 1 : 0,
-              scale: i === heroIndex ? 1 : 1.08,
-            }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            style={{ zIndex: i === heroIndex ? 1 : 0 }}
-          >
-            {slide.type === 'video' ? (
-              <motion.video
-                ref={(el) => {
-                  videoRefs.current[i] = el;
-                  // React hydration bug: muted prop이 DOM에 반영되지 않는 문제 해결
-                  if (el) el.muted = true;
-                }}
-                src={`${AWS_S3_DOMAIN}${slide.src}`}
-                preload="auto"
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                style={{ y: heroParallaxY }}
-              />
-            ) : (
-              <motion.img
-                src={slide.src}
-                alt=""
-                loading="eager"
-                className="w-full h-full object-cover"
-                style={{ y: heroParallaxY }}
-              />
-            )}
-          </motion.div>
-        ))}
+        {/* Stacked slide cards — top is draggable, underneath peek stays in place */}
+        {heroSlides.map((slide, i) => {
+          const isActive = i === heroIndex;
+          const isPeek = i === peekIndex;
+          const shouldShow = isActive || isPeek;
 
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-brand-900/80 via-brand-900/20 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 z-[2] bg-gradient-to-r from-brand-900/40 to-transparent pointer-events-none" />
+          return (
+            <motion.div
+              key={i}
+              className="absolute inset-0 touch-pan-y"
+              style={{
+                x: isActive ? dragX : 0,
+                zIndex: isActive ? 3 : isPeek ? 2 : 1,
+              }}
+              initial={false}
+              animate={{ opacity: shouldShow ? 1 : 0 }}
+              transition={{ opacity: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
+              drag={isActive ? 'x' : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.55}
+              onDragStart={isActive ? handleDragStart : undefined}
+              onDrag={isActive ? handleDrag : undefined}
+              onDragEnd={isActive ? handleDragEnd : undefined}
+            >
+              {/* Media */}
+              {slide.type === 'video' ? (
+                <motion.video
+                  ref={(el) => {
+                    videoRefs.current[i] = el;
+                    // React hydration bug: muted prop이 DOM에 반영되지 않는 문제 해결
+                    if (el) el.muted = true;
+                  }}
+                  src={`${AWS_S3_DOMAIN}${slide.src}`}
+                  preload="auto"
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover pointer-events-none"
+                  style={{ y: heroParallaxY }}
+                />
+              ) : (
+                <motion.img
+                  src={slide.src}
+                  alt=""
+                  loading="eager"
+                  className="w-full h-full object-cover pointer-events-none"
+                  style={{ y: heroParallaxY }}
+                  draggable={false}
+                />
+              )}
 
-        {/* Hero nav arrows */}
-        <button
-          onClick={() => setHeroIndex((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-[4] p-2 active:scale-[0.9] transition-transform"
-          aria-label="이전 슬라이드"
-        >
-          <ChevronLeft className="w-6 h-6 text-white/70" />
-        </button>
-        <button
-          onClick={() => setHeroIndex((prev) => (prev + 1) % heroSlides.length)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-[4] p-2 active:scale-[0.9] transition-transform"
-          aria-label="다음 슬라이드"
-        >
-          <ChevronRight className="w-6 h-6 text-white/70" />
-        </button>
+              {/* Gradient overlays — part of each card so they travel with drag */}
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-900/80 via-brand-900/20 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-900/40 to-transparent pointer-events-none" />
 
-        {/* Hero content */}
-        <div className="absolute inset-0 z-[3] flex flex-col justify-end px-6 pb-28 pointer-events-none">
-          <div className="pointer-events-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroIndex}
-                variants={staggerContainer}
-                initial="hidden"
-                animate="show"
-                exit="hidden"
-                className="space-y-4"
-              >
-                {/* Overline */}
-                <motion.div variants={fadeUp} className="flex items-center gap-2">
-                  <PulsingDot />
-                  <span className="text-[11px] tracking-[0.1em] uppercase text-gold-300 font-medium">
-                    {currentSlide.subtitle}
-                  </span>
-                </motion.div>
-
-                {/* Title */}
-                <motion.h1
-                  variants={fadeUp}
-                  className="font-serif text-[2.5rem] leading-[1.15] tracking-tight text-white whitespace-pre-line"
-                >
-                  {currentSlide.title}
-                </motion.h1>
-
-                {/* CTA */}
-                {currentSlide.cta && (
-                  <motion.button
-                    variants={fadeUp}
-                    onClick={onMoveToProductPage}
-                    className="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium backdrop-blur-sm active:scale-[0.97] transition-transform"
-                  >
-                    {currentSlide.cta}
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Slide indicator + autoplay toggle */}
-            <div className="mt-8 flex items-center gap-3">
-              {heroSlides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setHeroIndex(i)}
-                  className="relative h-[2px] flex-1 max-w-12 bg-white/30 rounded-full overflow-hidden"
-                  aria-label={`슬라이드 ${i + 1}`}
-                >
-                  {i === heroIndex && (
+              {/* Text content — only on active card, slides together with drag */}
+              {isActive && (
+                <div className="absolute inset-0 flex flex-col justify-end px-6 pb-40 pointer-events-none">
+                  <AnimatePresence mode="wait">
                     <motion.div
-                      key={`progress-${heroIndex}`}
-                      className="absolute inset-y-0 left-0 bg-white rounded-full"
-                      initial={{ width: '0%' }}
-                      animate={{ width: '100%' }}
-                      transition={{ duration: slideDuration, ease: 'linear' }}
-                    />
-                  )}
-                  {i < heroIndex && <div className="absolute inset-0 bg-white rounded-full" />}
-                </button>
-              ))}
+                      key={heroIndex}
+                      variants={staggerContainer}
+                      initial="hidden"
+                      animate="show"
+                      exit="hidden"
+                      className="space-y-4 pointer-events-auto"
+                    >
+                      {/* Overline */}
+                      <motion.div variants={fadeUp} className="flex items-center gap-2">
+                        <PulsingDot />
+                        <span className="text-[11px] tracking-[0.1em] uppercase text-gold-300 font-medium">
+                          {currentSlide.subtitle}
+                        </span>
+                      </motion.div>
+
+                      {/* Title */}
+                      <motion.h1
+                        variants={fadeUp}
+                        className="font-serif text-[2.5rem] leading-[1.15] tracking-tight text-white whitespace-pre-line"
+                      >
+                        {currentSlide.title}
+                      </motion.h1>
+
+                      {/* CTA */}
+                      {currentSlide.cta && (
+                        <motion.button
+                          variants={fadeUp}
+                          onClick={onMoveToProductPage}
+                          className="mt-4 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium backdrop-blur-sm active:scale-[0.97] transition-transform"
+                        >
+                          {currentSlide.cta}
+                          <ArrowRight className="w-4 h-4" />
+                        </motion.button>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+
+        {/* Fixed UI controls — stay in place regardless of drag */}
+        <div className="absolute bottom-24 left-6 right-6 z-[10] flex items-center gap-3 pointer-events-none">
+          <div className="flex items-center gap-3 flex-1 pointer-events-auto">
+            {heroSlides.map((_, i) => (
               <button
-                onClick={() => setHeroAutoplay((prev) => !prev)}
-                className="ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
-                aria-label={heroAutoplay ? '자동 재생 정지' : '자동 재생 시작'}
+                key={i}
+                onClick={() => setHeroIndex(i)}
+                className="relative h-[2px] flex-1 max-w-12 bg-white/30 rounded-full overflow-hidden"
+                aria-label={`슬라이드 ${i + 1}`}
               >
-                {heroAutoplay ? (
-                  <Pause className="w-3 h-3 text-white" />
+                {i === heroIndex && (
+                  <motion.div
+                    key={`progress-${heroIndex}`}
+                    className="absolute inset-y-0 left-0 bg-white rounded-full"
+                    initial={{ width: '0%' }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: slideDuration, ease: 'linear' }}
+                  />
+                )}
+                {i < heroIndex && <div className="absolute inset-0 bg-white rounded-full" />}
+              </button>
+            ))}
+            <button
+              onClick={() => setHeroAutoplay((prev) => !prev)}
+              className="ml-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
+              aria-label={heroAutoplay ? '자동 재생 정지' : '자동 재생 시작'}
+            >
+              {heroAutoplay ? (
+                <Pause className="w-3 h-3 text-white" />
+              ) : (
+                <Play className="w-3 h-3 text-white ml-[1px]" />
+              )}
+            </button>
+
+            {/* Sound toggle — only for video slides with sound */}
+            {currentSlide.type === 'video' && currentSlide.hasSound && (
+              <button
+                onClick={() => setIsSoundOn((prev) => !prev)}
+                className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
+                aria-label={isSoundOn ? '음소거' : '소리 켜기'}
+              >
+                {isSoundOn ? (
+                  <Volume2 className="w-3 h-3 text-white" />
                 ) : (
-                  <Play className="w-3 h-3 text-white ml-[1px]" />
+                  <VolumeX className="w-3 h-3 text-white" />
                 )}
               </button>
-
-              {/* Sound toggle — only for video slides with sound */}
-              {currentSlide.type === 'video' && currentSlide.hasSound && (
-                <button
-                  onClick={() => setIsSoundOn((prev) => !prev)}
-                  className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm"
-                  aria-label={isSoundOn ? '음소거' : '소리 켜기'}
-                >
-                  {isSoundOn ? (
-                    <Volume2 className="w-3 h-3 text-white" />
-                  ) : (
-                    <VolumeX className="w-3 h-3 text-white" />
-                  )}
-                </button>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
         {/* Scroll hint */}
         <motion.div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[3]"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[10]"
           animate={{ y: [0, 3, 0] }}
           transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
         >
