@@ -21,7 +21,7 @@ const getRegexpByType = (type: FormatEnum = 'text') => {
     case 'tel':
       return /^[0-9]+$/g;
     case 'text':
-      return /^[가-힣ㄱ-ㅎㅏ-ㅣ·:a-zA-Z\s0-9]+$/;
+      return /^[가-힣ㄱ-ㅎㅏ-ㅣㆍ·:a-zA-Z\s0-9]+$/;
     case 'email':
       return /^[a-zA-Z0-9@._+\-]+$/;
     case 'alphanumericWithSymbols':
