@@ -44,8 +44,10 @@ const ControllerInput = <T extends FieldValues>({
 }) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
-  // IME(한글 등) 조합 상태 추적 - state 대신 ref 사용 (onChange보다 먼저 읽혀야 하므로)
+  // IME(한글 등) 조합 상태 추적
   const isComposingRef = useRef<boolean>(false);
+  // DOM input 내부 참조 (blur 시 조합 미완료 값 강제 동기화용)
+  const internalInputRef = useRef<HTMLInputElement | null>(null);
 
   const { setValue, control, clearErrors } = useFormContext<T>();
 
@@ -85,19 +87,16 @@ const ControllerInput = <T extends FieldValues>({
   };
 
   const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
-    const inputValue = event.target.value;
+    const nativeEvent = event.nativeEvent as InputEvent;
 
-    // 조합 중(IME composing)에는 필터링/검증 없이 raw 값만 반영
-    // iOS Safari에서 조합 중 value가 바뀌면 입력이 씹히는 문제 방지
-    if (isComposingRef.current) {
-      setValue(name, inputValue as FieldPathValue<T, FieldPath<T>>, {
-        shouldDirty: false,
-        shouldValidate: false,
-      });
+    // 조합 중에는 state 업데이트를 전혀 하지 않음
+    // iOS Safari는 controlled input의 value가 조합 중 바뀌면 조합이 취소/삭제됨
+    // compositionend 시점에 DOM의 최종 값으로 동기화함
+    if (isComposingRef.current || nativeEvent.isComposing) {
       return;
     }
 
-    applyValue(inputValue);
+    applyValue(event.target.value);
   };
 
   const handleCompositionStart = () => {
@@ -110,13 +109,32 @@ const ControllerInput = <T extends FieldValues>({
     applyValue((event.target as HTMLInputElement).value);
   };
 
+  const handleRef = (el: HTMLInputElement | null) => {
+    internalInputRef.current = el;
+    if (inputRef) inputRef(el);
+  };
+
+  const handleBlur = () => {
+    setIsFocus(false);
+
+    // 안전망: compositionend가 누락되거나 조합이 끝나지 않은 상태로 포커스가 빠지는 경우
+    // DOM의 실제 값과 RHF state가 어긋나 있으면 강제로 동기화
+    if (internalInputRef.current) {
+      const domValue = internalInputRef.current.value;
+      if (domValue !== (field.value ?? '')) {
+        isComposingRef.current = false;
+        applyValue(domValue);
+      }
+    }
+  };
+
   return (
     <div className={wrapperClassName}>
       <Input
-        ref={inputRef}
+        ref={handleRef}
         name={name}
         placeholder={isFocus ? '' : placeholder}
-        value={field.value}
+        value={field.value ?? ''}
         onChange={onChangeHandler}
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
@@ -126,7 +144,7 @@ const ControllerInput = <T extends FieldValues>({
         type={type === 'email' ? 'text' : type}
         maxLength={maxLength}
         onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
+        onBlur={handleBlur}
         autoComplete="off"
       />
       {!disableErrorMessage && error?.message && (
