@@ -1,4 +1,6 @@
-import { ChangeEvent, useState } from 'react';
+'use client';
+
+import { ChangeEvent, CompositionEvent, useRef, useState } from 'react';
 
 import { isEmpty } from 'lodash-es';
 import {
@@ -42,6 +44,9 @@ const ControllerInput = <T extends FieldValues>({
 }) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
+  // IME(한글 등) 조합 상태 추적 - state 대신 ref 사용 (onChange보다 먼저 읽혀야 하므로)
+  const isComposingRef = useRef<boolean>(false);
+
   const { setValue, control, clearErrors } = useFormContext<T>();
 
   const {
@@ -60,10 +65,9 @@ const ControllerInput = <T extends FieldValues>({
     return field.value;
   };
 
-  const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
-    const inputValue = event.target.value;
-
-    const value = onFilterValue(inputValue) as FieldPathValue<T, FieldPath<T>>;
+  // 필터링 + 검증 로직 (조합 완료 후 또는 일반 입력 시 호출)
+  const applyValue = (rawValue: string) => {
+    const value = onFilterValue(rawValue as FieldPathValue<T, FieldPath<T>>);
 
     if (callbackFn) {
       callbackFn(null, { name, value });
@@ -80,6 +84,32 @@ const ControllerInput = <T extends FieldValues>({
     });
   };
 
+  const onChangeHandler = (event: ChangeEvent<ReactHookFormEventType<T> & HTMLInputElement>) => {
+    const inputValue = event.target.value;
+
+    // 조합 중(IME composing)에는 필터링/검증 없이 raw 값만 반영
+    // iOS Safari에서 조합 중 value가 바뀌면 입력이 씹히는 문제 방지
+    if (isComposingRef.current) {
+      setValue(name, inputValue as FieldPathValue<T, FieldPath<T>>, {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+      return;
+    }
+
+    applyValue(inputValue);
+  };
+
+  const handleCompositionStart = () => {
+    isComposingRef.current = true;
+  };
+
+  const handleCompositionEnd = (event: CompositionEvent<HTMLInputElement>) => {
+    isComposingRef.current = false;
+    // 조합이 완성된 시점에 최종 값으로 필터링/검증 수행
+    applyValue((event.target as HTMLInputElement).value);
+  };
+
   return (
     <div className={wrapperClassName}>
       <Input
@@ -88,6 +118,8 @@ const ControllerInput = <T extends FieldValues>({
         placeholder={isFocus ? '' : placeholder}
         value={field.value}
         onChange={onChangeHandler}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
         className={`${className} outline-none ${error?.message ? '!border-red-500 focus:!border-red-500' : ''} ${disabled ? 'bg-gray-100 text-gray-700 cursor-not-allowed' : ''}`}
         readOnly={readOnly}
         disabled={disabled}
