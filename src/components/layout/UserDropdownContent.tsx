@@ -18,8 +18,8 @@ const UserDropdownContent = ({ handleLogout, moveToMyPage, moveToOrderHistory }:
     height: 0,
     borderLeft: '8px solid transparent',
     borderRight: '8px solid transparent',
-    borderBottom: '8px solid oklch(0.985 0.003 70)',
-    filter: 'drop-shadow(0 -2px 2px oklch(0.35 0.07 40 / 0.08))',
+    borderBottom: '8px solid #ffffff',
+    filter: 'drop-shadow(0 -2px 2px rgba(0,0,0,0.06))',
   };
 
   const arrowBorderStyle = {
@@ -27,7 +27,7 @@ const UserDropdownContent = ({ handleLogout, moveToMyPage, moveToOrderHistory }:
     height: 0,
     borderLeft: '9px solid transparent',
     borderRight: '9px solid transparent',
-    borderBottom: '9px solid oklch(0.87 0.03 65)',
+    borderBottom: '9px solid #e5e5e5',
   };
 
   return (

@@ -1,19 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { AnimatePresence, animate, motion, useMotionValue } from 'framer-motion';
+import { animate, AnimatePresence, motion, useMotionValue } from 'framer-motion';
 import { filter, map } from 'lodash-es';
-import {
-  ArrowRight,
-  ArrowUpRight,
-  ChevronDown,
-  Pause,
-  Play,
-  Volume2,
-  VolumeX,
-} from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Pause, Play, Volume2, VolumeX } from 'lucide-react';
 
 import { ProductCard } from '@/components/common';
-import { PulsingDot } from '@/components/features/main/atoms';
 import {
   AWS_S3_DOMAIN,
   brandStory,
@@ -117,10 +108,7 @@ const MainMobileView = () => {
     setIsHeroDragging(true);
   };
 
-  const handleDrag = (
-    _: unknown,
-    info: { offset: { x: number } }
-  ) => {
+  const handleDrag = (_: unknown, info: { offset: { x: number } }) => {
     if (info.offset.x < -4) {
       setPeekIndex((heroIndex + 1) % heroSlides.length);
     } else if (info.offset.x > 4) {
@@ -128,10 +116,7 @@ const MainMobileView = () => {
     }
   };
 
-  const handleDragEnd = (
-    _: unknown,
-    info: { offset: { x: number }; velocity: { x: number } }
-  ) => {
+  const handleDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
     setIsHeroDragging(false);
     const distanceThreshold = 80;
     const velocityThreshold = 500;
@@ -218,8 +203,7 @@ const MainMobileView = () => {
                     >
                       {/* Overline */}
                       <motion.div variants={fadeUp} className="flex items-center gap-2">
-                        <PulsingDot />
-                        <span className="text-[11px] tracking-[0.1em] uppercase text-gold-300 font-medium">
+                        <span className="text-[11px] tracking-[0.1em] uppercase text-gold-300 font-medium ml-1">
                           {currentSlide.subtitle}
                         </span>
                       </motion.div>
@@ -227,7 +211,8 @@ const MainMobileView = () => {
                       {/* Title */}
                       <motion.h1
                         variants={fadeUp}
-                        className="font-serif text-[2.5rem] leading-[1.15] tracking-tight text-white whitespace-pre-line"
+                        style={{ fontWeight: 800 }}
+                        className="text-[2.25rem] leading-[1.25] tracking-[-0.015em] text-white whitespace-pre-line [text-shadow:0_2px_18px_rgba(0,0,0,0.35)]"
                       >
                         {currentSlide.title}
                       </motion.h1>
@@ -375,9 +360,7 @@ const MainMobileView = () => {
             </div>
             <div className="pl-4 pr-1">
               <dd className="text-[1.5rem] font-light text-brand-900 tracking-tight">하동</dd>
-              <dt className="mt-1 text-[10px] tracking-[0.15em] uppercase text-warm-400">
-                Origin
-              </dt>
+              <dt className="mt-1 text-[10px] tracking-[0.15em] uppercase text-warm-400">Origin</dt>
             </div>
             <div className="pl-4">
               <dd className="text-[1.5rem] font-light text-brand-900 tracking-tight">유기농</dd>

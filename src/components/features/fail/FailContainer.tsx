@@ -13,7 +13,7 @@ const FailContainer = ({ code, message }: FailContainerProps) => {
   const router = useRouter();
 
   return (
-    <div className="flex bg-gradient-to-b from-red-50/30 via-white to-white flex-col items-center justify-between px-6 w-full max-w-[500px] mx-auto min-h-screen overflow-hidden border-x border-gray-100">
+    <div className="flex bg-gradient-to-b from-neutral-50 via-white to-white flex-col items-center justify-between px-6 w-full max-w-[500px] mx-auto min-h-screen overflow-hidden border-x border-gray-100">
       {/* 상단 여백 */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
         {/* <div className="relative mb-8">
@@ -52,8 +52,8 @@ const FailContainer = ({ code, message }: FailContainerProps) => {
 
         {/* 안내 메시지 */}
         {code !== 'PAY_PROCESS_CANCELED' && (
-          <div className="mt-8 px-6 py-4 bg-amber-50/50 border border-amber-200/50 rounded-2xl">
-            <p className="text-[13px] sm:text-[14px] text-gray-700 leading-relaxed text-center break-keep">
+          <div className="mt-8 px-6 py-4 bg-red-50/60 border border-red-200/60 rounded-2xl">
+            <p className="text-[13px] sm:text-[14px] text-red-700 leading-relaxed text-center break-keep">
               결제 중 문제가 발생했습니다.
               <br />
               잠시 후 다시 시도해주세요.

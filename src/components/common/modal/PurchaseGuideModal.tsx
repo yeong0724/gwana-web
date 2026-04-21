@@ -31,7 +31,7 @@ const PurchaseGuideModal = ({ modalOpen, setModalOpen, moveToLoginPage }: Props)
         </DialogHeader>
 
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="text-[#018275] mb-3 font-light">구매를 위해 로그인이 필요합니다</div>
+          <div className="text-black mb-3 font-medium">구매를 위해 로그인이 필요합니다</div>
           <div>안전한 결제 처리를 위해</div>
           <div>로그인 후 구매를 진행해주세요.</div>
         </div>

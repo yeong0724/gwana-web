@@ -438,7 +438,7 @@ const AboutMobileView = () => {
         {/* ── Section: Heritage (계절을 기준으로 한 차) ── */}
         <div
           className="about-grain"
-          style={{ background: 'linear-gradient(180deg, #2C1B10 0%, #1a1008 100%)' }}
+          style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #000000 100%)' }}
         >
           <div className="max-w-lg mx-auto px-6 py-20">
             <section className="about-fade-section text-center">

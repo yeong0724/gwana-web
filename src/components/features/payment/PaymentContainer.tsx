@@ -383,7 +383,7 @@ const PaymentContainer = ({ sessionId }: Props) => {
                   {/* 결제 금액 */}
                   <div className="flex items-center justify-between text-[16px] sm:text-[17px] md:text-[18px] lg:text-[19px]">
                     <span className="font-bold">결제 금액</span>
-                    <span className="font-bold text-blue-600">
+                    <span className="font-bold text-black">
                       {localeFormat(paymentSession.totalPrice + paymentSession.totalShippingPrice)}
                       원
                     </span>

@@ -115,18 +115,20 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }
   );
 
-  const { reviewList, totalReviewCount } = useMemo(() => {
+  const { reviewList, totalReviewCount, averageRating } = useMemo(() => {
     if (reviewListData) {
       const { pages } = reviewListData;
       return {
         reviewList: pages.flatMap(({ data }) => data.data),
         totalReviewCount: pages[0].data.totalCount,
+        averageRating: pages[0].data.averageRating ?? 0,
       };
     }
 
     return {
       reviewList: [],
       totalReviewCount: 0,
+      averageRating: 0,
     };
   }, [reviewListData]);
 
@@ -191,6 +193,29 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
   const handleKakaoShare = () => {
     const { Kakao, location } = window;
+
+    if (!Kakao || !Kakao.Share) {
+      showAlert({
+        title: '안내',
+        description: '카카오 SDK 로드 중입니다. 잠시 후 다시 시도해주세요.',
+        size: 'sm',
+      });
+      return;
+    }
+
+    if (!Kakao.isInitialized()) {
+      const key = process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY;
+      if (!key) {
+        showAlert({
+          title: '에러',
+          description: '카카오 공유 설정이 누락되었습니다.',
+          size: 'sm',
+        });
+        return;
+      }
+      Kakao.init(key);
+    }
+
     Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
@@ -370,6 +395,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
           totalPrice,
           reviewList,
           totalReviewCount,
+          averageRating,
           reviewSearchPayload,
           role,
         }}

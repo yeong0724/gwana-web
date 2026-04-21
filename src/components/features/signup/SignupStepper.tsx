@@ -42,7 +42,7 @@ const SignupStepper = ({ steps, currentStep }: Props) => {
                     isCompleted
                       ? 'bg-brand-700 text-white'
                       : isActive
-                        ? 'bg-brand-700 text-white shadow-[0_0_0_3px_rgba(74,50,32,0.15)]'
+                        ? 'bg-brand-700 text-white shadow-[0_0_0_3px_rgba(0,0,0,0.12)]'
                         : 'bg-warm-200 text-warm-400'
                   }`}
                 >

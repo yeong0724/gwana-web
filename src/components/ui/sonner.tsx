@@ -1,26 +1,26 @@
 'use client';
 
-import { useTheme } from 'next-themes';
+import { CheckCircle2, CircleAlert, Info, Loader2, TriangleAlert } from 'lucide-react';
 import { Toaster as Sonner, ToasterProps } from 'sonner';
 
-const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
+const iconBase = 'h-[15px] w-[15px]' as const;
 
+const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
       className="toaster group"
       position="bottom-center"
-      richColors
-      closeButton
-      duration={2000}
-      style={
-        {
-          '--normal-bg': 'var(--popover)',
-          '--normal-text': 'var(--popover-foreground)',
-          '--normal-border': 'var(--border)',
-        } as React.CSSProperties
-      }
+      duration={2200}
+      offset={24}
+      visibleToasts={3}
+      gap={10}
+      icons={{
+        success: <CheckCircle2 className={iconBase} strokeWidth={2} />,
+        error: <CircleAlert className={iconBase} strokeWidth={2} />,
+        warning: <TriangleAlert className={iconBase} strokeWidth={2} />,
+        info: <Info className={iconBase} strokeWidth={2} />,
+        loading: <Loader2 className={`${iconBase} animate-spin`} strokeWidth={2} />,
+      }}
       {...props}
     />
   );

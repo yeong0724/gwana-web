@@ -59,7 +59,7 @@ const ShareModal = ({ modalOpen, setModalOpen, onKakaoShare }: Props) => {
         <div className="pt-1">
           <div className="flex items-stretch border border-gray-300 rounded-lg overflow-hidden">
             <div className="flex-1 bg-white px-4 py-3 min-w-0">
-              <span className="text-sm text-blue-500 truncate block">{currentUrl}</span>
+              <span className="text-sm text-neutral-700 truncate block">{currentUrl}</span>
             </div>
             <button
               onClick={handleCopyUrl}

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import {
   Carousel,
   CarouselApi,
@@ -9,7 +11,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { cn } from '@/lib/utils';
 import { ProductDetailResponse } from '@/types';
 
 type Props = {
@@ -65,26 +66,29 @@ const ProductCarousel = ({ product }: Props) => {
                 <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
               </>
             )}
-            {/* 페이지 인디케이터 - 캐러셀 안쪽 하단 */}
+            {/* 페이지 인디케이터 — 이미지 2장 이상일 때만 노출 */}
             {product.images.length > 1 && (
-              <div className="absolute bottom-4 left-4 right-4 flex justify-center">
-                <div
-                  className={cn(
-                    'w-3/4 relative h-[4px] overflow-hidden',
-                    'border-[1px] border-gray-500',
-                    'bg-black'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'absolute left-0 h-full',
-                      'transition-all duration-300 ease-out',
-                      'bg-white'
-                    )}
-                    style={{
-                      width: `${((current + 1) / product.images.length) * 100}%`,
-                    }}
-                  />
+              <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
+                <div className="flex items-center gap-1 px-3 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-white text-[12px] font-medium tabular-nums pointer-events-auto leading-none">
+                  <button
+                    type="button"
+                    onClick={() => carouselApi?.scrollPrev()}
+                    aria-label="이전 이미지"
+                    className="flex items-center justify-center w-5 h-5 text-white/90 hover:text-white transition-colors"
+                  >
+                    <ChevronLeft size={14} strokeWidth={2} />
+                  </button>
+                  <span className="min-w-[1ch] text-center">{current + 1}</span>
+                  <span className="text-white/55">|</span>
+                  <span>{product.images.length}</span>
+                  <button
+                    type="button"
+                    onClick={() => carouselApi?.scrollNext()}
+                    aria-label="다음 이미지"
+                    className="flex items-center justify-center w-5 h-5 text-white/90 hover:text-white transition-colors"
+                  >
+                    <ChevronRight size={14} strokeWidth={2} />
+                  </button>
                 </div>
               </div>
             )}

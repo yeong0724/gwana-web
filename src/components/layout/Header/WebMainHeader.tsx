@@ -41,11 +41,11 @@ const WebMainHeader = () => {
       style={{
         background:
           isScrolled || isHeaderHovered
-            ? 'oklch(0.985 0.003 70)'
-            : 'linear-gradient(to bottom, rgba(253,252,251,0.60) 0%, rgba(253,252,251,0) 100%)',
+            ? '#ffffff'
+            : 'linear-gradient(to bottom, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0) 100%)',
         boxShadow:
           isScrolled || isHeaderHovered
-            ? '0 4px 20px -4px oklch(0.35 0.07 40 / 0.08)'
+            ? '0 4px 20px -4px rgba(0,0,0,0.06)'
             : 'none',
       }}
       onMouseEnter={() => setIsHeaderHovered(true)}

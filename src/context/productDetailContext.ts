@@ -18,6 +18,7 @@ type ProductDetailStateContextType = {
   totalPrice: number;
   reviewList: Review[];
   totalReviewCount: number;
+  averageRating: number;
   reviewSearchPayload: Omit<ReviewListSearchRequest, 'page'>;
   role: RoleEnum;
 };

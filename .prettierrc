@@ -5,6 +5,8 @@
   "trailingComma": "es5",
   "plugins": ["@ianvs/prettier-plugin-sort-imports"],
   "importOrder": [
+    "^(.+)\\.css$",
+    "",
     "^(react/(.*)$)|^(react$)",
     "^(next/(.*)$)|^(next$)",
     "",

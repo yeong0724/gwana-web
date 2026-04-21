@@ -6,18 +6,18 @@ import { useIsFetching, useIsMutating } from '@tanstack/react-query';
 
 const SPINNER_BARS = 12;
 const BAR_COLORS = [
-  '#3B82F6',
-  '#5B9BF7',
-  '#7AB4F8',
-  '#93C5F9',
-  '#ABCFFA',
-  '#BDD8FB',
-  '#CFE1FC',
-  '#DDE9FD',
-  '#E8F0FD',
-  '#F0F5FE',
-  '#F5F8FE',
-  '#F9FBFF',
+  '#0A0A0A',
+  '#1F1F1F',
+  '#333333',
+  '#4A4A4A',
+  '#626262',
+  '#7A7A7A',
+  '#909090',
+  '#A5A5A5',
+  '#BABABA',
+  '#CECECE',
+  '#DEDEDE',
+  '#ECECEC',
 ];
 
 const IosSpinner = ({ size = 48 }: { size?: number }) => (
@@ -61,7 +61,7 @@ const GlobalLoading = () => {
             style={{ transformStyle: 'preserve-3d' }}
           />
         </div>
-        <span className="text-sm text-green-700 tracking-wide animate-text-fade">Loading...</span>
+        <span className="text-sm text-neutral-700 tracking-wide animate-text-fade">Loading...</span>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { find, findIndex, map } from 'lodash-es';
+import { findIndex, map } from 'lodash-es';
 
 import { ProductCard } from '@/components/common';
 import { useControllerContext, useStateContext } from '@/context/productContext';
@@ -32,9 +32,7 @@ const ProductMobileView = () => {
                 'py-4 px-5 min-w-fit',
                 'cursor-pointer transition-all duration-300 flex-shrink-0',
                 'text-[13px] text-center tracking-wide',
-                categoryId === menuId
-                  ? 'text-brand-900 font-semibold'
-                  : 'text-warm-400 font-medium'
+                categoryId === menuId ? 'text-brand-900 font-semibold' : 'text-warm-400 font-medium'
               )}
               onClick={() => onClickCategory(menuId)}
             >
@@ -70,15 +68,16 @@ const ProductMobileView = () => {
         </nav>
       </div>
 
+      <br />
       {/* 현재 카테고리 라벨 */}
-      <div className="px-4 pt-6 pb-5">
+      {/* <div className="px-4 pt-6 pb-5">
         <p className="text-[11px] tracking-widest text-warm-400 uppercase">
           tea collection
         </p>
         <h2 className="text-[20px] font-bold text-brand-900 mt-0.5 tracking-tight">
           {find(productCategory, { menuId: categoryId })?.menuName}
         </h2>
-      </div>
+      </div> */}
 
       {/* 상품 그리드 */}
       <div className="relative overflow-hidden px-4">

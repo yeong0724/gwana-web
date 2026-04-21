@@ -62,17 +62,17 @@ const SuccessContainer = ({ paymentKey, orderId, amount }: SuccessContainerProps
   }, [paymentKey, orderId, amount]);
 
   return (
-    <div className="flex bg-gradient-to-b from-green-50/30 via-white to-white flex-col items-center justify-between px-6 w-full max-w-[500px] mx-auto min-h-screen overflow-hidden border-x border-gray-100">
+    <div className="flex bg-gradient-to-b from-neutral-50 via-white to-white flex-col items-center justify-between px-6 w-full max-w-[500px] mx-auto min-h-screen overflow-hidden border-x border-gray-100">
       <>
         {isPaymentComplete ? (
           <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
             <div className="relative mb-8">
               <div className="absolute inset-0 animate-pulse">
-                <div className="w-32 h-32 rounded-full bg-green-100/50 blur-2xl" />
+                <div className="w-32 h-32 rounded-full bg-neutral-200/60 blur-2xl" />
               </div>
               <div className="relative">
                 <CheckCircle2
-                  className="w-24 h-24 text-green-500 animate-[bounce_1s_ease-in-out_3]"
+                  className="w-24 h-24 text-black animate-[bounce_1s_ease-in-out_3]"
                   strokeWidth={1.5}
                 />
               </div>
@@ -114,7 +114,7 @@ const SuccessContainer = ({ paymentKey, orderId, amount }: SuccessContainerProps
             </div>
 
             {/* 안내 메시지 */}
-            <div className="mt-8 px-6 py-4 bg-blue-50/50 border border-blue-200/50 rounded-2xl">
+            <div className="mt-8 px-6 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl">
               <p className="text-[13px] sm:text-[14px] text-gray-700 leading-relaxed text-center break-keep">
                 주문 내역은 마이페이지에서
                 <br />

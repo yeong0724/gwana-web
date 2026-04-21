@@ -14,6 +14,7 @@ import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import useImageSlide from '@/hooks/useImageSlide';
 import { cn, formatDate, localeFormat } from '@/lib/utils';
+import { useScrollTopStore } from '@/stores';
 import { Review, RoleEnum } from '@/types';
 
 type TabType = 'detail' | 'review' | 'qna';
@@ -29,6 +30,7 @@ const ProductDetailMobileView = () => {
     totalPrice,
     reviewList,
     totalReviewCount,
+    averageRating,
     role,
   } = useStateContext();
 
@@ -46,6 +48,36 @@ const ProductDetailMobileView = () => {
 
   const [isDetailExpanded, setIsDetailExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('detail');
+
+  const { setBottomOffset, setHidden } = useScrollTopStore();
+
+  // 스크롤탑 버튼: 하단 고정바(구매/장바구니) 높이만큼 띄워주고, 패널 펼쳐지면 숨김
+  useEffect(() => {
+    setBottomOffset(96);
+    return () => {
+      setBottomOffset(0);
+      setHidden(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    setHidden(isBottomPanelOpen);
+  }, [isBottomPanelOpen]);
+
+  // 하단 패널 열렸을 때 body 스크롤 잠금
+  useEffect(() => {
+    if (!isBottomPanelOpen) return;
+    const { overflow, paddingRight } = document.body.style;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    return () => {
+      document.body.style.overflow = overflow;
+      document.body.style.paddingRight = paddingRight;
+    };
+  }, [isBottomPanelOpen]);
 
   // Review Images Slide Modal Hook
   const {
@@ -153,34 +185,61 @@ const ProductDetailMobileView = () => {
   return (
     <>
       <div className="max-w-[1000px] mx-auto pb-2 px-6 pt-6">
-        <div className="flex flex-col gap-12">
-          {/* 이미지 캐러셀 */}
-          <ProductCarousel product={product} />
+        <div className="flex flex-col gap-6">
+          {/* 이미지 캐러셀 — 모바일은 좌우/상단 패딩 무시하고 엣지-투-엣지 */}
+          <div className="-mx-6 -mt-6">
+            <ProductCarousel product={product} />
+          </div>
 
           {/* 상품 정보 */}
           <div className="flex-1 flex flex-col">
-            {/* 브레드크럼과 공유 아이콘 */}
-            <div className="flex items-center justify-between text-[18px] font-medium text-brand-900 mb-[20px]">
-              <div>
-                <span>티 제품</span>
-                <span className="mx-2">{'>'}</span>
-                <span>{product.categoryName}</span>
-              </div>
+            {/* 카테고리 + 공유 아이콘 */}
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[15px] font-medium text-neutral-500">
+                {`${product.categoryName} >`}
+              </span>
               <button
                 onClick={handleShare}
-                className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                 aria-label="공유하기"
+                className="w-9 h-9 flex items-center justify-center text-neutral-700 hover:text-black transition-colors -mr-2"
               >
-                <Share2 size={18} className="text-warm-400" />
+                <Share2 size={20} strokeWidth={1.75} />
               </button>
             </div>
 
             {/* 상품명 */}
-            <h1 className="text-[20px] font-sans mb-[10px] break-keep">{product.productName}</h1>
+            <h1 className="text-[18px] font-semibold leading-[1.4] text-black mb-3 break-keep tracking-[-0.01em]">
+              {product.productName}
+            </h1>
 
             {/* 가격 */}
-            <div className="text-[15px] text-warm-600 font-normal mb-6">
-              {localeFormat(product.price)}원
+            <div className="flex items-baseline gap-1.5 mb-4">
+              <span className="text-[24px] font-bold text-black tabular-nums tracking-tight">
+                {localeFormat(product.price)}
+              </span>
+              <span className="text-[18px] font-semibold text-black">원</span>
+            </div>
+
+            {/* 별점 · 리뷰 — 리뷰 없을 때는 0.0 / 0건 */}
+            <div className="flex items-center gap-2 mb-6 text-[14px]">
+              <div className="flex items-center gap-1">
+                <Star size={14} className="text-gold-400 fill-gold-400" />
+                <span className="font-semibold text-black tabular-nums">
+                  {(averageRating ?? 0).toFixed(1)}
+                </span>
+              </div>
+              <span className="text-neutral-300">|</span>
+              {totalReviewCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={handleReviewOpen}
+                  className="text-neutral-600 hover:text-black underline-offset-2 hover:underline tabular-nums cursor-pointer"
+                >
+                  리뷰 {localeFormat(totalReviewCount)}건
+                </button>
+              ) : (
+                <span className="text-neutral-500 tabular-nums">리뷰 0건</span>
+              )}
             </div>
 
             {/* 배송비 정보 */}
@@ -470,150 +529,173 @@ const ProductDetailMobileView = () => {
       {/* 모바일 하단 고정 버튼 영역 - Portal로 body에 직접 렌더링 */}
       {isMounted &&
         createPortal(
-          <div
-            className="fixed bottom-0 left-0 right-0 z-70 lg:hidden"
-            style={{ viewTransitionName: 'none' }}
-          >
-            {/* 메인 패널 */}
+          <>
+            {/* 백드롭 — 패널이 열리면 뒷배경 어둡게 + 터치/스크롤 차단 */}
             <div
+              onClick={() => setIsBottomPanelOpen(false)}
+              aria-hidden="true"
               className={cn(
-                'bg-warm-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] overflow-hidden',
-                'transition-all duration-300 ease-in-out ',
-                `${isBottomPanelOpen ? 'rounded-t-2xl border-t border-brand-300' : ''}`
+                'fixed inset-0 z-60 bg-black/50 lg:hidden transition-opacity duration-300 touch-none',
+                isBottomPanelOpen
+                  ? 'opacity-100 pointer-events-auto'
+                  : 'opacity-0 pointer-events-none'
               )}
+              style={{ viewTransitionName: 'none' }}
+            />
+            <div
+              className="fixed bottom-0 left-0 right-0 z-70 lg:hidden"
+              style={{ viewTransitionName: 'none' }}
             >
-              {/* 확장 패널: 구매수량 + 상품금액 합계 (옵션 없는 경우) */}
+              {/* 메인 패널 */}
               <div
-                className={`overflow-hidden overflow-y-auto transition-all duration-300 ease-in-out ${
-                  isBottomPanelOpen ? 'max-h-[650px]' : 'max-h-0'
-                }`}
+                className={cn(
+                  'bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.08)] overflow-hidden',
+                  'rounded-t-2xl transition-all duration-300 ease-in-out'
+                )}
               >
-                {/* 닫기 버튼 */}
+                {/* 상단 토글 핸들 — 열림/닫힘 상태와 무관하게 항상 같은 자리, 아이콘만 회전 */}
                 <button
-                  onClick={() => setIsBottomPanelOpen(false)}
-                  className="w-full flex items-center justify-center py-2"
+                  type="button"
+                  onClick={() => setIsBottomPanelOpen(!isBottomPanelOpen)}
+                  aria-label={isBottomPanelOpen ? '상세 옵션 닫기' : '상세 옵션 열기'}
+                  aria-expanded={isBottomPanelOpen}
+                  className="w-full flex items-center justify-center pt-2.5 pb-1 cursor-pointer"
                 >
-                  <ChevronDown size={24} className="text-warm-400" />
+                  <ChevronUp
+                    size={22}
+                    strokeWidth={1.75}
+                    className={cn(
+                      'text-neutral-400 transition-transform duration-300 ease-in-out',
+                      isBottomPanelOpen && 'rotate-180'
+                    )}
+                  />
                 </button>
-                <div className="px-4 pb-4 space-y-4">
-                  {/* 옵션 선택 - 커스텀 드롭다운 */}
-                  {size(requiredOptions) > 1 && (
-                    <>
-                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">
-                        옵션선택{' '}
-                        <span className="text-rose-500 text-[11px] font-medium align-middle">
-                          필수
+                {/* 확장 패널: 구매수량 + 상품금액 합계 (옵션 없는 경우) */}
+                <div
+                  className={`overflow-hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+                    isBottomPanelOpen ? 'max-h-[650px]' : 'max-h-0'
+                  }`}
+                >
+                  <div className="px-4 pt-1 pb-4 space-y-4">
+                    {/* 옵션 선택 - 커스텀 드롭다운 */}
+                    {size(requiredOptions) > 1 && (
+                      <>
+                        <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">
+                          옵션선택{' '}
+                          <span className="text-rose-500 text-[11px] font-medium align-middle">
+                            필수
+                          </span>
                         </span>
-                      </span>
-                      <OptionDropdown
-                        options={requiredOptions}
-                        onOptionSelect={onOptionSelect}
-                        placeholder="구성 선택"
-                      />
-                    </>
-                  )}
-                  {/* 옵션 선택 - 커스텀 드롭다운 */}
-                  {!isEmpty(optionalOptions) && (
-                    <>
-                      <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">
-                        추가상품{' '}
-                        <span className="text-warm-400 text-[11px] font-normal align-middle">
-                          선택
+                        <OptionDropdown
+                          options={requiredOptions}
+                          onOptionSelect={onOptionSelect}
+                          placeholder="구성 선택"
+                        />
+                      </>
+                    )}
+                    {/* 옵션 선택 - 커스텀 드롭다운 */}
+                    {!isEmpty(optionalOptions) && (
+                      <>
+                        <span className="text-[13px] font-semibold tracking-tight text-warm-700 ml-0.5 mb-1.5 inline-block">
+                          추가상품{' '}
+                          <span className="text-warm-400 text-[11px] font-normal align-middle">
+                            선택
+                          </span>
                         </span>
-                      </span>
-                      <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
-                    </>
-                  )}
-                  {/* 선택된 옵션 목록 */}
-                  {!isEmpty(purchaseList) && (
-                    <div className="space-y-3">
-                      {map(
-                        purchaseList,
-                        (
-                          { productOptionId, optionName, quantity, optionPrice, isRequired },
-                          index
-                        ) => (
-                          <div
-                            key={`${productOptionId}-${index}`}
-                            className="border border-brand-200/60 rounded-md p-4 space-y-3"
-                          >
-                            <div className="flex items-start justify-between">
-                              <>
-                                <span className="text-sm font-medium text-brand-800">
-                                  {optionName}
-                                </span>
-                                {(size(requiredOptions) > 1 || !isRequired) && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const updatedCart = clone(purchaseList);
-                                      updatedCart.splice(index, 1);
-                                      setPurchaseList(updatedCart);
-                                    }}
-                                    className="text-warm-400 hover:text-warm-600"
-                                  >
-                                    <X size={20} strokeWidth={1.5} />
-                                  </button>
-                                )}
-                              </>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center border border-brand-200 rounded">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleQuantityChange(index, quantity - 1)}
-                                  disabled={quantity <= 1}
-                                  className="h-9 w-9 rounded-none border-r cursor-pointer text-base"
-                                >
-                                  -
-                                </Button>
-                                <div className="w-12 text-center h-9 text-sm flex items-center justify-center select-none">
-                                  {quantity}
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleQuantityChange(index, quantity + 1)}
-                                  className="h-9 w-9 rounded-none border-l cursor-pointer text-base"
-                                >
-                                  +
-                                </Button>
+                        <OptionDropdown options={optionalOptions} onOptionSelect={onOptionSelect} />
+                      </>
+                    )}
+                    {/* 선택된 옵션 목록 */}
+                    {!isEmpty(purchaseList) && (
+                      <div className="space-y-3">
+                        {map(
+                          purchaseList,
+                          (
+                            { productOptionId, optionName, quantity, optionPrice, isRequired },
+                            index
+                          ) => (
+                            <div
+                              key={`${productOptionId}-${index}`}
+                              className="border border-brand-200/60 rounded-md p-4 space-y-3"
+                            >
+                              <div className="flex items-start justify-between">
+                                <>
+                                  <span className="text-sm font-medium text-brand-800">
+                                    {optionName}
+                                  </span>
+                                  {(size(requiredOptions) > 1 || !isRequired) && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updatedCart = clone(purchaseList);
+                                        updatedCart.splice(index, 1);
+                                        setPurchaseList(updatedCart);
+                                      }}
+                                      className="text-warm-400 hover:text-warm-600"
+                                    >
+                                      <X size={20} strokeWidth={1.5} />
+                                    </button>
+                                  )}
+                                </>
                               </div>
-                              <span className="text-base font-semibold">
-                                {localeFormat(optionPrice * quantity)}원
-                              </span>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center border border-brand-200 rounded">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleQuantityChange(index, quantity - 1)}
+                                    disabled={quantity <= 1}
+                                    className="h-9 w-9 rounded-none border-r cursor-pointer text-base"
+                                  >
+                                    -
+                                  </Button>
+                                  <div className="w-12 text-center h-9 text-sm flex items-center justify-center select-none">
+                                    {quantity}
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleQuantityChange(index, quantity + 1)}
+                                    className="h-9 w-9 rounded-none border-l cursor-pointer text-base"
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                                <span className="text-base font-semibold">
+                                  {localeFormat(optionPrice * quantity)}원
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )}
+                          )
+                        )}
+                      </div>
+                    )}
 
-                  {/* 상품금액 합계 */}
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-sm font-medium text-warm-700">상품 금액 합계</span>
-                    <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
+                    {/* 상품금액 합계 */}
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                      <span className="text-sm font-medium text-warm-700">상품 금액 합계</span>
+                      <span className="text-xl font-bold">{localeFormat(totalPrice)}원</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* 버튼 */}
-              <div className="flex">
-                <Button
-                  onClick={onCartMobileHandler}
-                  className="flex-[0_0_35%] h-14 text-base bg-brand-900 text-white hover:bg-brand-800 rounded-none cursor-pointer"
-                >
-                  장바구니
-                </Button>
-                <Button
-                  onClick={onPurchaseMobileHandler}
-                  className="flex-[0_0_65%] h-14 text-base bg-tea-500 text-white hover:bg-tea-600 rounded-none cursor-pointer"
-                >
-                  구매하기
-                </Button>
+                {/* 버튼 — 화이트/블랙 B&W 톤 */}
+                <div className="flex gap-2 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]">
+                  <Button
+                    onClick={onCartMobileHandler}
+                    className="flex-1 h-12 text-[15px] font-semibold bg-white text-black border border-black hover:bg-neutral-50 active:bg-neutral-100 shadow-none rounded-lg cursor-pointer"
+                  >
+                    장바구니
+                  </Button>
+                  <Button
+                    onClick={onPurchaseMobileHandler}
+                    className="flex-1 h-12 text-[15px] font-semibold bg-black text-white border border-black hover:bg-neutral-900 active:bg-neutral-800 shadow-none rounded-lg cursor-pointer"
+                  >
+                    구매하기
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>,
+          </>,
           document.body
         )}
 

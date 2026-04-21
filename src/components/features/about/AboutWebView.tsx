@@ -484,7 +484,7 @@ const AboutWebView = () => {
       <section
         ref={heritageRef}
         className="relative w-full min-h-[50vw] z-10 flex items-center overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #2C1B10 0%, #1a1008 100%)' }}
+        style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #000000 100%)' }}
       >
         {/* Large year watermark */}
         <div

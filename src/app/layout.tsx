@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { Playfair_Display } from 'next/font/google';
 import localFont from 'next/font/local';
 
-import { GlobalAlert, GlobalLoading } from '@/components/common/global';
+import { GlobalAlert, GlobalLoading, ScrollToTopButton } from '@/components/common/global';
 import KakaoScript from '@/components/script/KakaoScript';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -58,6 +58,7 @@ export default function Layout({ children }: RootLayoutProps) {
           <GlobalAlert />
           <Toaster />
           <GlobalLoading />
+          <ScrollToTopButton />
           <KakaoScript />
         </ReactQueryProvider>
       </body>
