@@ -25,7 +25,7 @@ const fetchLogin = async <T, V>(params: V) => {
 };
 
 const kakaoLogout = async <T>(params: T) => {
-  return postAxios<ApiResponse<string>>({
+  return postAxios<ApiResponse<void>>({
     url: '/user/logout/kakao',
     params,
   });

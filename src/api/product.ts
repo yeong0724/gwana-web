@@ -24,9 +24,10 @@ const getProductDetail = async (params: ProductDetailRequest) => {
   });
 };
 
+/* =========== 관리자 - 상품 관리 API =========== */
 const uploadProductImage = async (params: FormData) => {
   return postAxios<ApiResponse<string>>({
-    url: '/product/image/upload',
+    url: '/admin/product/image/upload',
     params,
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -36,28 +37,28 @@ const uploadProductImage = async (params: FormData) => {
 
 const createProduct = async (params: ProductUpdateRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/product/create',
+    url: '/admin/product/create',
     params,
   });
 };
 
 const updateProduct = async (params: ProductUpdateRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/product/update',
+    url: '/admin/product/update',
     params,
   });
 };
 
 const deleteProductImage = async (params: ProductImageDeleteRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/product/image/delete',
+    url: '/admin/product/image/delete',
     params,
   });
 };
 
 const deleteProductOption = async (params: ProductOptionDeleteRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/product/option/delete',
+    url: '/admin/product/option/delete',
     params,
   });
 };

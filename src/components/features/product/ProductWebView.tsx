@@ -70,14 +70,11 @@ const ProductWebView = () => {
                   'xl:grid-cols-4',
                   'gap-x-5 gap-y-12'
                 )}
-                style={{ gridTemplateRows: 'repeat(auto-fill, auto auto auto)' }}
               >
                 {map(productList, (product) => (
-                  <ProductCard
-                    key={product.productId}
-                    product={product}
-                    onClickProduct={onClickProduct}
-                  />
+                  <div key={product.productId} className="w-full">
+                    <ProductCard product={product} onClickProduct={onClickProduct} />
+                  </div>
                 ))}
               </div>
             </div>

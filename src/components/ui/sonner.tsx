@@ -10,7 +10,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       className="toaster group"
       position="bottom-center"
-      duration={2200}
+      duration={4000}
       offset={24}
       visibleToasts={3}
       gap={10}

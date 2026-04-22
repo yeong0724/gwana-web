@@ -63,17 +63,11 @@ const ProductWriteContainer = ({ productId }: Props) => {
       toast.success('상품 등록이 완료되었습니다.');
       router.back();
     },
-    onError: () => {
-      toast.error('상품 등록에 실패하였습니다.');
-    },
   });
   const { mutateAsync: updateProductAsync } = useUpdateProductMutation({
     onSuccess: () => {
       toast.success('상품 수정이 완료되었습니다.');
       refetchProductDetail();
-    },
-    onError: () => {
-      toast.error('상품 업데이트에 실패하였습니다.');
     },
   });
   const { mutateAsync: uploadProductImageAsync } = useUploadProductImagedMutation();
@@ -258,22 +252,17 @@ const ProductWriteContainer = ({ productId }: Props) => {
     if (!confirm) return;
 
     if (isCreateMode) {
-      createProductAsync(product);
+      asyncFn(createProductAsync(product), '상품 등록에 실패하였습니다.');
     } else {
       updateProduct(product);
     }
   };
 
   const updateProduct = async (updatedProduct: ProductDetailResponse) => {
-    updateProductAsync(updatedProduct);
-    // const [error] = await asyncFn(updateProductAsync(updatedProduct));
-    // if (error) {
-    //   toast.error('상품 업데이트에 실패하였습니다.');
-    //   return;
-    // }
+    await asyncFn(updateProductAsync(updatedProduct), '상품 업데이트에 실패하였습니다.');
   };
 
-  const formatKRWInput = (value: number) => (value === 0 ? '' : value.toLocaleString('ko-KR'));
+  const formatKRWInput = (value: number) => (!value ? '' : value.toLocaleString('ko-KR'));
 
   return (
     <div className="min-h-[100dvh] bg-warm-50">

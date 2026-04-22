@@ -14,7 +14,7 @@ import { useDragScroll } from '@/hooks/useDragScroll';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { useProductService } from '@/service';
 import { useMenuStore } from '@/stores';
-import { DragScrollType } from '@/types';
+import { DragScrollType, Menu } from '@/types';
 
 import ProductWebView from './ProductWebView';
 
@@ -52,7 +52,7 @@ const ProductContainer = ({ categoryId }: Props) => {
   const productList = productListData?.data ?? [];
 
   const productCategory = useMemo(() => {
-    const allCategory = [{ menuName: '전체 상품 보기', menuId: 'all', upperMenuId: null }];
+    const allCategory: Menu[] = [{ menuName: '전체 상품 보기', menuId: 'all', upperMenuId: null }];
 
     return concat(allCategory, filter(category, { upperMenuId: pathname.replace('/', '') }));
   }, [category, pathname]);
@@ -146,6 +146,7 @@ const ProductContainer = ({ categoryId }: Props) => {
         <ResponsiveFrame
           mobileComponent={<ProductMobileView />}
           webComponent={<ProductWebView />}
+          webClassName="w-full"
         />
       </div>
     </Provider>

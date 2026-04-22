@@ -8,7 +8,7 @@ import { ChevronDown, ChevronRight, LogOut, User, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 import { useLoginStore, useUserStore } from '@/stores';
-import { MenuGroup, RoleEnum } from '@/types';
+import { Menu, MenuGroup, RoleEnum } from '@/types';
 
 type Props = {
   isMenuOpen: boolean;
@@ -39,7 +39,7 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
   }, [isMenuOpen]);
 
   const getFilteredCategory = (menuId: string) => {
-    const init =
+    const init: Menu[] =
       menuId === 'product'
         ? [{ menuName: '전체 상품 보기', menuId: 'all', upperMenuId: null }]
         : [];
@@ -155,47 +155,52 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
         <div className="flex-1 overflow-y-auto sidebar-scroll min-h-0">
           <div className="flex flex-col min-h-full">
             <div className="py-2 flex-shrink-0">
-              {main.map(({ menuId, menuName }) => {
-                const filteredCategory = getFilteredCategory(menuId);
-                const hasCategory = !isEmpty(filteredCategory);
+              {main
+                .filter(
+                  ({ isAdminMenu }) =>
+                    !isAdminMenu || (isAdminMenu && user?.role === RoleEnum.ADMIN)
+                )
+                .map(({ menuId, menuName }) => {
+                  const filteredCategory = getFilteredCategory(menuId);
+                  const hasCategory = !isEmpty(filteredCategory);
 
-                return (
-                  <div key={menuId} className="border-b border-brand-200/40 last:border-b-0">
-                    <button
-                      className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer transition-colors duration-200 hover:bg-brand-50"
-                      onClick={() => onClickMain(menuId, hasCategory)}
-                    >
-                      <span className="text-base font-medium text-brand-800">{menuName}</span>
-                      {hasCategory && (
-                        <ChevronDown
-                          size={20}
-                          className={`text-warm-400 transition-transform duration-300 ${
-                            currentMenu === menuId ? 'rotate-180' : ''
-                          }`}
-                        />
-                      )}
-                    </button>
-                    {/* 서브메뉴 */}
-                    {hasCategory && (
-                      <div
-                        className={`bg-brand-50/50 overflow-hidden transition-all duration-300 ease-out ${
-                          currentMenu === menuId ? 'max-h-48' : 'max-h-0'
-                        }`}
+                  return (
+                    <div key={menuId} className="border-b border-brand-200/40 last:border-b-0">
+                      <button
+                        className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer transition-colors duration-200 hover:bg-brand-50"
+                        onClick={() => onClickMain(menuId, hasCategory)}
                       >
-                        {filteredCategory.map((category, subIndex) => (
-                          <button
-                            key={subIndex}
-                            className="w-full text-left px-8 py-3 text-warm-700 hover:bg-brand-100 hover:text-brand-700 transition-colors duration-200 cursor-pointer"
-                            onClick={() => onClickCategory(category.menuId)}
-                          >
-                            {category.menuName}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                        <span className="text-base font-medium text-brand-800">{menuName}</span>
+                        {hasCategory && (
+                          <ChevronDown
+                            size={20}
+                            className={`text-warm-400 transition-transform duration-300 ${
+                              currentMenu === menuId ? 'rotate-180' : ''
+                            }`}
+                          />
+                        )}
+                      </button>
+                      {/* 서브메뉴 */}
+                      {hasCategory && (
+                        <div
+                          className={`bg-brand-50/50 overflow-hidden transition-all duration-300 ease-out ${
+                            currentMenu === menuId ? 'max-h-48' : 'max-h-0'
+                          }`}
+                        >
+                          {filteredCategory.map((category, subIndex) => (
+                            <button
+                              key={subIndex}
+                              className="w-full text-left px-8 py-3 text-warm-700 hover:bg-brand-100 hover:text-brand-700 transition-colors duration-200 cursor-pointer"
+                              onClick={() => onClickCategory(category.menuId)}
+                            >
+                              {category.menuName}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
             </div>
 
             {/* 하단 메뉴 */}

@@ -31,12 +31,12 @@ const useLoginService = () => {
   /**
    * Kakao 로그아웃
    */
-  const useKakaoLogout = (options?: UseMutationCustomOptions) =>
-    useMutation({
+  const useKakaoLogout = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
       mutationFn: (param: KakaoLogoutRequest) => kakaoLogout(param),
       ...options,
     });
-
+  };
   return { useGetAccessTokenByKakaoCode, useRefreshAccessToken, useKakaoLogout };
 };
 

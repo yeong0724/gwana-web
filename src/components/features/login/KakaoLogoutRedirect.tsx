@@ -1,31 +1,33 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { allClearPersistStore, getAccessToken } from '@/lib/utils';
+import { toast } from 'sonner';
+
+import { allClearPersistStore, asyncFn, getAccessToken } from '@/lib/utils';
 import { useLoginService } from '@/service';
 
 const KakaoLogoutRedirect = () => {
   const router = useRouter();
   const { useKakaoLogout } = useLoginService();
 
-  const { mutate: kakaoLogoutMutate, isPending } = useKakaoLogout();
+  const { mutateAsync: kakaoLogoutAsync, isPending } = useKakaoLogout();
 
-  const callbackKakaoLogout = () => {
+  const callbackKakaoLogout = async () => {
     const accessToken = getAccessToken();
-    kakaoLogoutMutate(
-      { accessToken },
-      {
-        onSuccess: () => {
-          allClearPersistStore();
-          router.push('/');
-        },
-      }
-    );
+
+    const [error] = await asyncFn(kakaoLogoutAsync({ accessToken }), '');
+    if (!error) {
+      toast.success('로그아웃 되었습니다.');
+    }
+    allClearPersistStore();
+    router.push('/');
   };
 
-  useEffect(() => callbackKakaoLogout(), []);
+  useEffect(() => {
+    callbackKakaoLogout();
+  }, []);
 
   return isPending && <p className="mt-[150px] text-lg">Kakao Logout Redirecting...</p>;
 };

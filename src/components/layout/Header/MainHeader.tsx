@@ -13,7 +13,7 @@ import { Provider } from '@/context/headerContext';
 import useNativeRouter from '@/hooks/useNativeRouter';
 import { cn } from '@/lib/utils';
 import { useCartService } from '@/service';
-import { useCartStore, useLoginStore, useMenuStore } from '@/stores';
+import { useCartStore, useLoginStore, useMenuStore, useUserStore } from '@/stores';
 import { type MenuGroup } from '@/types';
 
 type HeaderProps = {
@@ -30,8 +30,8 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   const { backward, forward } = useNativeRouter();
   const { setMenu } = useMenuStore();
   const { isLoggedIn } = useLoginStore();
+  const { user } = useUserStore();
   const { cart } = useCartStore();
-
   const { useGetCartListQuery } = useCartService();
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -166,6 +166,7 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   return (
     <Provider
       state={{
+        user,
         isHeaderHovered,
         isMainHovered,
         modileHeaderStyle,

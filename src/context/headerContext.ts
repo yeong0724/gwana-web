@@ -1,7 +1,8 @@
 import createGenericContext from '@/providers/ContextProvider';
-import { Menu, MenuGroup } from '@/types';
+import { Menu, MenuGroup, User } from '@/types';
 
 type HeaderStateContextType = {
+  user: User;
   isHeaderHovered: boolean;
   isMainHovered: boolean;
   menuGroup: MenuGroup;

@@ -12,6 +12,7 @@ import UserDropdownContent from '../UserDropdownContent';
 
 const WebMainHeader = () => {
   const {
+    user,
     isHeaderHovered,
     isMainHovered,
     menuGroup,
@@ -43,10 +44,7 @@ const WebMainHeader = () => {
           isScrolled || isHeaderHovered
             ? '#ffffff'
             : 'linear-gradient(to bottom, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0) 100%)',
-        boxShadow:
-          isScrolled || isHeaderHovered
-            ? '0 4px 20px -4px rgba(0,0,0,0.06)'
-            : 'none',
+        boxShadow: isScrolled || isHeaderHovered ? '0 4px 20px -4px rgba(0,0,0,0.06)' : 'none',
       }}
       onMouseEnter={() => setIsHeaderHovered(true)}
       onMouseLeave={() => {
@@ -89,47 +87,48 @@ const WebMainHeader = () => {
                 marginLeft: 'calc(2rem + 100px)',
               }}
             >
-              {main.map(({ menuName, menuId }) => {
-                const categories = filter(category, { upperMenuId: menuId }) as Menu[];
-
-                return (
-                  <div
-                    key={menuId}
-                    className="relative group flex flex-col items-center justify-start"
-                  >
-                    <button
-                      className="cursor-pointer flex items-center justify-center text-[18px] text-brand-800 space-x-1 py-6 font-medium tracking-wide hover:text-brand-500 transition-colors duration-200 w-full"
-                      onClick={() => onClickMain(menuId)}
-                      onMouseEnter={() => {
-                        if (!isEmpty(categories)) setIsMainHovered(true);
-                      }}
-                      onMouseLeave={() => setIsMainHovered(false)}
-                    >
-                      <span>{menuName}</span>
-                    </button>
-
-                    {/* 카테고리 드롭다운 */}
+              {main
+                .filter(({ isAdminMenu }) => !isAdminMenu || (isAdminMenu && user.role === 'ADMIN'))
+                .map(({ menuName, menuId }) => {
+                  const categories = filter(category, { upperMenuId: menuId }) as Menu[];
+                  return (
                     <div
-                      className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-300 ease-out origin-top ${
-                        isHeaderHovered && isMainHovered
-                          ? 'scale-y-100 opacity-100 visible'
-                          : 'scale-y-0 opacity-0 invisible'
-                      }`}
-                      onMouseEnter={() => setIsMainHovered(true)}
+                      key={menuId}
+                      className="relative group flex flex-col items-center justify-start"
                     >
-                      {categories.map((category) => (
-                        <button
-                          key={category.menuId}
-                          className="cursor-pointer mb-[20px] text-[18px] text-warm-600 hover:text-brand-600 transition-colors duration-200 whitespace-nowrap text-center"
-                          onClick={() => onClickCategory(menuId, category.menuId)}
-                        >
-                          {category.menuName}
-                        </button>
-                      ))}
+                      <button
+                        className="cursor-pointer flex items-center justify-center text-[18px] text-brand-800 space-x-1 py-6 font-medium tracking-wide hover:text-brand-500 transition-colors duration-200 w-full"
+                        onClick={() => onClickMain(menuId)}
+                        onMouseEnter={() => {
+                          if (!isEmpty(categories)) setIsMainHovered(true);
+                        }}
+                        onMouseLeave={() => setIsMainHovered(false)}
+                      >
+                        <span>{menuName}</span>
+                      </button>
+
+                      {/* 카테고리 드롭다운 */}
+                      <div
+                        className={`absolute top-full pt-5 flex flex-col items-center space-y-3 z-30 transition-all duration-300 ease-out origin-top ${
+                          isHeaderHovered && isMainHovered
+                            ? 'scale-y-100 opacity-100 visible'
+                            : 'scale-y-0 opacity-0 invisible'
+                        }`}
+                        onMouseEnter={() => setIsMainHovered(true)}
+                      >
+                        {categories.map((category) => (
+                          <button
+                            key={category.menuId}
+                            className="cursor-pointer mb-[20px] text-[18px] text-warm-600 hover:text-brand-600 transition-colors duration-200 whitespace-nowrap text-center"
+                            onClick={() => onClickCategory(menuId, category.menuId)}
+                          >
+                            {category.menuName}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </nav>
           </div>
           <div className="flex items-center flex-shrink-0 space-x-1 lg:space-x-8">

@@ -20,7 +20,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
 
   return (
     <button
-      className="cursor-pointer group text-left"
+      className="w-full cursor-pointer group text-left"
       onClick={() => onClickProduct(product.productId)}
     >
       {/* 이미지 영역 */}

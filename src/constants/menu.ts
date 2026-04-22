@@ -13,9 +13,10 @@ export const menuGroup: MenuGroup = {
       upperMenuId: null,
     },
     {
-      menuName: 'Management',
+      menuName: 'Admin',
       menuId: 'admin',
       upperMenuId: null,
+      isAdminMenu: true,
     },
   ],
   category: [

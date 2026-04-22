@@ -1,14 +1,16 @@
+import { isAxiosError } from 'axios';
 import { clsx, type ClassValue } from 'clsx';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import DOMPurify from 'dompurify';
 import { some, startsWith } from 'lodash-es';
+import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 
 import { cartActions } from '@/stores/useCartStore';
 import { loginActions } from '@/stores/useLoginStore';
 import { userActions } from '@/stores/useUserStore';
-import { LoginResponse } from '@/types';
+import { ErrorResponse, LoginResponse } from '@/types';
 import { DecodedToken, FormatEnum } from '@/types/type';
 
 export function cn(...inputs: ClassValue[]) {
@@ -98,8 +100,9 @@ const delayAsync = (delay: number = 1000): Promise<number> => {
 };
 
 const noMainHeaderPage = (pathname: string) => {
-  return some(['/cart', '/login', '/signup', '/payment', '/fail', '/mypage', '/mypage/inquiry'], (path) =>
-    startsWith(pathname, path)
+  return some(
+    ['/cart', '/login', '/signup', '/payment', '/fail', '/mypage', '/mypage/inquiry'],
+    (path) => startsWith(pathname, path)
   );
 };
 
@@ -245,11 +248,22 @@ export const compressImage = async (
   });
 };
 
-const asyncFn = async <T>(promise: Promise<T>): Promise<[null, T] | [Error, null]> => {
+const asyncFn = async <T>(
+  promise: Promise<T>,
+  errorMsg: string = '알 수 없는 에러가 발생했습니다.'
+): Promise<[null, T] | [Error, null]> => {
   try {
     const data = await promise;
     return [null, data];
   } catch (error) {
+    if (isAxiosError<ErrorResponse>(error)) {
+      const code = error.response?.data?.code ?? '';
+      const message = code === '1000' ? errorMsg : (error.response?.data?.message ?? '');
+      toast.error(message);
+    } else {
+      toast.error('알 수 없는 에러가 발생했습니다.');
+    }
+
     return [error as Error, null];
   }
 };

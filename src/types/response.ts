@@ -8,7 +8,7 @@ export interface ApiResponse<T = unknown> {
 }
 
 export interface ErrorResponse {
-  success: boolean;
+  success: false;
   code: string;
   message: string;
   data: null;
@@ -27,6 +27,7 @@ export type Menu = {
   menuName: string;
   menuId: string;
   upperMenuId: string | null;
+  isAdminMenu?: boolean;
 };
 
 export type MenuGroup = {

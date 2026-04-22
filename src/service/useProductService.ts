@@ -38,7 +38,7 @@ const useProductService = () => {
     options?: UseQueryCustomOptions<ProductDetailResponse>
   ) => {
     return useQuery({
-      queryKey: ['productList', payload.productId],
+      queryKey: ['productDetail', payload.productId],
       queryFn: () => getProductDetail(payload),
       ...options,
     });
