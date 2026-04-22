@@ -43,7 +43,7 @@ const ProductContainer = ({ categoryId }: Props) => {
 
   const { data: productListData, error: productListError } = useProductListQuery(
     {
-      categoryId: '',
+      categoryId: categoryId === 'all' ? '' : categoryId,
     },
     { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );

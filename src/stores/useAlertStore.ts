@@ -63,24 +63,26 @@ export const alertStore = create<AlertDialogState & AlertDialogActions>((set, ge
     });
   },
 
+  // 닫힘 애니메이션 중 type/버튼 구성이 바뀌어 기본 알럿이 번쩍이는 현상을 막기 위해
+  // 닫을 때는 isOpen 만 끄고 나머지 필드는 그대로 둔다. 다음 show* 호출에서 initialState 가 전개되며 덮어쓰임.
   hideAlert: () => {
     const { resolve } = get();
     resolve?.(false);
-    set(initialState);
+    set({ isOpen: false, resolve: undefined });
   },
 
   confirmAlert: () => {
     const { onConfirm, resolve } = get();
     onConfirm?.();
     resolve?.(true);
-    set(initialState);
+    set({ isOpen: false, resolve: undefined });
   },
 
   cancelAlert: () => {
     const { onCancel, resolve } = get();
     onCancel?.();
     resolve?.(false);
-    set(initialState);
+    set({ isOpen: false, resolve: undefined });
   },
 }));
 

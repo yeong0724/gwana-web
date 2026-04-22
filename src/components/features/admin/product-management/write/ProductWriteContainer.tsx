@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
-import { cloneDeep, filter, find } from 'lodash-es';
-import { ArrowLeft } from 'lucide-react';
+import { cloneDeep, filter, find, some } from 'lodash-es';
+import { Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { OptionDropdown } from '@/components/common/form';
@@ -12,9 +11,11 @@ import { categoryOptions } from '@/constants/options';
 import { asyncFn, compressImage } from '@/lib/utils';
 import useProductService from '@/service/useProductService';
 import useAlertStore from '@/stores/useAlertStore';
+import { ProductOption } from '@/types';
 import { ProductDetailResponse } from '@/types/response';
 
 import ProductImageManager from './ProductImageManager';
+import ProductOptionEditor from './ProductOptionEditor';
 
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 3;
@@ -36,25 +37,36 @@ const defaultValues: ProductDetailResponse = {
 };
 
 const ProductWriteContainer = ({ productId }: Props) => {
-  const router = useRouter();
-  const { showAlert } = useAlertStore();
+  const { showAlert, showConfirmAlert } = useAlertStore();
 
   const {
     useProductDetailQuery,
     useUploadProductImagedMutation,
     useUpdateProductMutation,
     useDeleteProductImageMutation,
+    useDeleteProductOptionMutation,
   } = useProductService();
 
   const [product, setProduct] = useState<ProductDetailResponse>({ ...defaultValues });
 
-  const { data: productDetailData, error: productDetailError } = useProductDetailQuery({
+  const {
+    data: productDetailData,
+    error: productDetailError,
+    refetch: refetchProductDetail,
+  } = useProductDetailQuery({
     productId,
   });
 
+  const { mutateAsync: updateProductAsync } = useUpdateProductMutation({
+    onSuccess: () => {
+      toast.success('상품 수정이 완료되었습니다.');
+      refetchProductDetail();
+    },
+  });
   const { mutateAsync: uploadProductImageAsync } = useUploadProductImagedMutation();
-  const { mutateAsync: updateProductAsync } = useUpdateProductMutation();
+
   const { mutateAsync: deleteProductImageAsync } = useDeleteProductImageMutation();
+  const { mutateAsync: deleteProductOptionAsync } = useDeleteProductOptionMutation();
 
   useEffect(() => {
     if (productDetailData) {
@@ -70,6 +82,17 @@ const ProductWriteContainer = ({ productId }: Props) => {
     const matched = find(categoryOptions, { value: product.categoryId });
     return matched?.label ?? product.categoryName ?? '';
   }, [product.categoryId, product.categoryName]);
+
+  // 옵션 유효성 — optionName 누락 / optionPrice === 0 인 옵션 존재 여부
+  const optionValidation = useMemo(() => {
+    const hasEmptyName = some(product.options, (option) => !option.optionName);
+    const hasZeroPrice = some(product.options, (option) => option.optionPrice === 0);
+    return {
+      hasEmptyName,
+      hasZeroPrice,
+      hasError: hasEmptyName || hasZeroPrice,
+    };
+  }, [product.options]);
 
   const handleTextChange = (key: 'productName') => (e: React.ChangeEvent<HTMLInputElement>) => {
     setProduct((prev) => ({ ...prev, [key]: e.target.value }));
@@ -158,14 +181,62 @@ const ProductWriteContainer = ({ productId }: Props) => {
     }
   };
 
+  const handleOptionsChange = (next: ProductOption[]) => {
+    setProduct((prev) => ({ ...prev, options: next }));
+  };
+
+  const handleOptionRemove = async (option: ProductOption, index: number) => {
+    if (option.productOptionId !== null) {
+      const [error] = await asyncFn(
+        deleteProductOptionAsync({ productOptionId: option.productOptionId })
+      );
+
+      if (error) {
+        toast.error('상품 옵션 삭제에 실패하였습니다.');
+        return;
+      }
+    }
+
+    setProduct((prev) => ({
+      ...prev,
+      options: prev.options.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (optionValidation.hasEmptyName) {
+      showAlert({
+        title: '입력 확인',
+        description: '옵션명을 모두 입력해주세요.',
+      });
+      return;
+    }
+
+    if (optionValidation.hasZeroPrice) {
+      showAlert({
+        title: '입력 확인',
+        description: '옵션 가격을 입력해주세요.',
+      });
+      return;
+    }
+
+    const confirm = await showConfirmAlert({
+      title: '안내',
+      description: '상품을 수정하시겠습니까?',
+      confirmText: '수정',
+      cancelText: '취소',
+    });
+
+    if (!confirm) return;
+
+    updateProduct(product);
+  };
+
   const updateProduct = async (updatedProduct: ProductDetailResponse) => {
     const [error] = await asyncFn(updateProductAsync(updatedProduct));
     if (error) {
       toast.error('상품 업데이트에 실패하였습니다.');
       return;
-    } else {
-      toast.success('상품 업데이트를 성공하였습니다.');
-      setProduct(updatedProduct);
     }
   };
 
@@ -176,22 +247,19 @@ const ProductWriteContainer = ({ productId }: Props) => {
       <div className="mx-auto w-full max-w-[1400px] px-4 py-10 md:px-8 md:py-14">
         <header className="flex flex-col gap-4 border-b border-warm-200 pb-6 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => router.push('/admin/product-management')}
-              className="flex w-fit items-center gap-1.5 text-xs text-warm-500 transition-colors hover:text-warm-900"
-            >
-              <ArrowLeft className="size-3.5" strokeWidth={1.5} />
-              <span className="font-mono tracking-wider uppercase">Back to list</span>
-            </button>
-            <span className="font-mono text-xs tracking-[0.18em] text-warm-500 uppercase">
-              Admin · Product Edit
-            </span>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-warm-900 md:text-4xl">
               상품 수정
             </h1>
-            <p className="font-mono text-xs tracking-wider text-warm-400">ID · {productId}</p>
           </div>
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-warm-900 px-6 text-sm font-semibold tracking-tight text-white transition-all hover:bg-warm-800 active:translate-y-[1px] md:w-auto"
+          >
+            <Check className="size-4" strokeWidth={2} />
+            <span>수정하기</span>
+          </button>
         </header>
 
         <div className="mt-8 flex flex-col gap-6">
@@ -249,6 +317,15 @@ const ProductWriteContainer = ({ productId }: Props) => {
             </div>
           </section>
 
+          <section className="rounded-2xl border border-warm-200 bg-white p-5">
+            <ProductOptionEditor
+              options={product.options}
+              onChange={handleOptionsChange}
+              onRemove={handleOptionRemove}
+              productId={productId}
+            />
+          </section>
+
           <section className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
             <div className="rounded-2xl border border-warm-200 bg-white p-5">
               <ProductImageManager
@@ -260,6 +337,7 @@ const ProductWriteContainer = ({ productId }: Props) => {
                 onUpload={handleImageUpload}
                 folderPath="images/product/thumbnail"
                 name="images"
+                disabled={optionValidation.hasError}
               />
             </div>
 
@@ -273,6 +351,7 @@ const ProductWriteContainer = ({ productId }: Props) => {
                 onUpload={handleImageUpload}
                 folderPath="images/product/info"
                 name="infos"
+                disabled={optionValidation.hasError}
               />
             </div>
           </section>

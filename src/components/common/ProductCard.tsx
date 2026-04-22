@@ -2,6 +2,7 @@
 
 import { Star } from 'lucide-react';
 
+import { AWS_S3_DOMAIN } from '@/constants/env';
 import { Product } from '@/types';
 
 type ProductCardProps = {
@@ -26,7 +27,7 @@ const ProductCard = ({ product, onClickProduct }: ProductCardProps) => {
       <div className="relative overflow-hidden aspect-square">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={images[0]}
+          src={`${AWS_S3_DOMAIN}${images[0]}`}
           alt={product.productName}
           loading="lazy"
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"

@@ -57,9 +57,12 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
 
   const onClickCategory = (categoryId: string) => {
     if (currentMenu === 'product') {
-      closeSidebar();
       router.push(`/${currentMenu}?category=${categoryId}`);
+    } else {
+      router.push(`/${currentMenu}/${categoryId}`);
     }
+
+    closeSidebar();
   };
 
   const closeSidebar = () => {
@@ -92,15 +95,17 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
       {/* 오버레이 */}
       <div
         style={{ viewTransitionName: 'navigation-overlay' }}
-        className={`fixed inset-0 bg-brand-900 z-[70] transition-opacity duration-300 ${isMenuOpen ? 'opacity-30 visible' : 'opacity-0 invisible'
-          }`}
+        className={`fixed inset-0 bg-brand-900 z-[70] transition-opacity duration-300 ${
+          isMenuOpen ? 'opacity-30 visible' : 'opacity-0 invisible'
+        }`}
       />
 
       {/* 사이드바 메뉴 */}
       <div
         style={{ viewTransitionName: 'navigation-sidebar' }}
-        className={`fixed top-0 left-0 h-full w-[90%] bg-warm-50 z-[1000] transform transition-transform duration-300 ease-out ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          } flex flex-col`}
+        className={`fixed top-0 left-0 h-full w-[90%] bg-warm-50 z-[1000] transform transition-transform duration-300 ease-out ${
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } flex flex-col`}
       >
         {/* 사이드바 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-brand-200/60 flex-shrink-0">
@@ -118,7 +123,9 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
                   </span>
                 ) : (
                   <>
-                    <span className="text-[16px] font-semibold text-brand-900">{user?.username} 님</span>
+                    <span className="text-[16px] font-semibold text-brand-900">
+                      {user?.username} 님
+                    </span>
                     <span className="text-[14px] text-warm-500">{user?.email}</span>
                   </>
                 )}
@@ -162,16 +169,18 @@ const Navigation = ({ isMenuOpen, moveToLoginPage, toggleMenu, menuGroup }: Prop
                       {hasCategory && (
                         <ChevronDown
                           size={20}
-                          className={`text-warm-400 transition-transform duration-300 ${currentMenu === menuId ? 'rotate-180' : ''
-                            }`}
+                          className={`text-warm-400 transition-transform duration-300 ${
+                            currentMenu === menuId ? 'rotate-180' : ''
+                          }`}
                         />
                       )}
                     </button>
                     {/* 서브메뉴 */}
                     {hasCategory && (
                       <div
-                        className={`bg-brand-50/50 overflow-hidden transition-all duration-300 ease-out ${currentMenu === menuId ? 'max-h-48' : 'max-h-0'
-                          }`}
+                        className={`bg-brand-50/50 overflow-hidden transition-all duration-300 ease-out ${
+                          currentMenu === menuId ? 'max-h-48' : 'max-h-0'
+                        }`}
                       >
                         {filteredCategory.map((category, subIndex) => (
                           <button

@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
 import { GripVertical, ImagePlus, X } from 'lucide-react';
 
-// import { AWS_S3_DOMAIN } from '@/constants/env';
+import { AWS_S3_DOMAIN } from '@/constants/env';
 
 type Props = {
   title: string;
@@ -15,6 +15,7 @@ type Props = {
   onRemove: (imageUrl: string, name: 'images' | 'infos') => void;
   onUpload: (file: File, folderPath: string, name: 'images' | 'infos') => void;
   isUploading?: boolean;
+  disabled?: boolean;
   folderPath: string;
   name: 'images' | 'infos';
 };
@@ -27,6 +28,7 @@ const ProductImageManager = ({
   onRemove,
   onUpload,
   isUploading,
+  disabled,
   folderPath,
   name,
 }: Props) => {
@@ -75,8 +77,8 @@ const ProductImageManager = ({
       <button
         type="button"
         onClick={handleUploadClick}
-        disabled={isUploading}
-        className="group relative flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-warm-300 bg-warm-50 px-4 py-6 text-sm font-medium text-warm-600 transition-all hover:border-warm-500 hover:bg-warm-100 hover:text-warm-900 active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={isUploading || disabled}
+        className="group relative flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-warm-300 bg-warm-50 px-4 py-6 text-sm font-medium text-warm-600 transition-all hover:border-warm-500 hover:bg-warm-100 hover:text-warm-900 active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-warm-300 disabled:hover:bg-warm-50 disabled:hover:text-warm-600"
       >
         <ImagePlus className="size-4" strokeWidth={1.5} />
         <span>{isUploading ? '업로드 중…' : '이미지 추가'}</span>
@@ -174,8 +176,7 @@ const ImageRow = memo(function ImageRow({
       <div className="relative h-44 w-60 shrink-0 overflow-hidden rounded-md border border-warm-200 bg-warm-100">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          // src={`${AWS_S3_DOMAIN}${imageUrl}`}
-          src={imageUrl}
+          src={`${AWS_S3_DOMAIN}${imageUrl}`}
           alt={`product-image-${index + 1}`}
           className="size-full object-contain"
           draggable={false}

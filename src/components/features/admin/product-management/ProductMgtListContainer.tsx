@@ -38,7 +38,7 @@ const ProductMgtListContainer = () => {
   }, [productListError]);
 
   const onClickRow = (productId: string) => {
-    router.push(`/admin/product-management/${productId}`);
+    router.push(`/admin/product-management/write?productId=${productId}`);
   };
 
   return (

@@ -26,6 +26,10 @@ export type ProductImageDeleteRequest = {
   imageUrl: string;
 };
 
+export type ProductOptionDeleteRequest = {
+  productOptionId: string;
+};
+
 export interface ValidateTokenRequest {
   accessToken: string;
 }

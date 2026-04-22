@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import {
   deleteProductImage,
+  deleteProductOption,
   getProductDetail,
   getProductList,
   updateProduct,
@@ -13,6 +14,7 @@ import {
   ProductDetailResponse,
   ProductImageDeleteRequest,
   ProductListRequest,
+  ProductOptionDeleteRequest,
   ProductUpdateRequest,
   UseMutationCustomOptions,
   UseQueryCustomOptions,
@@ -62,12 +64,20 @@ const useProductService = () => {
     });
   };
 
+  const useDeleteProductOptionMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductOptionDeleteRequest) => deleteProductOption(param),
+      ...options,
+    });
+  };
+
   return {
     useProductListQuery,
     useProductDetailQuery,
     useUploadProductImagedMutation,
     useUpdateProductMutation,
     useDeleteProductImageMutation,
+    useDeleteProductOptionMutation,
   };
 };
 

@@ -5,6 +5,7 @@ import { filter, first, isEmpty, map, size, some } from 'lodash-es';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';
+import { AWS_S3_DOMAIN } from '@/constants/env';
 import { useControllerContext, useStateContext } from '@/context/cartContext';
 import { localeFormat } from '@/lib/utils';
 
@@ -76,7 +77,7 @@ const CartModileView = () => {
                           <div className="relative w-14 h-14 flex-shrink-0 bg-brand-100 overflow-hidden">
                             {item.images && !isEmpty(item.images) ? (
                               <Image
-                                src={first(item.images)!}
+                                src={`${AWS_S3_DOMAIN}${first(item.images)}`}
                                 alt={item.productName}
                                 fill
                                 className="object-cover"
@@ -206,11 +207,15 @@ const CartModileView = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-[13px]">
                   <span className="text-warm-500">상품금액</span>
-                  <span className="text-brand-900 tabular-nums">{localeFormat(totalProductPrice)}원</span>
+                  <span className="text-brand-900 tabular-nums">
+                    {localeFormat(totalProductPrice)}원
+                  </span>
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                   <span className="text-warm-500">배송비</span>
-                  <span className="text-brand-900 tabular-nums">{localeFormat(totalShippingPrice)}원</span>
+                  <span className="text-brand-900 tabular-nums">
+                    {localeFormat(totalShippingPrice)}원
+                  </span>
                 </div>
                 <div className="h-px bg-brand-200 my-3" />
                 <div className="flex justify-between items-center text-[15px] font-bold">

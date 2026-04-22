@@ -6,6 +6,7 @@ import {
   ProductDetailResponse,
   ProductImageDeleteRequest,
   ProductListRequest,
+  ProductOptionDeleteRequest,
   ProductUpdateRequest,
 } from '@/types';
 
@@ -47,4 +48,18 @@ const deleteProductImage = async (params: ProductImageDeleteRequest) => {
   });
 };
 
-export { getProductList, getProductDetail, uploadProductImage, updateProduct, deleteProductImage };
+const deleteProductOption = async (params: ProductOptionDeleteRequest) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/product/option/delete',
+    params,
+  });
+};
+
+export {
+  getProductList,
+  getProductDetail,
+  uploadProductImage,
+  updateProduct,
+  deleteProductImage,
+  deleteProductOption,
+};
