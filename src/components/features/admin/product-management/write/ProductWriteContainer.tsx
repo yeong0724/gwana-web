@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { cloneDeep, filter, find, some } from 'lodash-es';
 import { Check } from 'lucide-react';
@@ -24,47 +25,58 @@ type Props = {
   productId: string;
 };
 
-const defaultValues: ProductDetailResponse = {
-  productId: '',
-  productName: '',
-  categoryId: '',
-  categoryName: '',
-  images: [],
-  infos: [],
-  price: 0,
-  shippingPrice: 0,
-  options: [],
-};
-
 const ProductWriteContainer = ({ productId }: Props) => {
+  const router = useRouter();
   const { showAlert, showConfirmAlert } = useAlertStore();
 
   const {
     useProductDetailQuery,
     useUploadProductImagedMutation,
+    useCreateProductMutation,
     useUpdateProductMutation,
     useDeleteProductImageMutation,
     useDeleteProductOptionMutation,
   } = useProductService();
 
-  const [product, setProduct] = useState<ProductDetailResponse>({ ...defaultValues });
+  const isCreateMode = !productId;
+
+  const [product, setProduct] = useState<ProductDetailResponse>({
+    productId: productId || '',
+    productName: '',
+    categoryId: '',
+    categoryName: '',
+    images: [],
+    infos: [],
+    price: 0,
+    shippingPrice: 0,
+    options: [],
+  });
 
   const {
     data: productDetailData,
     error: productDetailError,
     refetch: refetchProductDetail,
-  } = useProductDetailQuery({
-    productId,
-  });
+  } = useProductDetailQuery({ productId }, { enabled: !!productId });
 
+  const { mutateAsync: createProductAsync } = useCreateProductMutation({
+    onSuccess: () => {
+      toast.success('상품 등록이 완료되었습니다.');
+      router.back();
+    },
+    onError: () => {
+      toast.error('상품 등록에 실패하였습니다.');
+    },
+  });
   const { mutateAsync: updateProductAsync } = useUpdateProductMutation({
     onSuccess: () => {
       toast.success('상품 수정이 완료되었습니다.');
       refetchProductDetail();
     },
+    onError: () => {
+      toast.error('상품 업데이트에 실패하였습니다.');
+    },
   });
   const { mutateAsync: uploadProductImageAsync } = useUploadProductImagedMutation();
-
   const { mutateAsync: deleteProductImageAsync } = useDeleteProductImageMutation();
   const { mutateAsync: deleteProductOptionAsync } = useDeleteProductOptionMutation();
 
@@ -204,6 +216,22 @@ const ProductWriteContainer = ({ productId }: Props) => {
   };
 
   const handleSubmit = async () => {
+    if (!product.productName) {
+      showAlert({
+        title: '입력 확인',
+        description: '상품명을 입력해주세요.',
+      });
+      return;
+    }
+
+    if (!product.categoryId) {
+      showAlert({
+        title: '입력 확인',
+        description: '카테고리를 선택해주세요.',
+      });
+      return;
+    }
+
     if (optionValidation.hasEmptyName) {
       showAlert({
         title: '입력 확인',
@@ -222,22 +250,27 @@ const ProductWriteContainer = ({ productId }: Props) => {
 
     const confirm = await showConfirmAlert({
       title: '안내',
-      description: '상품을 수정하시겠습니까?',
-      confirmText: '수정',
+      description: `상품을 ${isCreateMode ? '등록' : '수정'}하시겠습니까?`,
+      confirmText: isCreateMode ? '등록' : '수정',
       cancelText: '취소',
     });
 
     if (!confirm) return;
 
-    updateProduct(product);
+    if (isCreateMode) {
+      createProductAsync(product);
+    } else {
+      updateProduct(product);
+    }
   };
 
   const updateProduct = async (updatedProduct: ProductDetailResponse) => {
-    const [error] = await asyncFn(updateProductAsync(updatedProduct));
-    if (error) {
-      toast.error('상품 업데이트에 실패하였습니다.');
-      return;
-    }
+    updateProductAsync(updatedProduct);
+    // const [error] = await asyncFn(updateProductAsync(updatedProduct));
+    // if (error) {
+    //   toast.error('상품 업데이트에 실패하였습니다.');
+    //   return;
+    // }
   };
 
   const formatKRWInput = (value: number) => (value === 0 ? '' : value.toLocaleString('ko-KR'));
@@ -248,7 +281,7 @@ const ProductWriteContainer = ({ productId }: Props) => {
         <header className="flex flex-col gap-4 border-b border-warm-200 pb-6 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-warm-900 md:text-4xl">
-              상품 수정
+              {isCreateMode ? '상품 등록' : '상품 수정'}
             </h1>
           </div>
 
@@ -258,7 +291,7 @@ const ProductWriteContainer = ({ productId }: Props) => {
             className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-warm-900 px-6 text-sm font-semibold tracking-tight text-white transition-all hover:bg-warm-800 active:translate-y-[1px] md:w-auto"
           >
             <Check className="size-4" strokeWidth={2} />
-            <span>수정하기</span>
+            <span>{isCreateMode ? '등록하기' : '수정하기'}</span>
           </button>
         </header>
 
@@ -317,44 +350,48 @@ const ProductWriteContainer = ({ productId }: Props) => {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-warm-200 bg-white p-5">
-            <ProductOptionEditor
-              options={product.options}
-              onChange={handleOptionsChange}
-              onRemove={handleOptionRemove}
-              productId={productId}
-            />
-          </section>
-
-          <section className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-            <div className="rounded-2xl border border-warm-200 bg-white p-5">
-              <ProductImageManager
-                title="상품 이미지"
-                description="썸네일 및 상품 목록에 노출되는 이미지입니다."
-                images={product.images}
-                onReorder={handleReorder}
-                onRemove={handleImageRemove}
-                onUpload={handleImageUpload}
-                folderPath="images/product/thumbnail"
-                name="images"
-                disabled={optionValidation.hasError}
+          {!isCreateMode && (
+            <section className="rounded-2xl border border-warm-200 bg-white p-5">
+              <ProductOptionEditor
+                options={product.options}
+                onChange={handleOptionsChange}
+                onRemove={handleOptionRemove}
+                productId={productId}
               />
-            </div>
+            </section>
+          )}
 
-            <div className="rounded-2xl border border-warm-200 bg-white p-5">
-              <ProductImageManager
-                title="상품 상세 이미지"
-                description="상세 페이지 하단에 노출되는 상세 설명 이미지입니다."
-                images={product.infos}
-                onReorder={handleReorder}
-                onRemove={handleImageRemove}
-                onUpload={handleImageUpload}
-                folderPath="images/product/info"
-                name="infos"
-                disabled={optionValidation.hasError}
-              />
-            </div>
-          </section>
+          {!isCreateMode && (
+            <section className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+              <div className="rounded-2xl border border-warm-200 bg-white p-5">
+                <ProductImageManager
+                  title="상품 이미지"
+                  description="썸네일 및 상품 목록에 노출되는 이미지입니다."
+                  images={product.images}
+                  onReorder={handleReorder}
+                  onRemove={handleImageRemove}
+                  onUpload={handleImageUpload}
+                  folderPath="images/product/thumbnail"
+                  name="images"
+                  disabled={optionValidation.hasError}
+                />
+              </div>
+
+              <div className="rounded-2xl border border-warm-200 bg-white p-5">
+                <ProductImageManager
+                  title="상품 상세 이미지"
+                  description="상세 페이지 하단에 노출되는 상세 설명 이미지입니다."
+                  images={product.infos}
+                  onReorder={handleReorder}
+                  onRemove={handleImageRemove}
+                  onUpload={handleImageUpload}
+                  folderPath="images/product/info"
+                  name="infos"
+                  disabled={optionValidation.hasError}
+                />
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>

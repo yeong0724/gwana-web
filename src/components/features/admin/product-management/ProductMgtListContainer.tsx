@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { ChevronRight, Package, Search } from 'lucide-react';
+import { ChevronRight, Package, Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
 import {
@@ -41,6 +41,10 @@ const ProductMgtListContainer = () => {
     router.push(`/admin/product-management/write?productId=${productId}`);
   };
 
+  const onClickCreate = () => {
+    router.push('/admin/product-management/write');
+  };
+
   return (
     <div className="min-h-[100dvh] bg-warm-50">
       <div className="mx-auto w-full max-w-[1400px] px-4 py-10 md:px-8 md:py-14">
@@ -60,6 +64,14 @@ const ProductMgtListContainer = () => {
               </span>
               <span className="text-xs tracking-wider text-warm-500 uppercase">Items</span>
             </div>
+            <button
+              type="button"
+              onClick={onClickCreate}
+              className="flex h-11 items-center gap-1.5 rounded-lg bg-warm-900 px-4 text-sm font-semibold tracking-tight text-white transition-all hover:bg-warm-800 active:translate-y-[1px]"
+            >
+              <Plus className="size-4" strokeWidth={2} />
+              <span>상품 등록</span>
+            </button>
           </div>
         </header>
 

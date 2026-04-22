@@ -34,6 +34,13 @@ const uploadProductImage = async (params: FormData) => {
   });
 };
 
+const createProduct = async (params: ProductUpdateRequest) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/product/create',
+    params,
+  });
+};
+
 const updateProduct = async (params: ProductUpdateRequest) => {
   return postAxios<ApiResponse<void>>({
     url: '/product/update',
@@ -59,6 +66,7 @@ export {
   getProductList,
   getProductDetail,
   uploadProductImage,
+  createProduct,
   updateProduct,
   deleteProductImage,
   deleteProductOption,

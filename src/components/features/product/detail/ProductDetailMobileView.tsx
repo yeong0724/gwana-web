@@ -330,7 +330,7 @@ const ProductDetailMobileView = () => {
             {product.infos.map((image, index) => (
               <div key={index} className="relative w-full">
                 <Image
-                  src={image}
+                  src={`${AWS_S3_DOMAIN}${image}`}
                   alt={image}
                   width={1000}
                   height={0}

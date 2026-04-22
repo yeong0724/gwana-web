@@ -5,7 +5,7 @@ type PageProps = {
 };
 
 const Page = async ({ searchParams }: PageProps) => {
-  const { productId } = await searchParams;
+  const { productId = '' } = await searchParams;
 
   return <ProductWriteContainer productId={productId} />;
 };
