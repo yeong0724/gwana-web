@@ -3,18 +3,18 @@ import { MenuGroup } from '@/types';
 export const menuGroup: MenuGroup = {
   main: [
     {
-      menuName: 'ABOUT',
+      menuName: 'Story',
       menuId: 'about',
       upperMenuId: null,
     },
     {
-      menuName: 'TEA',
+      menuName: 'Store',
       menuId: 'product',
       upperMenuId: null,
     },
     {
-      menuName: 'STAY',
-      menuId: 'pension',
+      menuName: 'Management',
+      menuId: 'admin',
       upperMenuId: null,
     },
   ],
@@ -35,14 +35,14 @@ export const menuGroup: MenuGroup = {
       upperMenuId: 'product',
     },
     {
-      menuName: '우티',
-      menuId: 'wuti',
-      upperMenuId: 'pension',
+      menuName: '상품 관리',
+      menuId: 'product-management',
+      upperMenuId: 'admin',
     },
     {
-      menuName: '아티',
-      menuId: 'ati',
-      upperMenuId: 'pension',
+      menuName: '주문 관리',
+      menuId: 'order-management',
+      upperMenuId: 'admin',
     },
   ],
 };

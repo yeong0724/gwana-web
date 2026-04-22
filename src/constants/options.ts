@@ -8,3 +8,9 @@ export const deliveryRequestOptions = [
   { value: DeliveryRequestEnum.NONE, label: '요청사항 없음.' },
   { value: DeliveryRequestEnum.CUSTOM_INPUT, label: '직접입력' },
 ];
+
+export const categoryOptions = [
+  { value: 'greenTea', label: '녹차' },
+  { value: 'blackTea', label: '발효차' },
+  { value: 'substituteTea', label: '대용차' },
+];

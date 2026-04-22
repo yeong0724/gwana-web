@@ -1,4 +1,5 @@
 import { SortByEnum, YesOrNoEnum } from './enum';
+import { ProductDetailResponse } from './response';
 
 export interface GetAccessTokenByKakaoCodeRequest {
   code: string;
@@ -18,6 +19,12 @@ export interface ProductListRequest {
 export interface ProductDetailRequest {
   productId: string;
 }
+
+export type ProductUpdateRequest = ProductDetailResponse;
+
+export type ProductImageDeleteRequest = {
+  imageUrl: string;
+};
 
 export interface ValidateTokenRequest {
   accessToken: string;

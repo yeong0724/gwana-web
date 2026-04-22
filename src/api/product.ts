@@ -4,21 +4,47 @@ import {
   Product,
   ProductDetailRequest,
   ProductDetailResponse,
+  ProductImageDeleteRequest,
   ProductListRequest,
+  ProductUpdateRequest,
 } from '@/types';
 
 const getProductList = async (params: ProductListRequest) => {
   return postAxios<ApiResponse<Product[]>>({
-    url: '/product/list',
+    url: '/product/list/search',
     params,
   });
 };
 
 const getProductDetail = async (params: ProductDetailRequest) => {
   return postAxios<ApiResponse<ProductDetailResponse>>({
-    url: '/product/detail',
+    url: '/product/detail/search',
     params,
   });
 };
 
-export { getProductList, getProductDetail };
+const uploadProductImage = async (params: FormData) => {
+  return postAxios<ApiResponse<string>>({
+    url: '/product/image/upload',
+    params,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+const updateProduct = async (params: ProductUpdateRequest) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/product/update',
+    params,
+  });
+};
+
+const deleteProductImage = async (params: ProductImageDeleteRequest) => {
+  return postAxios<ApiResponse<void>>({
+    url: '/product/image/delete',
+    params,
+  });
+};
+
+export { getProductList, getProductDetail, uploadProductImage, updateProduct, deleteProductImage };

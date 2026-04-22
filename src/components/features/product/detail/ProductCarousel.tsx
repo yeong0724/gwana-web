@@ -11,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { AWS_S3_DOMAIN } from '@/constants';
 import { ProductDetailResponse } from '@/types';
 
 type Props = {
@@ -49,7 +50,7 @@ const ProductCarousel = ({ product }: Props) => {
                 <CarouselItem key={index}>
                   <div className="relative w-full aspect-square">
                     <Image
-                      src={image}
+                      src={`${AWS_S3_DOMAIN}${image}`}
                       alt={`${product.productName} ${index + 1}`}
                       fill
                       className="object-cover"

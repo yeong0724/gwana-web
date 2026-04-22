@@ -14,6 +14,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import type { CarouselApi } from '@/components/ui/carousel';
+import { AWS_S3_DOMAIN } from '@/constants/env';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import { localeFormat } from '@/lib/utils';
 
@@ -62,7 +63,7 @@ const ProductDetailWebView = () => {
                       <CarouselItem key={index}>
                         <div className="relative w-full aspect-square">
                           <Image
-                            src={image}
+                            src={`${AWS_S3_DOMAIN}${image}`}
                             alt={`${product.productName} ${index + 1}`}
                             fill
                             className="object-cover"

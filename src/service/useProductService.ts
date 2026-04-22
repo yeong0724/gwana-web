@@ -1,11 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { getProductDetail, getProductList } from '@/api/product';
+import {
+  deleteProductImage,
+  getProductDetail,
+  getProductList,
+  updateProduct,
+  uploadProductImage,
+} from '@/api/product';
 import {
   Product,
   ProductDetailRequest,
   ProductDetailResponse,
+  ProductImageDeleteRequest,
   ProductListRequest,
+  ProductUpdateRequest,
+  UseMutationCustomOptions,
   UseQueryCustomOptions,
 } from '@/types';
 
@@ -32,7 +41,34 @@ const useProductService = () => {
     });
   };
 
-  return { useProductListQuery, useProductDetailQuery };
+  const useUploadProductImagedMutation = (options?: UseMutationCustomOptions<string>) => {
+    return useMutation({
+      mutationFn: (param: FormData) => uploadProductImage(param),
+      ...options,
+    });
+  };
+
+  const useUpdateProductMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductUpdateRequest) => updateProduct(param),
+      ...options,
+    });
+  };
+
+  const useDeleteProductImageMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductImageDeleteRequest) => deleteProductImage(param),
+      ...options,
+    });
+  };
+
+  return {
+    useProductListQuery,
+    useProductDetailQuery,
+    useUploadProductImagedMutation,
+    useUpdateProductMutation,
+    useDeleteProductImageMutation,
+  };
 };
 
 export default useProductService;

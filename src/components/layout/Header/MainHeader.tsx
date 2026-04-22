@@ -27,7 +27,7 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { backward } = useNativeRouter();
+  const { backward, forward } = useNativeRouter();
   const { setMenu } = useMenuStore();
   const { isLoggedIn } = useLoginStore();
   const { cart } = useCartStore();
@@ -93,6 +93,8 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
 
     if (mainMenuId === 'product') {
       moveToProductPage(categoryMenuId);
+    } else {
+      forward(`/${mainMenuId}/${categoryMenuId}`); // 예: /admin/productMgt
     }
   };
 
