@@ -168,15 +168,22 @@ const ProductWriteContainer = ({ productId }: Props) => {
 
       const formData = new FormData();
       formData.append('folderPath', folderPath);
-      formData.append('image', file);
+      formData.append('image', compressedFile);
 
       const [error, data] = await asyncFn(uploadProductImageAsync(formData));
-      if (error) {
+      if (error || !data) {
         toast.error('상품 이미지 업로드 실패');
         return;
       }
 
-      const { data: imageUrl } = data;
+      const { data: imageUrl, message } = data;
+      if (!imageUrl) {
+        toast.error(
+          `${message} [${(compressedFile.size / (1024 * 1024)).toFixed(2)} MB]` ||
+            '상품 이미지 업로드 실패'
+        );
+        return;
+      }
 
       const _product = cloneDeep(product);
       const updatedProduct = { ..._product, [name]: [..._product[name], imageUrl] };
