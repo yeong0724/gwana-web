@@ -2,7 +2,7 @@ import { ChangeEvent, RefObject } from 'react';
 
 import { FieldPath, FieldPathValue, FieldValues } from 'react-hook-form';
 
-import { RoleEnum, YesOrNoEnum } from '@/types';
+import { OrderStatus, RoleEnum, YesOrNoEnum } from '@/types';
 
 export type HandleChange<T, V> = (
   event: ChangeEvent<T> | null,
@@ -12,7 +12,13 @@ export type HandleChange<T, V> = (
   }
 ) => void;
 
-export type FormatEnum = 'number' | 'text' | 'tel' | 'email' | 'password' | 'alphanumericWithSymbols';
+export type FormatEnum =
+  | 'number'
+  | 'text'
+  | 'tel'
+  | 'email'
+  | 'password'
+  | 'alphanumericWithSymbols';
 
 export type ReactHookFormEventType<T extends FieldValues> = {
   name: FieldPath<T>;
@@ -177,4 +183,52 @@ export type HeroSlide = {
   subtitle: string;
   title: string;
   cta?: string;
+};
+
+export type Order = {
+  orderId: string;
+  productAmount: number;
+  shippingFee: number;
+  discountAmount: number;
+  totalAmount: number;
+  orderStatus: OrderStatus;
+  senderName?: string;
+  senderPhone?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  zonecode?: string;
+  roadAddress?: string;
+  detailAddress?: string;
+  deliveryRequest?: string;
+  deliveryRequestDetail?: string;
+};
+
+export type OrderItem = {
+  orderItemId: number;
+  orderId: string;
+  productId: number;
+  productName: string;
+  productThumbnailUrl: string;
+  categoryName: string;
+  productOptionId: string;
+  optionName: string;
+  optionPrice: number;
+  quantity: number;
+  isRequired: boolean;
+};
+
+export type OrderOptionGroup = {
+  productId: number;
+  productName: string;
+  productThumbnailUrl: string;
+  categoryName: string;
+  orderOptions: OrderOption[];
+};
+
+export type OrderOption = {
+  productOptionId: number;
+  optionName: string;
+  optionPrice: number;
+  quantity: number;
+  isRequired: boolean;
 };

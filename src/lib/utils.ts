@@ -10,7 +10,7 @@ import { twMerge } from 'tailwind-merge';
 import { cartActions } from '@/stores/useCartStore';
 import { loginActions } from '@/stores/useLoginStore';
 import { userActions } from '@/stores/useUserStore';
-import { ErrorResponse, LoginResponse } from '@/types';
+import { ApiResponse, ErrorResponse, LoginResponse, ResultCode } from '@/types';
 import { DecodedToken, FormatEnum } from '@/types/type';
 
 export function cn(...inputs: ClassValue[]) {
@@ -248,12 +248,18 @@ export const compressImage = async (
   });
 };
 
-const asyncFn = async <T>(
+const asyncFn = async <T extends ApiResponse>(
   promise: Promise<T>,
   errorMsg: string = '알 수 없는 에러가 발생했습니다.'
 ): Promise<[null, T] | [Error, null]> => {
   try {
     const data = await promise;
+
+    if (data.code !== ResultCode.SUCCESS) {
+      toast.error(data.message ?? errorMsg);
+      return [new Error(data?.message ?? errorMsg), null];
+    }
+
     return [null, data];
   } catch (error) {
     if (isAxiosError<ErrorResponse>(error)) {

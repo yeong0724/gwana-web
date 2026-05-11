@@ -1,4 +1,4 @@
-import { ProductOption, RoleEnum, SocialProviderEnum } from '@/types';
+import { Order, OrderOptionGroup, ProductOption, RoleEnum, SocialProviderEnum } from '@/types';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -124,3 +124,5 @@ export type InfiniteResponse<T> = {
   totalPages: number | null;
   averageRating: number | null;
 };
+
+export type OrderResponse = Order & { orderOptionGroups: OrderOptionGroup[] };

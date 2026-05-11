@@ -144,3 +144,7 @@ export type ReviewListSearchRequest = {
   page: number;
   size: number;
 };
+
+export type OrderSearchRequest = {
+  orderId: string;
+};

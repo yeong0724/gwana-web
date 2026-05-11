@@ -1,5 +1,6 @@
-import PaymentContainer from '@/components/features/payment/PaymentContainer';
 import { Viewport } from 'next';
+
+import PaymentContainer from '@/components/features/payment/PaymentContainer';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -9,13 +10,13 @@ export const viewport: Viewport = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ sessionId?: string }>;
+  searchParams: Promise<{ orderId?: string }>;
 };
 
 const Page = async ({ searchParams }: PageProps) => {
-  const { sessionId = '' } = await searchParams;
+  const { orderId = '' } = await searchParams;
 
-  return <PaymentContainer sessionId={sessionId} />;
+  return <PaymentContainer orderId={orderId} />;
 };
 
 export default Page;

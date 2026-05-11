@@ -130,10 +130,7 @@ const ProductWriteContainer = ({ productId }: Props) => {
   const handleImageRemove = async (imageUrl: string, name: 'images' | 'infos') => {
     const [error] = await asyncFn(deleteProductImageAsync({ imageUrl }));
 
-    if (error) {
-      toast.error('상품 이미지 삭제에 실패하였습니다.');
-      return;
-    }
+    if (error) return;
 
     const _product = cloneDeep(product);
     const updatedProduct = {
@@ -170,27 +167,21 @@ const ProductWriteContainer = ({ productId }: Props) => {
       formData.append('folderPath', folderPath);
       formData.append('image', compressedFile);
 
-      const [error, data] = await asyncFn(uploadProductImageAsync(formData));
-      if (error || !data) {
-        toast.error('상품 이미지 업로드 실패');
-        return;
-      }
+      const [error, data] = await asyncFn(
+        uploadProductImageAsync(formData),
+        `상품 이미지 업로드 실패 [${(compressedFile.size / (1024 * 1024)).toFixed(2)} MB]`
+      );
 
-      const { data: imageUrl, message } = data;
-      if (!imageUrl) {
-        toast.error(
-          `${message} [${(compressedFile.size / (1024 * 1024)).toFixed(2)} MB]` ||
-            '상품 이미지 업로드 실패'
-        );
-        return;
-      }
+      if (error) return;
+
+      const { data: imageUrl } = data;
 
       const _product = cloneDeep(product);
       const updatedProduct = { ..._product, [name]: [..._product[name], imageUrl] };
       updateProduct(updatedProduct);
     } catch (error) {
       console.error(error);
-      toast.error('이미지 업로드에 실패하였습니다.');
+      toast.error('이미지 압축에 실패하였습니다.');
     }
   };
 

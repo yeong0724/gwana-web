@@ -56,13 +56,12 @@ const usePaymentForm = () => {
 
   // hydration 완료 후 store의 user 정보로 form 값 업데이트
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && user) {
       const { username, phone } = user;
-
       setValue('senderName', username);
       setValue('senderPhone', phone);
     }
-  }, [isLoggedIn, setValue]);
+  }, [isLoggedIn, user, setValue]);
 
   return { form, setValue, clearErrors, watch };
 };

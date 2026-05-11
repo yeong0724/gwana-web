@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { cloneDeep, filter, isEmpty, map, some, sumBy } from 'lodash-es';
+import { cloneDeep, filter, isEmpty, map, omit, some, sumBy } from 'lodash-es';
 import { toast } from 'sonner';
 
 import { ResponsiveFrame } from '@/components/common/frame';
@@ -12,8 +12,8 @@ import CartModileView from '@/components/features/cart/CartModileView';
 import CartWebView from '@/components/features/cart/CartWebView';
 import { Provider } from '@/context/cartContext';
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { setRedirectUrl } from '@/lib/utils';
-import { useCartService, usePaymentService } from '@/service';
+import { asyncFn, setRedirectUrl } from '@/lib/utils';
+import { useCartService, useOrderService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore } from '@/stores';
 import { Breakpoint, Cart, CartState, UpdateCartItemQuantityRequest } from '@/types';
 
@@ -35,17 +35,17 @@ const CartContainer = () => {
     useUpdateCartItemQuantityMutation,
   } = useCartService();
 
-  const { useCreatePaymentSessionMutation } = usePaymentService();
+  const { useCreateOrderMutation } = useOrderService();
 
   const { data: cartListData, error: cartListError } = useGetCartListQuery({
     enabled: isLoggedIn,
   });
 
-  const { mutate: deleteCartItemMutate } = useDeleteCartItemMutation();
-  const { mutate: deleteCartMutate } = useDeleteCartMutation();
-  const { mutate: deleteCartListMutate } = useDeleteCartListMutation();
-  const { mutateAsync: updateCartItemQuantityMutate } = useUpdateCartItemQuantityMutation();
-  const { mutateAsync: createPaymentSessionAsync } = useCreatePaymentSessionMutation();
+  const { mutateAsync: deleteCartItemAsync } = useDeleteCartItemMutation();
+  const { mutateAsync: deleteCartAsync } = useDeleteCartMutation();
+  const { mutateAsync: deleteCartListAsync } = useDeleteCartListMutation();
+  const { mutateAsync: updateCartItemQuantityAsync } = useUpdateCartItemQuantityMutation();
+  const { mutateAsync: createOrderAsync } = useCreateOrderMutation();
 
   const [cart, setCart] = useState<Array<CartState>>([]);
 
@@ -112,9 +112,9 @@ const CartContainer = () => {
 
     if (isLoggedIn) {
       if (shouldRemoveCart) {
-        deleteCartMutate({ cartId });
+        asyncFn(deleteCartAsync({ cartId }));
       } else {
-        deleteCartItemMutate({ cartItemId });
+        asyncFn(deleteCartItemAsync({ cartItemId }));
       }
     } else {
       if (shouldRemoveCart) {
@@ -145,7 +145,8 @@ const CartContainer = () => {
 
     const selectedCart = filter(cart, { checked: true });
     if (isLoggedIn) {
-      deleteCartListMutate(map(selectedCart, 'cartId'));
+      const [error] = await asyncFn(deleteCartListAsync(map(selectedCart, 'cartId')));
+      if (error) return;
     } else {
       setCartStore(cloneDeep(cartStore).filter(({ cartId }) => !some(selectedCart, { cartId })));
     }
@@ -168,7 +169,7 @@ const CartContainer = () => {
     };
 
     if (isLoggedIn) {
-      updateCartItemQuantityMutate(payload);
+      asyncFn(updateCartItemQuantityAsync(payload));
     } else {
       const cloneCartStore = cloneDeep(cartStore);
       cloneCartStore[index].cartItems[cartItemIndex].quantity = updatedQuantity;
@@ -181,16 +182,21 @@ const CartContainer = () => {
   };
 
   const moveToOrderPage = async () => {
-    // if (!isLoggedIn) {
-    //   setPurchaseGuideModalOpen(true);
-    //   return;
-    // }
-    // const payload = filter(cart, { checked: true }).map(({ productId, quantity }) => ({
-    //   productId,
-    //   quantity,
-    // }));
-    // const { data: sessionId } = await createPaymentSessionAsync(payload);
-    // forward(`/payment?sessionId=${sessionId}`);
+    if (!isLoggedIn) {
+      setPurchaseGuideModalOpen(true);
+      return;
+    }
+
+    const payload = filter(cart, { checked: true }).map((item) => omit(item, 'checked')) as Cart[];
+
+    const [error, data] = await asyncFn(createOrderAsync(payload));
+
+    if (error) return;
+
+    const { data: orderId } = data;
+
+    // 0QAFK7BMVJRXQ
+    forward(`/payment?orderId=${orderId}`);
   };
 
   const moveToLoginPage = () => {
