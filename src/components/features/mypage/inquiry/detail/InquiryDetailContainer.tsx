@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { MessageSquareReply } from 'lucide-react';
 
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { getCleanHtmlContent, getPhoneNumber } from '@/lib/utils';
+import { formatDate, getCleanHtmlContent, getPhoneNumber } from '@/lib/utils';
 import { useMypageService } from '@/service';
 import { useLoginStore, useUserStore } from '@/stores';
 import { Inquiry, ResultCode, RoleEnum, YesOrNoEnum } from '@/types';
@@ -41,6 +41,8 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
     createdBy: '',
     username: '',
     phone: null,
+    email: '',
+    canView: true,
     answer: {
       title: '',
       content: '',
@@ -80,10 +82,11 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
             {/* 답변 상태 뱃지 + 제목 */}
             <div className="flex items-center gap-3 mb-3">
               <span
-                className={`shrink-0 text-[10px] px-2 py-1 rounded-full font-medium border ${isAnswered === YesOrNoEnum.YES
-                  ? 'bg-tea-50 text-tea-700 border-tea-200'
-                  : 'bg-gold-50 text-gold-600 border-gold-200'
-                  }`}
+                className={`shrink-0 text-[10px] px-2 py-1 rounded-full font-medium border ${
+                  isAnswered === YesOrNoEnum.YES
+                    ? 'bg-tea-50 text-tea-700 border-tea-200'
+                    : 'bg-gold-50 text-gold-600 border-gold-200'
+                }`}
               >
                 {isAnswered === YesOrNoEnum.YES ? '답변완료' : '답변대기'}
               </span>
@@ -92,7 +95,8 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
 
             {/* 작성일 | 작성자 */}
             <div className="text-warm-400 text-[12px] px-1">
-              {createdAt} <span className="mx-2 text-warm-200">|</span>{' '}
+              {formatDate(createdAt, 'yyyy-MM-dd HH:mm')}{' '}
+              <span className="mx-2 text-warm-200">|</span>{' '}
               {user.role === RoleEnum.ADMIN ? `${username} (${getPhoneNumber(phone)})` : username}
             </div>
           </div>
@@ -131,7 +135,9 @@ const InquiryDetailContainer = ({ inquiryId }: Props) => {
                   </div>
 
                   {/* 작성일 */}
-                  <div className="text-warm-400 text-[12px] px-1">{inquiry.answer.createdAt}</div>
+                  <div className="text-warm-400 text-[12px] px-1">
+                    {formatDate(inquiry.answer.createdAt, 'yyyy-MM-dd HH:mm')}
+                  </div>
                 </div>
 
                 {/* 구분선 */}

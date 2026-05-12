@@ -93,6 +93,8 @@ export type Inquiry = {
   createdBy: string;
   username: string;
   phone: string | null;
+  email: string | null;
+  canView: boolean;
   answer: {
     title: string;
     content: string;

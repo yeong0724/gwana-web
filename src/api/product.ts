@@ -1,10 +1,13 @@
 import { postAxios } from '@/lib/api';
 import {
   ApiResponse,
+  InfiniteResponse,
+  Inquiry,
   Product,
   ProductDetailRequest,
   ProductDetailResponse,
   ProductImageDeleteRequest,
+  ProductInquiryListSearchRequest,
   ProductListRequest,
   ProductOptionDeleteRequest,
   ProductUpdateRequest,
@@ -63,6 +66,13 @@ const deleteProductOption = async (params: ProductOptionDeleteRequest) => {
   });
 };
 
+const getProductInquiryList = async (params: ProductInquiryListSearchRequest) => {
+  return postAxios<ApiResponse<InfiniteResponse<Inquiry[]>>>({
+    url: '/product/inquiry/list/search',
+    params,
+  });
+};
+
 export {
   getProductList,
   getProductDetail,
@@ -71,4 +81,5 @@ export {
   updateProduct,
   deleteProductImage,
   deleteProductOption,
+  getProductInquiryList,
 };

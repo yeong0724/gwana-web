@@ -1,10 +1,10 @@
 import createGenericContext from '@/providers/ContextProvider';
 import {
   DropdownOption,
+  Inquiry,
   ProductDetailResponse,
   Purchase,
   Review,
-  ReviewListSearchRequest,
   RoleEnum,
 } from '@/types';
 
@@ -19,8 +19,9 @@ type ProductDetailStateContextType = {
   reviewList: Review[];
   totalReviewCount: number;
   averageRating: number;
-  reviewSearchPayload: Omit<ReviewListSearchRequest, 'page'>;
   role: RoleEnum;
+  productInquiryList: Inquiry[];
+  totalInquiryCount: number;
 };
 
 type ProductDetailControllerContextType = {
@@ -33,7 +34,6 @@ type ProductDetailControllerContextType = {
   onPurchaseMobileHandler: () => void;
   handleAddToCart: () => void;
   handlePurchase: () => void;
-  setReviewSearchPayload: (reviewSearchPayload: Omit<ReviewListSearchRequest, 'page'>) => void;
   handleReviewOpen: () => void;
   moveToInquiryWritePage: () => void;
 };

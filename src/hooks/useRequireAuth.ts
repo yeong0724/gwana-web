@@ -14,7 +14,6 @@ const useRequireAuth = () => {
   useEffect(() => {
     if (!loginStoreHydrated) return;
 
-    console.log('isLoggedInisLoggedIn', isLoggedIn);
     if (!isLoggedIn) {
       (async () => {
         await showConfirmAlert({

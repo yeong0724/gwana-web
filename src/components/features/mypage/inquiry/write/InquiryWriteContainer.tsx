@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
+
 import TiptapEditor from '@/components/common/editor';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import useNativeRouter from '@/hooks/useNativeRouter';
-import { validateByType } from '@/lib/utils';
+import { asyncFn, validateByType } from '@/lib/utils';
 import { useMypageService } from '@/service';
 import { useAlertStore, useUserStore } from '@/stores';
 import { RoleEnum, YesOrNoEnum } from '@/types/enum';
@@ -19,6 +21,7 @@ type Props = {
 
 const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
   const { user } = useUserStore();
+  const queryClient = useQueryClient();
 
   const { backward } = useNativeRouter();
   const { showAlert, showConfirmAlert } = useAlertStore();
@@ -28,7 +31,7 @@ const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
   const { useCreateInquiryMutation } = useMypageService();
-  const { mutate: createInquiry } = useCreateInquiryMutation();
+  const { mutateAsync: createInquiryAsync } = useCreateInquiryMutation();
 
   const isAdmin = useMemo(() => {
     if (user.role === RoleEnum.ADMIN && inquiryId) {
@@ -63,21 +66,23 @@ const InquiryWriteContainer = ({ inquiryId, productId }: Props) => {
       upperInquiryId: isAdmin && inquiryId ? inquiryId : null,
     };
 
-    createInquiry(payload, {
-      onSuccess: async () => {
-        const description = isAdmin ? '답변이 제출되었습니다.' : '문의가 제출되었습니다.';
-
-        await showConfirmAlert({
-          title: '안내',
-          description,
-        });
-
-        backward();
-      },
-      onError: (error) => {
-        console.error(error);
-      },
+    const confirm = await showConfirmAlert({
+      title: '안내',
+      description: '문의글을 등록하시겠습니까?',
+      cancelText: '취소',
     });
+    if (!confirm) return;
+
+    const [error] = await asyncFn(createInquiryAsync(payload));
+    if (error) return;
+
+    const description = isAdmin ? '답변이 제출되었습니다.' : '문의가 제출되었습니다.';
+
+    await showConfirmAlert({ title: '안내', description });
+
+    queryClient.invalidateQueries({ queryKey: ['inquiryList'] });
+
+    backward();
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

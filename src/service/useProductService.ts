@@ -1,22 +1,26 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 import {
   createProduct,
   deleteProductImage,
   deleteProductOption,
   getProductDetail,
+  getProductInquiryList,
   getProductList,
   updateProduct,
   uploadProductImage,
 } from '@/api/product';
 import {
+  Inquiry,
   Product,
   ProductDetailRequest,
   ProductDetailResponse,
   ProductImageDeleteRequest,
+  ProductInquiryListSearchRequest,
   ProductListRequest,
   ProductOptionDeleteRequest,
   ProductUpdateRequest,
+  UseInfiniteQueryCustomOptions,
   UseMutationCustomOptions,
   UseQueryCustomOptions,
 } from '@/types';
@@ -79,6 +83,19 @@ const useProductService = () => {
     });
   };
 
+  const useGetProductInquiryListInfiniteQuery = (
+    payload: Omit<ProductInquiryListSearchRequest, 'page'>,
+    options?: UseInfiniteQueryCustomOptions<Inquiry[]>
+  ) => {
+    return useInfiniteQuery({
+      queryKey: ['productInquiryList', payload],
+      queryFn: ({ pageParam = 0 }) => getProductInquiryList({ ...payload, page: pageParam }),
+      getNextPageParam: (lastPage) => (lastPage.data.hasNext ? lastPage.data.page + 1 : undefined),
+      initialPageParam: 0,
+      ...options,
+    });
+  };
+
   return {
     useProductListQuery,
     useProductDetailQuery,
@@ -87,6 +104,7 @@ const useProductService = () => {
     useUpdateProductMutation,
     useDeleteProductImageMutation,
     useDeleteProductOptionMutation,
+    useGetProductInquiryListInfiniteQuery,
   };
 };
 

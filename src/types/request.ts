@@ -133,6 +133,14 @@ export type InquiryListSearchRequest = {
   size: number;
 };
 
+export type ProductInquiryListSearchRequest = {
+  productId: string;
+  excludeSecret: string;
+  isAnswered: string;
+  page: number;
+  size: number;
+};
+
 export type InquirySearchRequest = {
   inquiryId: string;
 };

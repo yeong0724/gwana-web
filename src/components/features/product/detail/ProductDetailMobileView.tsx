@@ -2,8 +2,8 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import gsap from 'gsap';
-import { clone, isEmpty, map, size } from 'lodash-es';
-import { ChevronDown, ChevronUp, Share2, Star, X } from 'lucide-react';
+import { clone, includes, isEmpty, map, size, without } from 'lodash-es';
+import { ChevronDown, ChevronUp, Lock, Share2, Star, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 import { OptionDropdown } from '@/components/common/form';
@@ -13,9 +13,16 @@ import { Button } from '@/components/ui/button';
 import { AWS_S3_DOMAIN } from '@/constants';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import useImageSlide from '@/hooks/useImageSlide';
-import { cn, formatDate, localeFormat } from '@/lib/utils';
+import { cn, formatDate, getCleanHtmlContent, localeFormat } from '@/lib/utils';
 import { useScrollTopStore } from '@/stores';
-import { Review, RoleEnum } from '@/types';
+import { Inquiry, Review, RoleEnum, YesOrNoEnum } from '@/types';
+
+const maskEmail = (email: string | null) => {
+  if (!email) return '';
+  const [name] = email.split('@');
+  if (name.length <= 4) return name;
+  return name.slice(0, 4) + '*'.repeat(Math.min(name.length - 4, 6));
+};
 
 type TabType = 'detail' | 'review' | 'qna';
 
@@ -32,6 +39,8 @@ const ProductDetailMobileView = () => {
     totalReviewCount,
     averageRating,
     role,
+    productInquiryList,
+    totalInquiryCount,
   } = useStateContext();
 
   const {
@@ -48,6 +57,13 @@ const ProductDetailMobileView = () => {
 
   const [isDetailExpanded, setIsDetailExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('detail');
+  const [expandedInquiryIds, setExpandedInquiryIds] = useState<number[]>([]);
+
+  const toggleInquiryExpand = (inquiryId: number) => {
+    setExpandedInquiryIds((prev) =>
+      includes(prev, inquiryId) ? without(prev, inquiryId) : [...prev, inquiryId]
+    );
+  };
 
   const { setBottomOffset, setHidden } = useScrollTopStore();
 
@@ -289,7 +305,7 @@ const ProductDetailMobileView = () => {
               activeTab === 'qna' ? 'text-black' : 'text-warm-400'
             }`}
           >
-            Q&A
+            Q&A ({totalInquiryCount})
           </button>
         </div>
         {/* 탭 밑줄 인디케이터 */}
@@ -306,20 +322,6 @@ const ProductDetailMobileView = () => {
 
       {/* 상세정보 섹션 - 모바일뷰 */}
       <div ref={detailSectionRef} className="max-w-[800px]">
-        {/* 상세정보 타이틀 */}
-        {/* <div className="relative flex items-center justify-center mb-15">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-brand-300" />
-          </div>
-          <div className="relative bg-warm-50 px-8">
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] tracking-[0.3em] text-warm-400 mb-1">PRODUCT</span>
-              <h2 className="text-2xl font-light tracking-[0.2em] text-brand-900">DETAIL</h2>
-              <div className="mt-3 w-8 h-[2px] bg-tea-500" />
-            </div>
-          </div>
-        </div> */}
-
         {/* 상세 이미지 영역 */}
         <div className="relative">
           <div
@@ -381,7 +383,7 @@ const ProductDetailMobileView = () => {
       <div ref={reviewSectionRef} className="max-w-[800px] py-6 px-5">
         {/* 리뷰 타이틀 */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[18px] font-medium text-brand-800">후기</h3>
+          <h3 className="text-[18px] font-medium text-brand-800">리뷰 {totalReviewCount}</h3>
         </div>
 
         <div className="border-t border-brand-200/60" />
@@ -472,7 +474,7 @@ const ProductDetailMobileView = () => {
                   )}
                   onClick={handleReviewOpen}
                 >
-                  리뷰 더보기
+                  리뷰 전체보기
                 </button>
               </div>
             )}
@@ -491,7 +493,7 @@ const ProductDetailMobileView = () => {
       <div ref={qnaSectionRef} className="max-w-[800px] pt-6 px-5 mb-[100px]">
         {/* 질문 타이틀 */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[18px] font-medium text-brand-800">질문</h3>
+          <h3 className="text-[18px] font-medium text-brand-800">Q&A</h3>
           <button
             className="mr-1 text-[15px] text-warm-500 active:text-warm-700"
             onClick={moveToInquiryWritePage}
@@ -502,10 +504,116 @@ const ProductDetailMobileView = () => {
 
         <div className="border-t border-brand-200/60" />
 
-        {/* Q&A 목록 - 현재는 빈 상태 UI만 */}
-        <div className="py-12 text-center min-h-[250px] flex items-center justify-center">
-          <p className="text-warm-400">작성된 질문이 없습니다.</p>
-        </div>
+        {/* Q&A 목록 */}
+        {!isEmpty(productInquiryList) ? (
+          <ul className="divide-y divide-brand-200/60">
+            {map(productInquiryList, (inquiry: Inquiry) => {
+              const isExpanded = includes(expandedInquiryIds, inquiry.inquiryId);
+              const hasAnswer = inquiry.isAnswered === YesOrNoEnum.YES;
+
+              return (
+                <li key={inquiry.inquiryId} className="py-4">
+                  {/* 본문: 비밀글이면 자물쇠 표시, 아니면 제목 노출 */}
+                  <div className="mb-3">
+                    {inquiry.canView ? (
+                      <p className="text-[14px] text-brand-800 font-medium leading-relaxed break-words">
+                        {inquiry.title}
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-1.5 text-[14px] text-warm-500">
+                        <span>비밀글입니다.</span>
+                        <Lock size={13} strokeWidth={2} className="text-warm-500" />
+                      </p>
+                    )}
+                  </div>
+
+                  {/* 메타 정보 + 토글 */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[12px] min-w-0">
+                      <span
+                        className={cn(
+                          'shrink-0 font-semibold',
+                          hasAnswer ? 'text-tea-700' : 'text-gold-600'
+                        )}
+                      >
+                        {hasAnswer ? '답변완료' : '답변대기'}
+                      </span>
+                      <span className="text-warm-200">|</span>
+                      <span className="text-warm-500 truncate">{maskEmail(inquiry.email)}</span>
+                      <span className="text-warm-200">|</span>
+                      <span className="text-warm-400 tabular-nums shrink-0">
+                        {formatDate(inquiry.createdAt, 'yyyy.MM.dd HH:mm')}
+                      </span>
+                    </div>
+
+                    {inquiry.canView && (
+                      <button
+                        type="button"
+                        onClick={() => toggleInquiryExpand(inquiry.inquiryId)}
+                        aria-label={isExpanded ? '문의 접기' : '문의 펼치기'}
+                        aria-expanded={isExpanded}
+                        className="ml-2 shrink-0 p-1 text-warm-500 active:text-warm-700 cursor-pointer"
+                      >
+                        <ChevronDown
+                          size={18}
+                          className={cn(
+                            'transition-transform duration-200',
+                            isExpanded && 'rotate-180'
+                          )}
+                        />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 펼침 영역: 질문 본문 + (있다면) 답변 본문 */}
+                  {inquiry.canView && isExpanded && (
+                    <div className="mt-4 space-y-3">
+                      {/* 질문자 본문 */}
+                      <div className="flex gap-3 pl-1">
+                        <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-warm-100 text-warm-600 text-[12px] font-bold leading-none">
+                          Q
+                        </span>
+                        <div
+                          className="flex-1 min-w-0 pt-0.5 text-[14px] text-brand-800 leading-relaxed break-words [&_img]:max-w-full [&_img]:h-auto [&_img]:my-2 [&_img]:rounded"
+                          dangerouslySetInnerHTML={{
+                            __html: getCleanHtmlContent(inquiry.content),
+                          }}
+                        />
+                      </div>
+
+                      {/* 판매자 답변 */}
+                      {hasAnswer && inquiry.answer && (
+                        <div className="flex gap-3 px-3 py-3 bg-tea-50/40 border border-brand-200/60 rounded-md">
+                          <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-tea-500 text-white text-[12px] font-bold leading-none">
+                            A
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="text-[11px] font-semibold text-tea-700">판매자</span>
+                              <span className="text-[11px] text-warm-400 tabular-nums">
+                                {formatDate(inquiry.answer.createdAt, 'yyyy.MM.dd HH:mm')}
+                              </span>
+                            </div>
+                            <div
+                              className="text-[14px] text-brand-700 leading-relaxed break-words [&_img]:max-w-full [&_img]:h-auto [&_img]:my-2 [&_img]:rounded"
+                              dangerouslySetInnerHTML={{
+                                __html: getCleanHtmlContent(inquiry.answer.content),
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="py-12 text-center min-h-[250px] flex items-center justify-center">
+            <p className="text-warm-400">작성된 질문이 없습니다.</p>
+          </div>
+        )}
 
         <div className="border-t border-brand-200/60" />
 
@@ -520,7 +628,7 @@ const ProductDetailMobileView = () => {
                 'active:bg-tea-500/10'
               )}
             >
-              문의 더보기
+              Q&A 전체보기
             </button>
           </div>
         )}

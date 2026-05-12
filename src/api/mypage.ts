@@ -1,5 +1,4 @@
 import { postAxios } from '@/lib/api';
-import { delayAsync } from '@/lib/utils';
 import {
   ApiResponse,
   CreateInquiryRequest,
@@ -53,37 +52,35 @@ const updateMyinfo = async (params: UpdateMyinfoRequest) => {
 
 const createInquiry = async (params: CreateInquiryRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/mypage/create/inquiry',
+    url: '/mypage/inquiry/create',
     params,
   });
 };
 
 const getInquiryList = async (params: InquiryListSearchRequest) => {
-  await delayAsync(1000);
   return postAxios<ApiResponse<InfiniteResponse<Inquiry[]>>>({
-    url: '/mypage/search/inquiry/list',
+    url: '/mypage/inquiry/list/search',
     params,
   });
 };
 
 const getInquiry = async (params: InquirySearchRequest) => {
   return postAxios<ApiResponse<Inquiry>>({
-    url: '/mypage/search/inquiry',
+    url: '/mypage/inquiry/search',
     params,
   });
 };
 
 const createReview = async (params: ReviewCreateRequest) => {
   return postAxios<ApiResponse<void>>({
-    url: '/mypage/create/review',
+    url: '/mypage/review/create',
     params,
   });
 };
 
 const getReviewList = async (params: ReviewListSearchRequest) => {
-  await delayAsync(800);
   return postAxios<ApiResponse<InfiniteResponse<Review[]>>>({
-    url: '/mypage/search/review/list',
+    url: '/mypage/review/list/search',
     params,
   });
 };

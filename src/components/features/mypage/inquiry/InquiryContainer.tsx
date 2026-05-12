@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { forEach } from 'lodash-es';
+import { forEach, isEqual, omit } from 'lodash-es';
 import { ChevronDown, ChevronRight, MessageCircleQuestion, PenLine, Search } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
 
@@ -25,9 +25,8 @@ import { useLoginStore, useUserStore } from '@/stores';
 import { InquiryListSearchRequest, RoleEnum, YesOrNoEnum } from '@/types';
 
 type SearchParams = {
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  isChanged: boolean;
+  startDate: Date | null;
+  endDate: Date | null;
   isAnswered: string;
 };
 
@@ -35,15 +34,17 @@ const InquiryContainer = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { forward } = useNativeRouter();
+
   const { isLoggedIn } = useLoginStore();
   const { user } = useUserStore();
+  console.log(user);
   const { ref, inView } = useInView();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
-    startDate: undefined,
-    endDate: undefined,
-    isChanged: false,
-    isAnswered: 'ALL',
+    startDate: null,
+    endDate: null,
+    isAnswered: '',
   });
 
   const [searchPayload, setSearchPayload] = useState<Omit<InquiryListSearchRequest, 'page'>>({
@@ -64,7 +65,10 @@ const InquiryContainer = () => {
     enabled: isLoggedIn,
   });
 
-  const inquiryList = inquiryQueryData?.pages.flatMap(({ data }) => data.data) ?? [];
+  const inquiryList = useMemo(
+    () => inquiryQueryData?.pages.flatMap(({ data }) => data.data) ?? [],
+    [inquiryQueryData]
+  );
 
   const moveToInquiryWritePage = () => {
     forward('/mypage/inquiry/write');
@@ -74,37 +78,38 @@ const InquiryContainer = () => {
     forward(`/mypage/inquiry/detail?inquiryId=${inquiryId.toString()}`);
   };
 
-  const onChangeSearchParams = (name: string, value: Date | undefined) => {
-    setSearchParams((prev) => ({ ...prev, [name]: value, isChanged: true }));
+  const onChangeSearchParams = (name: string, value: Date | null) => {
+    setSearchParams((prev) => ({ ...prev, [name]: formatDate(value) }));
   };
 
   const onChangeIsAnsweredFilter = (value: string) => {
-    setSearchParams((prev) => ({ ...prev, isChanged: true, isAnswered: value }));
+    setSearchParams((prev) => ({ ...prev, isAnswered: value === 'ALL' ? '' : value }));
   };
 
   const onSearch = () => {
-    if (searchParams.isChanged) {
+    if (!isEqual(searchParams, omit(searchPayload, 'size'))) {
       setSearchPayload({
         ...searchPayload,
         startDate: formatDate(searchParams.startDate),
         endDate: formatDate(searchParams.endDate),
-        isAnswered: searchParams.isAnswered === 'ALL' ? '' : searchParams.isAnswered,
+        isAnswered: searchParams.isAnswered,
       });
     } else {
-      // refetch();
       queryClient.resetQueries({ queryKey: ['inquiryList'] });
     }
-
-    setSearchParams((prev) => ({ ...prev, isChanged: false }));
   };
 
   useEffect(() => {
-    router.prefetch('/mypage/inquiry/write');
+    if (user.role !== RoleEnum.ADMIN) {
+      router.prefetch('/mypage/inquiry/write');
+    }
+  }, [router, user]);
 
+  useEffect(() => {
     forEach(inquiryList, ({ inquiryId }) => {
       router.prefetch(`/mypage/inquiry/detail?inquiryId=${inquiryId.toString()}`);
     });
-  }, [inquiryList]);
+  }, [inquiryList, router]);
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
@@ -121,7 +126,10 @@ const InquiryContainer = () => {
             <MessageCircleQuestion className="size-6 text-tea-500" />
             <span className="text-[18px] font-bold text-brand-800">문의 내역</span>
           </div>
-          <Select value={searchParams.isAnswered} onValueChange={onChangeIsAnsweredFilter}>
+          <Select
+            value={searchParams?.isAnswered ?? 'ALL'}
+            onValueChange={onChangeIsAnsweredFilter}
+          >
             <SelectTrigger className="w-[120px] h-9 text-sm">
               <SelectValue placeholder="전체" />
             </SelectTrigger>
@@ -168,7 +176,10 @@ const InquiryContainer = () => {
           </div>
 
           {/* 조회 버튼 */}
-          <Button onClick={onSearch} className="h-9 flex-1 bg-tea-500 hover:bg-tea-600 cursor-pointer">
+          <Button
+            onClick={onSearch}
+            className="h-9 flex-1 bg-tea-500 hover:bg-tea-600 cursor-pointer"
+          >
             <Search className="h-4 w-4" />
           </Button>
         </div>
@@ -191,10 +202,13 @@ const InquiryContainer = () => {
           </Card>
         ) : (
           // 문의 리스트
-          <div className="flex-1 min-h-0 overflow-y-auto relative bg-white">
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 min-h-0 overflow-y-auto relative bg-white"
+          >
             <ul className="divide-y divide-brand-100 px-4">
               {inquiryList.map(({ inquiryId, title, createdAt, isAnswered }, index) => (
-                <li key={index} className="group">
+                <li key={`${inquiryId}-${index}`} className="group">
                   <button
                     onClick={() => moveToInquiryDetailPage(inquiryId)}
                     className="w-full py-4 flex items-center justify-between cursor-pointer transition-colors hover:bg-brand-50/80 -mx-2 px-4"
@@ -204,7 +218,9 @@ const InquiryContainer = () => {
                         {title}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-[12px] text-warm-400">{createdAt}</span>
+                        <span className="text-[12px] text-warm-400">
+                          {formatDate(createdAt, 'yyyy-MM-dd HH:mm')}
+                        </span>
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                             isAnswered === YesOrNoEnum.YES

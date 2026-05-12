@@ -163,7 +163,7 @@ const renewLoginInfo = (refreshResponse: LoginResponse) => {
   loginActions.setLogin({ isLoggedIn: true, provider });
 };
 
-const formatDate = (date: Date | undefined | string, dateFormat: string = 'yyyy-MM-dd') => {
+const formatDate = (date: Date | null | string, dateFormat: string = 'yyyy-MM-dd') => {
   if (!date) return null;
 
   return format(date, dateFormat, { locale: ko });

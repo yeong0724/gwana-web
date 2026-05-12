@@ -29,14 +29,7 @@ import { localeFormat } from '@/lib/utils';
 import { useCartService, useMypageService, useProductService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stores';
 import { cartActions } from '@/stores/useCartStore';
-import {
-  Cart,
-  ProductDetailResponse,
-  ProductOption,
-  Purchase,
-  ReviewListSearchRequest,
-  SortByEnum,
-} from '@/types';
+import { Cart, ProductDetailResponse, ProductOption, Purchase, SortByEnum } from '@/types';
 
 type Props = {
   productId: string;
@@ -82,17 +75,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
   // 상품 선택 옵션
   const [purchaseList, setPurchaseList] = useState<Purchase[]>([]);
 
-  // 리뷰 검색 옵션
-  const [reviewSearchPayload, setReviewSearchPayload] = useState<
-    Omit<ReviewListSearchRequest, 'page'>
-  >({
-    productId,
-    sortBy: SortByEnum.LATEST,
-    photoOnly: false,
-    size: 5,
-  });
-
-  const { useProductDetailQuery } = useProductService();
+  const { useProductDetailQuery, useGetProductInquiryListInfiniteQuery } = useProductService();
   const { useGetReviewListInfiniteQuery } = useMypageService();
 
   /**
@@ -103,11 +86,39 @@ const ProductDetailContainer = ({ productId }: Props) => {
     { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );
 
+  const { data: productInquiryListData } = useGetProductInquiryListInfiniteQuery(
+    { productId, isAnswered: '', excludeSecret: 'N', size: 5 },
+    {
+      enabled: pathname === `/product/${productId}`,
+      staleTime: 60 * 1000,
+    }
+  );
+
+  const { productInquiryList, totalInquiryCount } = useMemo(() => {
+    if (productInquiryListData) {
+      const { pages } = productInquiryListData;
+      return {
+        productInquiryList: pages.flatMap(({ data }) => data.data),
+        totalInquiryCount: pages[0].data.totalCount,
+      };
+    }
+
+    return {
+      productInquiryList: [],
+      totalInquiryCount: 0,
+    };
+  }, [productInquiryListData]);
+
   /**
    * 상품 리뷰 목록 조회 (무한 스크롤)
    */
   const { data: reviewListData } = useGetReviewListInfiniteQuery(
-    reviewSearchPayload,
+    {
+      productId,
+      sortBy: SortByEnum.LATEST,
+      photoOnly: false,
+      size: 5,
+    },
     'productDetail',
     {
       enabled: pathname === `/product/${productId}`,
@@ -396,8 +407,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
           reviewList,
           totalReviewCount,
           averageRating,
-          reviewSearchPayload,
           role,
+          productInquiryList,
+          totalInquiryCount,
         }}
         controller={{
           handleShare,
@@ -409,7 +421,6 @@ const ProductDetailContainer = ({ productId }: Props) => {
           onPurchaseMobileHandler,
           handleAddToCart,
           handlePurchase,
-          setReviewSearchPayload,
           handleReviewOpen,
           moveToInquiryWritePage,
         }}

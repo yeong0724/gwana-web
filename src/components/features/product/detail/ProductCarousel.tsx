@@ -70,7 +70,7 @@ const ProductCarousel = ({ product }: Props) => {
             {/* 페이지 인디케이터 — 이미지 2장 이상일 때만 노출 */}
             {product.images.length > 1 && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
-                <div className="flex items-center gap-1 px-3 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-white text-[12px] font-medium tabular-nums pointer-events-auto leading-none">
+                <div className="flex items-center px-2 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-white text-[12px] font-medium tabular-nums pointer-events-auto leading-none">
                   <button
                     type="button"
                     onClick={() => carouselApi?.scrollPrev()}
@@ -79,9 +79,11 @@ const ProductCarousel = ({ product }: Props) => {
                   >
                     <ChevronLeft size={14} strokeWidth={2} />
                   </button>
-                  <span className="min-w-[1ch] text-center">{current + 1}</span>
-                  <span className="text-white/55">|</span>
-                  <span>{product.images.length}</span>
+                  <div className="flex items-center gap-1 px-2.5">
+                    <span className="min-w-[1ch] text-center">{current + 1}</span>
+                    <span className="text-white/55">|</span>
+                    <span>{product.images.length}</span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => carouselApi?.scrollNext()}
