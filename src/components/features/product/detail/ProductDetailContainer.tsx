@@ -90,6 +90,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
     { productId, isAnswered: '', excludeSecret: 'N', size: 5 },
     {
       enabled: pathname === `/product/${productId}`,
+      gcTime: 60 * 60 * 100,
       staleTime: 60 * 1000,
     }
   );
@@ -122,6 +123,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
     'productDetail',
     {
       enabled: pathname === `/product/${productId}`,
+      gcTime: 60 * 60 * 100,
       staleTime: 60 * 1000,
     }
   );

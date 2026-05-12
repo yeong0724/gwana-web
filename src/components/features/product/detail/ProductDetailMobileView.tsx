@@ -15,14 +15,7 @@ import { useControllerContext, useStateContext } from '@/context/productDetailCo
 import useImageSlide from '@/hooks/useImageSlide';
 import { cn, formatDate, getCleanHtmlContent, localeFormat } from '@/lib/utils';
 import { useScrollTopStore } from '@/stores';
-import { Inquiry, Review, RoleEnum, YesOrNoEnum } from '@/types';
-
-const maskEmail = (email: string | null) => {
-  if (!email) return '';
-  const [name] = email.split('@');
-  if (name.length <= 4) return name;
-  return name.slice(0, 4) + '*'.repeat(Math.min(name.length - 4, 6));
-};
+import { Inquiry, Review, YesOrNoEnum } from '@/types';
 
 type TabType = 'detail' | 'review' | 'qna';
 
@@ -38,7 +31,6 @@ const ProductDetailMobileView = () => {
     reviewList,
     totalReviewCount,
     averageRating,
-    role,
     productInquiryList,
     totalInquiryCount,
   } = useStateContext();
@@ -528,32 +520,31 @@ const ProductDetailMobileView = () => {
                   </div>
 
                   {/* 메타 정보 + 토글 */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[12px] min-w-0">
-                      <span
-                        className={cn(
-                          'shrink-0 font-semibold',
-                          hasAnswer ? 'text-tea-700' : 'text-gold-600'
-                        )}
-                      >
-                        {hasAnswer ? '답변완료' : '답변대기'}
-                      </span>
-                      <span className="text-warm-200">|</span>
-                      <span className="text-warm-500 truncate">{maskEmail(inquiry.email)}</span>
-                      <span className="text-warm-200">|</span>
-                      <span className="text-warm-400 tabular-nums shrink-0">
-                        {formatDate(inquiry.createdAt, 'yyyy.MM.dd HH:mm')}
-                      </span>
-                    </div>
-
-                    {inquiry.canView && (
-                      <button
-                        type="button"
-                        onClick={() => toggleInquiryExpand(inquiry.inquiryId)}
-                        aria-label={isExpanded ? '문의 접기' : '문의 펼치기'}
-                        aria-expanded={isExpanded}
-                        className="ml-2 shrink-0 p-1 text-warm-500 active:text-warm-700 cursor-pointer"
-                      >
+                  {inquiry.canView ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleInquiryExpand(inquiry.inquiryId)}
+                      aria-label={isExpanded ? '문의 접기' : '문의 펼치기'}
+                      aria-expanded={isExpanded}
+                      className="w-full flex items-center justify-between cursor-pointer active:opacity-70"
+                    >
+                      <div className="flex items-center gap-2 text-[12px] min-w-0">
+                        <span
+                          className={cn(
+                            'shrink-0 font-semibold',
+                            hasAnswer ? 'text-tea-700' : 'text-gold-600'
+                          )}
+                        >
+                          {hasAnswer ? '답변완료' : '답변대기'}
+                        </span>
+                        <span className="text-warm-200">|</span>
+                        <span className="text-warm-500 truncate">{inquiry.email}</span>
+                        <span className="text-warm-200">|</span>
+                        <span className="text-warm-400 tabular-nums shrink-0">
+                          {formatDate(inquiry.createdAt, 'yyyy.MM.dd HH:mm')}
+                        </span>
+                      </div>
+                      <span className="ml-2 shrink-0 p-1 text-warm-500">
                         <ChevronDown
                           size={18}
                           className={cn(
@@ -561,15 +552,34 @@ const ProductDetailMobileView = () => {
                             isExpanded && 'rotate-180'
                           )}
                         />
-                      </button>
-                    )}
-                  </div>
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-[12px] min-w-0">
+                        <span
+                          className={cn(
+                            'shrink-0 font-semibold',
+                            hasAnswer ? 'text-tea-700' : 'text-gold-600'
+                          )}
+                        >
+                          {hasAnswer ? '답변완료' : '답변대기'}
+                        </span>
+                        <span className="text-warm-200">|</span>
+                        <span className="text-warm-500 truncate">{inquiry.email}</span>
+                        <span className="text-warm-200">|</span>
+                        <span className="text-warm-400 tabular-nums shrink-0">
+                          {formatDate(inquiry.createdAt, 'yyyy.MM.dd HH:mm')}
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* 펼침 영역: 질문 본문 + (있다면) 답변 본문 */}
                   {inquiry.canView && isExpanded && (
                     <div className="mt-4 space-y-3">
                       {/* 질문자 본문 */}
-                      <div className="flex gap-3 pl-1">
+                      <div className="flex gap-3 px-3 py-3 border border-brand-200/60 rounded-md">
                         <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-warm-100 text-warm-600 text-[12px] font-bold leading-none">
                           Q
                         </span>
@@ -618,7 +628,7 @@ const ProductDetailMobileView = () => {
         <div className="border-t border-brand-200/60" />
 
         {/* 질문 쓰기 버튼 */}
-        {role !== RoleEnum.ADMIN && (
+        {totalInquiryCount > 5 && (
           <div className="flex justify-center pt-6 pb-2">
             <button
               className={cn(
