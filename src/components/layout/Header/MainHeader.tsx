@@ -62,7 +62,7 @@ const MainHeader = ({ menuGroup }: HeaderProps) => {
    * 로그아웃
    */
   const handleLogout = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/oauth2/logout/kakao`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth2/logout/kakao`;
   };
 
   /**

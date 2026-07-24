@@ -63,9 +63,14 @@ const KakaoRedirectContainer = ({ code: kakaoCode }: Props) => {
         setRedirectUrl('/');
       }
     } else {
+      // 서버가 내려준 안내 메시지를 우선 노출한다.
+      // (예: 이미 가입된 이메일 → 기존 계정으로 로그인 유도, 카카오 이메일 미동의 등)
+      const description =
+        getAccessTokenByKakaoCodeError.message || '카카오 로그인을 실패하였습니다.';
+
       const confirm = await showConfirmAlert({
-        title: '에러',
-        description: '카카오 로그인을 실패하였습니다.',
+        title: '알림',
+        description,
         size: 'sm',
       });
 
