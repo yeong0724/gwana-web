@@ -82,18 +82,15 @@ const CartContainer = () => {
   }
 
   const onDeleteCart = async (
-    cartId: string,
-    cartItemId: string,
+    cartId: number,
+    cartItemId: number,
     index: number,
     cartItemIndex: number
   ) => {
     const newCart = removeCartItem<CartState>(cart, index, cartItemIndex);
 
-    /**
-     * shouldRemoveCart: 해당 상품이 필수 옵션만 남아있는지 여부 (true: 선택옵션만 남은 경우)
-     * - 선택 옵션만 남는 경우는 해당 장바구니 상품은 삭제
-     */
-    const shouldRemoveCart = isEmpty(filter(newCart[index].cartItems, { isRequired: true }));
+    // 항목이 모두 제거되면 해당 장바구니 상품 자체를 삭제
+    const shouldRemoveCart = isEmpty(newCart[index].cartItems);
 
     if (shouldRemoveCart) {
       const confirmed = await showConfirmAlert({
@@ -155,7 +152,7 @@ const CartContainer = () => {
   };
 
   const onUpdateCartQuantity = async (
-    cartItemId: string,
+    cartItemId: number,
     index: number,
     cartItemIndex: number,
     quantity: number,
@@ -206,7 +203,7 @@ const CartContainer = () => {
 
   function getSumProductPrice(item: Cart) {
     const { cartItems } = item;
-    return sumBy(cartItems, ({ optionPrice, quantity }) => optionPrice * quantity);
+    return sumBy(cartItems, ({ price, quantity }) => price * quantity);
   }
 
   const getShippingPrice = (item: Cart) => {

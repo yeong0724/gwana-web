@@ -42,7 +42,7 @@ const deleteCartItem = async (params: DeleteCartItemRequest) => {
   });
 };
 
-const deleteCartList = async (params: string[]) => {
+const deleteCartList = async (params: number[]) => {
   return postAxios<ApiResponse<void>>({
     url: '/cart/list/delete',
     params,

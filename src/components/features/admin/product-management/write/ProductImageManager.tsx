@@ -11,13 +11,15 @@ type Props = {
   title: string;
   description?: string;
   images: string[];
-  onReorder: (images: string[], name: 'images' | 'infos') => void;
-  onRemove: (imageUrl: string, name: 'images' | 'infos') => void;
-  onUpload: (file: File, folderPath: string, name: 'images' | 'infos') => void;
+  onReorder: (images: string[], name: 'gallery' | 'detail') => void;
+  onRemove: (imageUrl: string, name: 'gallery' | 'detail') => void;
+  onUpload: (file: File, folderPath: string, name: 'gallery' | 'detail') => void;
+  // 업로드 클릭 시 실행. false 를 반환하면(=검증 실패) 파일 선택창을 열지 않는다.
+  guardUpload?: () => boolean;
   isUploading?: boolean;
   disabled?: boolean;
   folderPath: string;
-  name: 'images' | 'infos';
+  name: 'gallery' | 'detail';
 };
 
 const ProductImageManager = ({
@@ -27,6 +29,7 @@ const ProductImageManager = ({
   onReorder,
   onRemove,
   onUpload,
+  guardUpload,
   isUploading,
   disabled,
   folderPath,
@@ -48,6 +51,7 @@ const ProductImageManager = ({
   };
 
   const handleUploadClick = () => {
+    if (guardUpload && !guardUpload()) return;
     inputRef.current?.click();
   };
 
@@ -129,8 +133,8 @@ const ProductImageManager = ({
 type ImageRowProps = {
   imageUrl: string;
   index: number;
-  name: 'images' | 'infos';
-  onRemove: (imageUrl: string, name: 'images' | 'infos') => void;
+  name: 'gallery' | 'detail';
+  onRemove: (imageUrl: string, name: 'gallery' | 'detail') => void;
   onDragStart: () => void;
   onDragEnd: () => void;
 };

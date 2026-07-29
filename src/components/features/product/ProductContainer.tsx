@@ -43,7 +43,7 @@ const ProductContainer = ({ categoryId }: Props) => {
 
   const { data: productListData, error: productListError } = useProductListQuery(
     {
-      categoryId: categoryId === 'all' ? '' : categoryId,
+      categorySlug: categoryId === 'all' ? null : categoryId,
     },
     { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );
@@ -62,7 +62,7 @@ const ProductContainer = ({ categoryId }: Props) => {
     router.push(`/product?category=${menuId}`);
   };
 
-  const onClickProduct = (productId: string) => {
+  const onClickProduct = (productId: number) => {
     forward(`/product/${productId}`);
   };
 

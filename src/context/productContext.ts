@@ -12,7 +12,7 @@ type ProductStateContextType = {
 
 type ProductControllerContextType = {
   onClickCategory: (menuId: string) => void;
-  onClickProduct: (productId: string) => void;
+  onClickProduct: (productId: number) => void;
 };
 
 export const { Provider, useStateContext, useControllerContext } = createGenericContext<

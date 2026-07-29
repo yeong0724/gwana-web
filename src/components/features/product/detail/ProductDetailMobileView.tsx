@@ -11,6 +11,7 @@ import { ImageSlideModal } from '@/components/common/modal';
 import ProductCarousel from '@/components/features/product/detail/ProductCarousel';
 import { Button } from '@/components/ui/button';
 import { AWS_S3_DOMAIN } from '@/constants';
+import { customerStatusBadge } from '@/constants/options';
 import { useControllerContext, useStateContext } from '@/context/productDetailContext';
 import useImageSlide from '@/hooks/useImageSlide';
 import { cn, formatDate, getCleanHtmlContent, localeFormat } from '@/lib/utils';
@@ -22,6 +23,7 @@ type TabType = 'detail' | 'review' | 'qna';
 const ProductDetailMobileView = () => {
   const {
     product,
+    isPurchasable,
     optionalOptions,
     requiredOptions,
     isMounted,
@@ -34,6 +36,7 @@ const ProductDetailMobileView = () => {
     productInquiryList,
     totalInquiryCount,
   } = useStateContext();
+  const statusBadge = customerStatusBadge[product.status];
 
   const {
     handleShare,
@@ -216,14 +219,21 @@ const ProductDetailMobileView = () => {
             </div>
 
             {/* 상품명 */}
-            <h1 className="text-[18px] font-semibold leading-[1.4] text-black mb-3 break-keep tracking-[-0.01em]">
-              {product.productName}
-            </h1>
+            <div className="flex items-center gap-2 mb-3">
+              {statusBadge && (
+                <span className="shrink-0 rounded-sm bg-warm-800 px-2 py-0.5 text-[12px] font-semibold text-white">
+                  {statusBadge}
+                </span>
+              )}
+              <h1 className="text-[18px] font-semibold leading-[1.4] text-black break-keep tracking-[-0.01em]">
+                {product.name}
+              </h1>
+            </div>
 
             {/* 가격 */}
             <div className="flex items-baseline gap-1.5 mb-4">
               <span className="text-[24px] font-bold text-black tabular-nums tracking-tight">
-                {localeFormat(product.price)}
+                {localeFormat(product.displayPrice)}
               </span>
               <span className="text-[18px] font-semibold text-black">원</span>
             </div>
@@ -321,7 +331,7 @@ const ProductDetailMobileView = () => {
               isDetailExpanded ? 'max-h-none' : 'max-h-[600px]'
             }`}
           >
-            {product.infos.map((image, index) => (
+            {product.detailImages.map((image, index) => (
               <div key={index} className="relative w-full">
                 <Image
                   src={`${AWS_S3_DOMAIN}${image}`}
@@ -728,20 +738,17 @@ const ProductDetailMobileView = () => {
                       <div className="space-y-3">
                         {map(
                           purchaseList,
-                          (
-                            { productOptionId, optionName, quantity, optionPrice, isRequired },
-                            index
-                          ) => (
+                          ({ productVariantId, optionLabel, quantity, price }, index) => (
                             <div
-                              key={`${productOptionId}-${index}`}
+                              key={`${productVariantId}-${index}`}
                               className="border border-brand-200/60 rounded-md p-4 space-y-3"
                             >
                               <div className="flex items-start justify-between">
                                 <>
                                   <span className="text-sm font-medium text-brand-800">
-                                    {optionName}
+                                    {optionLabel}
                                   </span>
-                                  {(size(requiredOptions) > 1 || !isRequired) && (
+                                  {size(requiredOptions) > 1 && (
                                     <button
                                       type="button"
                                       onClick={() => {
@@ -780,7 +787,7 @@ const ProductDetailMobileView = () => {
                                   </Button>
                                 </div>
                                 <span className="text-base font-semibold">
-                                  {localeFormat(optionPrice * quantity)}원
+                                  {localeFormat(price * quantity)}원
                                 </span>
                               </div>
                             </div>
@@ -798,18 +805,29 @@ const ProductDetailMobileView = () => {
                 </div>
                 {/* 버튼 — 화이트/블랙 B&W 톤 */}
                 <div className="flex gap-2 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]">
-                  <Button
-                    onClick={onCartMobileHandler}
-                    className="flex-1 h-12 text-[15px] font-semibold bg-white text-black border border-black hover:bg-neutral-50 active:bg-neutral-100 shadow-none rounded-lg cursor-pointer"
-                  >
-                    장바구니
-                  </Button>
-                  <Button
-                    onClick={onPurchaseMobileHandler}
-                    className="flex-1 h-12 text-[15px] font-semibold bg-black text-white border border-black hover:bg-neutral-900 active:bg-neutral-800 shadow-none rounded-lg cursor-pointer"
-                  >
-                    구매하기
-                  </Button>
+                  {isPurchasable ? (
+                    <>
+                      <Button
+                        onClick={onCartMobileHandler}
+                        className="flex-1 h-12 text-[15px] font-semibold bg-white text-black border border-black hover:bg-neutral-50 active:bg-neutral-100 shadow-none rounded-lg cursor-pointer"
+                      >
+                        장바구니
+                      </Button>
+                      <Button
+                        onClick={onPurchaseMobileHandler}
+                        className="flex-1 h-12 text-[15px] font-semibold bg-black text-white border border-black hover:bg-neutral-900 active:bg-neutral-800 shadow-none rounded-lg cursor-pointer"
+                      >
+                        구매하기
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      disabled
+                      className="flex-1 h-12 text-[15px] font-semibold bg-warm-300 text-white shadow-none rounded-lg disabled:opacity-100"
+                    >
+                      {statusBadge ?? '구매 불가'}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

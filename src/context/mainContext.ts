@@ -24,7 +24,7 @@ type MainControllerContextType = {
   setHeroAutoplay: Dispatch<SetStateAction<boolean>>;
   setIsSoundOn: Dispatch<SetStateAction<boolean>>;
   setIsHeroDragging: Dispatch<SetStateAction<boolean>>;
-  onClickProduct: (productId: string) => void;
+  onClickProduct: (productId: number) => void;
   onMoveToProductPage: () => void;
   onClickCategory: (categoryId: string) => void;
   onClickViewAll: () => void;

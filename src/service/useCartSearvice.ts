@@ -53,7 +53,7 @@ const useCartService = () => {
    */
   const useDeleteCartListMutation = (options?: UseMutationCustomOptions) =>
     useMutation({
-      mutationFn: (param: string[]) => deleteCartList(param),
+      mutationFn: (param: number[]) => deleteCartList(param),
       ...options,
     });
 

@@ -43,8 +43,8 @@ const KakaoRedirectContainer = ({ code: kakaoCode }: Props) => {
             (acc, { productId, cartItems }) => {
               return acc.concat({
                 productId,
-                cartItems: map(cartItems, ({ productOptionId, quantity }) => ({
-                  productOptionId,
+                cartItems: map(cartItems, ({ productVariantId, quantity }) => ({
+                  productVariantId,
                   quantity,
                 })),
               });

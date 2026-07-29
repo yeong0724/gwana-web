@@ -43,7 +43,7 @@ const ReviewContainer = ({ productId }: Props) => {
     content: '',
     rating: 0,
     reviewImages: [],
-    productId, // review 대상 상품 ID
+    productId: Number(productId), // review 대상 상품 ID
   });
 
   // 텍스트 변경 핸들러

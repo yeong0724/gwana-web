@@ -66,3 +66,10 @@ export enum OrderStatus {
   CANCELLED = 'CANCELLED',
   REFUNDED = 'REFUNDED',
 }
+
+export enum ProductStatus {
+  ON_SALE = 'ON_SALE', // 판매중
+  SOLD_OUT = 'SOLD_OUT', // 품절
+  HIDDEN = 'HIDDEN', // 숨김
+  DISCONTINUED = 'DISCONTINUED', // 단종
+}

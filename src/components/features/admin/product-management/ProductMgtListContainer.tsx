@@ -1,11 +1,18 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { ChevronRight, Package, Plus, Search } from 'lucide-react';
+import { ChevronRight, Package, Plus, Search, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -14,20 +21,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { productStatusOptions } from '@/constants/options';
+import { asyncFn } from '@/lib/utils';
 import { useProductService } from '@/service';
+
+import AddonManageDialog from './AddonManageDialog';
 
 const formatKRW = (value: number) => `${value.toLocaleString('ko-KR')}원`;
 
 const ProductMgtListContainer = () => {
   const router = useRouter();
-  const { useProductListQuery } = useProductService();
+  const [addonDialogOpen, setAddonDialogOpen] = useState(false);
+  const { useAdminProductListQuery, useUpdateProductStatusMutation } = useProductService();
   const {
     data: productListData,
     error: productListError,
     isLoading,
-  } = useProductListQuery({
-    categoryId: '',
+    refetch,
+  } = useAdminProductListQuery({
+    categorySlug: null,
   });
+  const { mutateAsync: updateStatusAsync } = useUpdateProductStatusMutation();
 
   const productList = useMemo(() => productListData?.data ?? [], [productListData]);
 
@@ -37,7 +51,17 @@ const ProductMgtListContainer = () => {
     }
   }, [productListError]);
 
-  const onClickRow = (productId: string) => {
+  const handleStatusChange = async (productId: number, status: string) => {
+    const [error] = await asyncFn(
+      updateStatusAsync({ productId, status }),
+      '상품 상태 변경에 실패하였습니다.'
+    );
+    if (error) return;
+    toast.success('상품 상태를 변경했습니다.');
+    refetch();
+  };
+
+  const onClickRow = (productId: number) => {
     router.push(`/admin/product-management/write?productId=${productId}`);
   };
 
@@ -66,6 +90,14 @@ const ProductMgtListContainer = () => {
             </div>
             <button
               type="button"
+              onClick={() => setAddonDialogOpen(true)}
+              className="flex h-11 items-center gap-1.5 rounded-lg border border-warm-300 bg-white px-4 text-sm font-semibold tracking-tight text-warm-800 transition-all hover:bg-warm-50 active:translate-y-[1px]"
+            >
+              <Tag className="size-4" strokeWidth={2} />
+              <span>애드온 관리</span>
+            </button>
+            <button
+              type="button"
               onClick={onClickCreate}
               className="flex h-11 items-center gap-1.5 rounded-lg bg-warm-900 px-4 text-sm font-semibold tracking-tight text-white transition-all hover:bg-warm-800 active:translate-y-[1px]"
             >
@@ -79,20 +111,23 @@ const ProductMgtListContainer = () => {
           <Table className="text-sm">
             <TableHeader>
               <TableRow className="border-warm-200 bg-warm-100/60 hover:bg-warm-100/60">
-                <TableHead className="w-20 px-6 py-4 font-mono text-xs tracking-wider text-warm-500 uppercase">
+                <TableHead className="w-20 px-6 py-4 text-center font-mono text-xs tracking-wider text-warm-500 uppercase">
                   No
                 </TableHead>
-                <TableHead className="px-6 py-4 text-xs font-medium tracking-wider text-warm-500 uppercase">
+                <TableHead className="px-6 py-4 text-center text-xs font-medium tracking-wider text-warm-500 uppercase">
                   상품명
                 </TableHead>
-                <TableHead className="w-40 px-6 py-4 text-xs font-medium tracking-wider text-warm-500 uppercase">
+                <TableHead className="w-40 px-6 py-4 text-center text-xs font-medium tracking-wider text-warm-500 uppercase">
                   카테고리
                 </TableHead>
-                <TableHead className="w-40 px-6 py-4 text-right text-xs font-medium tracking-wider text-warm-500 uppercase">
+                <TableHead className="w-40 px-6 py-4 text-center text-xs font-medium tracking-wider text-warm-500 uppercase">
                   가격
                 </TableHead>
-                <TableHead className="w-40 px-6 py-4 text-right text-xs font-medium tracking-wider text-warm-500 uppercase">
+                <TableHead className="w-40 px-6 py-4 text-center text-xs font-medium tracking-wider text-warm-500 uppercase">
                   배송비
+                </TableHead>
+                <TableHead className="w-36 px-6 py-4 text-center text-xs font-medium tracking-wider text-warm-500 uppercase">
+                  상태
                 </TableHead>
                 <TableHead className="w-12 px-6 py-4" />
               </TableRow>
@@ -105,19 +140,22 @@ const ProductMgtListContainer = () => {
                     className="border-warm-200 hover:bg-transparent"
                   >
                     <TableCell className="px-6 py-5">
-                      <div className="h-4 w-6 animate-pulse rounded bg-warm-200" />
+                      <div className="mx-auto h-4 w-6 animate-pulse rounded bg-warm-200" />
                     </TableCell>
                     <TableCell className="px-6 py-5">
-                      <div className="h-4 w-48 animate-pulse rounded bg-warm-200" />
+                      <div className="mx-auto h-4 w-48 animate-pulse rounded bg-warm-200" />
                     </TableCell>
                     <TableCell className="px-6 py-5">
-                      <div className="h-4 w-16 animate-pulse rounded bg-warm-200" />
+                      <div className="mx-auto h-4 w-16 animate-pulse rounded bg-warm-200" />
                     </TableCell>
                     <TableCell className="px-6 py-5">
-                      <div className="ml-auto h-4 w-20 animate-pulse rounded bg-warm-200" />
+                      <div className="mx-auto h-4 w-20 animate-pulse rounded bg-warm-200" />
                     </TableCell>
                     <TableCell className="px-6 py-5">
-                      <div className="ml-auto h-4 w-16 animate-pulse rounded bg-warm-200" />
+                      <div className="mx-auto h-4 w-16 animate-pulse rounded bg-warm-200" />
+                    </TableCell>
+                    <TableCell className="px-6 py-5">
+                      <div className="mx-auto h-9 w-28 animate-pulse rounded bg-warm-200" />
                     </TableCell>
                     <TableCell className="px-6 py-5" />
                   </TableRow>
@@ -125,7 +163,7 @@ const ProductMgtListContainer = () => {
 
               {!isLoading && productList.length === 0 && (
                 <TableRow className="border-transparent hover:bg-transparent">
-                  <TableCell colSpan={6} className="px-6 py-20">
+                  <TableCell colSpan={7} className="px-6 py-20">
                     <div className="flex flex-col items-center gap-4 text-center">
                       <div className="flex size-14 items-center justify-center rounded-full border border-warm-200 bg-warm-100">
                         <Package className="size-6 text-warm-500" strokeWidth={1.5} />
@@ -153,23 +191,23 @@ const ProductMgtListContainer = () => {
                       onClick={() => onClickRow(product.productId)}
                       className="group cursor-pointer border-warm-200 transition-colors hover:bg-warm-50 active:bg-warm-100"
                     >
-                      <TableCell className="px-6 py-5 font-mono text-xs tabular-nums text-warm-500">
+                      <TableCell className="px-6 py-5 text-center font-mono text-xs tabular-nums text-warm-500">
                         {(index + 1).toString().padStart(2, '0')}
                       </TableCell>
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-6 py-5 text-center">
                         <span className="font-medium text-warm-900 group-hover:text-brand-900">
-                          {product.productName}
+                          {product.name}
                         </span>
                       </TableCell>
-                      <TableCell className="px-6 py-5">
+                      <TableCell className="px-6 py-5 text-center">
                         <span className="inline-flex items-center rounded-full border border-warm-200 bg-warm-50 px-2.5 py-0.5 text-xs font-medium text-warm-700">
                           {product.categoryName}
                         </span>
                       </TableCell>
-                      <TableCell className="px-6 py-5 text-right font-mono tabular-nums text-warm-900">
-                        {formatKRW(product.price)}
+                      <TableCell className="px-6 py-5 text-center font-mono tabular-nums text-warm-900">
+                        {formatKRW(product.displayPrice)}
                       </TableCell>
-                      <TableCell className="px-6 py-5 text-right">
+                      <TableCell className="px-6 py-5 text-center">
                         {isFreeShipping ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-warm-900/10 bg-warm-900 px-2.5 py-1 text-xs font-medium tracking-tight text-white">
                             무료배송
@@ -180,9 +218,26 @@ const ProductMgtListContainer = () => {
                           </span>
                         )}
                       </TableCell>
-                      <TableCell className="px-6 py-5 text-right">
+                      <TableCell className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
+                        <Select
+                          value={product.status}
+                          onValueChange={(value) => handleStatusChange(product.productId, value)}
+                        >
+                          <SelectTrigger className="mx-auto h-9 w-28 border-warm-200 text-sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {productStatusOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="px-6 py-5 text-center">
                         <ChevronRight
-                          className="ml-auto size-4 text-warm-400 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-warm-800"
+                          className="mx-auto size-4 text-warm-400 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-warm-800"
                           strokeWidth={1.5}
                         />
                       </TableCell>
@@ -200,6 +255,8 @@ const ProductMgtListContainer = () => {
           </div>
         )}
       </div>
+
+      <AddonManageDialog open={addonDialogOpen} onOpenChange={setAddonDialogOpen} />
     </div>
   );
 };

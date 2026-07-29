@@ -36,7 +36,7 @@ const ProductReviewSheet = ({ reviewOpen, setReviewOpen, productId }: Props) => 
   } = useImageSlide();
 
   const initialReviewSearchPayload: ReviewSearchPayload = {
-    productId,
+    productId: Number(productId),
     sortBy: SortByEnum.LATEST,
     photoOnly: false,
     size: 5,

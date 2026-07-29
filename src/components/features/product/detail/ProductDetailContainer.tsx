@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   clone,
-  filter,
   find,
   findIndex,
   forEach,
@@ -29,13 +28,30 @@ import { localeFormat } from '@/lib/utils';
 import { useCartService, useMypageService, useProductService } from '@/service';
 import { useAlertStore, useCartStore, useLoginStore, useUserStore } from '@/stores';
 import { cartActions } from '@/stores/useCartStore';
-import { Cart, ProductDetailResponse, ProductOption, Purchase, SortByEnum } from '@/types';
+import {
+  Cart,
+  ProductDetailResponse,
+  ProductVariant,
+  Purchase,
+  ResultCode,
+  SortByEnum,
+} from '@/types';
 
 type Props = {
   productId: string;
 };
 
+const variantToPurchase = (v: ProductVariant): Purchase => ({
+  productVariantId: v.productVariantId,
+  productId: v.productId,
+  optionLabel: v.optionLabel,
+  price: v.price,
+  status: v.status,
+  quantity: 1,
+});
+
 const ProductDetailContainer = ({ productId }: Props) => {
+  const productIdNum = Number(productId);
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const router = useRouter();
@@ -61,15 +77,21 @@ const ProductDetailContainer = ({ productId }: Props) => {
   // Portal을 위한 클라이언트 마운트 상태
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [product, setProduct] = useState<ProductDetailResponse>({
-    productId: '',
-    productName: '',
-    categoryId: '',
+    productId: 0,
+    name: '',
+    categoryId: 0,
     categoryName: '',
-    images: [],
-    infos: [],
-    price: 0,
+    summary: null,
+    detailContent: null,
+    status: '',
     shippingPrice: 0,
-    options: [],
+    displayPrice: 0,
+    galleryImages: [],
+    detailImages: [],
+    variants: [],
+    addons: [],
+    avgRating: 0,
+    reviewCount: 0,
   });
 
   // 상품 선택 옵션
@@ -82,12 +104,12 @@ const ProductDetailContainer = ({ productId }: Props) => {
    * 상품 상세 정보 조회
    */
   const { data: productDetailData, error: productDetailError } = useProductDetailQuery(
-    { productId },
+    { productId: productIdNum },
     { enabled: true, gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );
 
   const { data: productInquiryListData } = useGetProductInquiryListInfiniteQuery(
-    { productId, isAnswered: '', excludeSecret: 'N', size: 5 },
+    { productId: productIdNum, isAnswered: '', excludeSecret: 'N', size: 5 },
     {
       enabled: pathname === `/product/${productId}`,
       gcTime: 60 * 60 * 100,
@@ -115,7 +137,7 @@ const ProductDetailContainer = ({ productId }: Props) => {
    */
   const { data: reviewListData } = useGetReviewListInfiniteQuery(
     {
-      productId,
+      productId: productIdNum,
       sortBy: SortByEnum.LATEST,
       photoOnly: false,
       size: 5,
@@ -155,14 +177,24 @@ const ProductDetailContainer = ({ productId }: Props) => {
 
   useEffect(() => {
     if (productDetailData) {
+      // 임시저장/숨김/미존재 → 백엔드가 "존재하지 않는 상품" 코드로 응답
+      if (productDetailData.code !== ResultCode.SUCCESS) {
+        showAlert({
+          title: '안내',
+          description: '존재하지 않는 상품입니다.',
+          onConfirm: () => router.back(),
+        });
+        return;
+      }
+
       const { data } = productDetailData;
 
-      const { options } = data;
+      const { variants } = data;
 
-      const requiredOptions = filter(options, { isRequired: true });
-      if (size(requiredOptions) === 1) {
-        const requiredOption = { ...head(requiredOptions), quantity: 1 } as Purchase;
-        setPurchaseList((prev) => [...prev, requiredOption]);
+      // variant 가 하나뿐이면 자동 선택
+      if (size(variants) === 1) {
+        const only = head(variants) as ProductVariant;
+        setPurchaseList((prev) => [...prev, variantToPurchase(only)]);
       }
 
       setProduct(data);
@@ -171,13 +203,13 @@ const ProductDetailContainer = ({ productId }: Props) => {
     }
   }, [productDetailData, productDetailError]);
 
+  // 구매 가능 여부: 판매중(ON_SALE)만 구매/장바구니 허용. 품절/단종은 노출은 하되 비활성.
+  const isPurchasable = product.status === 'ON_SALE';
+
   const totalPrice = useMemo(() => {
-    const totalProductPrice = sumBy(
-      purchaseList,
-      ({ optionPrice, quantity }) => optionPrice * quantity
-    );
-    const totalShippingPrice =
-      totalProductPrice >= 50000 || isEmpty(purchaseList) ? 0 : product.shippingPrice;
+    const totalProductPrice = sumBy(purchaseList, ({ price, quantity }) => price * quantity);
+    // 배송비: 상품 단위 shipping_price(0=무료). 선택 항목이 없으면 0.
+    const totalShippingPrice = isEmpty(purchaseList) ? 0 : product.shippingPrice;
 
     return totalProductPrice + totalShippingPrice;
   }, [purchaseList, product.shippingPrice]);
@@ -187,13 +219,12 @@ const ProductDetailContainer = ({ productId }: Props) => {
   };
 
   const handlePurchase = () => {
-    // if (isLogin) {
-    //   router.push('/payment');
-    // } else {
-    //   setPurchaseGuideModalOpen(true);
-    // }
-    if (isEmpty(filter(purchaseList, { isRequired: true }))) {
-      showAlert({ title: '안내', description: '필수 옵션을 선택해주세요.', size: 'sm' });
+    if (!isPurchasable) {
+      showAlert({ title: '안내', description: '현재 구매할 수 없는 상품입니다.', size: 'sm' });
+      return;
+    }
+    if (isEmpty(purchaseList)) {
+      showAlert({ title: '안내', description: '옵션을 선택해주세요.', size: 'sm' });
       return;
     }
 
@@ -232,9 +263,9 @@ const ProductDetailContainer = ({ productId }: Props) => {
     Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: product.productName,
+        title: product.name,
         description: `출처: 관아수제차 > 티 제품 > ${product.categoryName}`,
-        imageUrl: `${process.env.NEXT_PUBLIC_APP_BASE_URL}${product.images[0]}`,
+        imageUrl: `${process.env.NEXT_PUBLIC_APP_BASE_URL}${product.galleryImages[0] ?? ''}`,
         link: {
           mobileWebUrl: location.href,
           webUrl: location.href,
@@ -256,17 +287,21 @@ const ProductDetailContainer = ({ productId }: Props) => {
    * 장바구니 상품 추가
    */
   const handleAddToCart = () => {
-    if (isEmpty(filter(purchaseList, { isRequired: true }))) {
-      showAlert({ title: '안내', description: '필수 옵션을 선택해주세요.', size: 'sm' });
+    if (!isPurchasable) {
+      showAlert({ title: '안내', description: '현재 구매할 수 없는 상품입니다.', size: 'sm' });
+      return;
+    }
+    if (isEmpty(purchaseList)) {
+      showAlert({ title: '안내', description: '옵션을 선택해주세요.', size: 'sm' });
       return;
     }
 
     // 로그인 상태인 경우
     if (isLoggedIn) {
       const payload = {
-        productId,
-        cartItems: map(purchaseList, ({ productOptionId, quantity }) => ({
-          productOptionId,
+        productId: productIdNum,
+        cartItems: map(purchaseList, ({ productVariantId, quantity }) => ({
+          productVariantId,
           quantity,
         })),
       };
@@ -285,24 +320,18 @@ const ProductDetailContainer = ({ productId }: Props) => {
     // 비로그인 상태인 경우
     else {
       const cart = cartActions.cart();
-      const index = findIndex(cart, { productId });
+      const index = findIndex(cart, { productId: productIdNum });
 
       if (index < 0) {
         const insertCart: Cart = {
-          ...pick(product, [
-            'productName',
-            'categoryId',
-            'categoryName',
-            'images',
-            'price',
-            'shippingPrice',
-          ]),
-          cartId: '',
-          productId,
+          ...pick(product, ['name', 'categoryId', 'categoryName', 'shippingPrice']),
+          thumbnailUrl: product.galleryImages[0] ?? null,
+          cartId: 0,
+          productId: productIdNum,
           cartItems: orderBy(
-            map(purchaseList, (item) => ({ ...item, cartItemId: '' })),
-            ['isRequired'],
-            ['desc']
+            map(purchaseList, (item) => ({ ...item, cartItemId: 0 })),
+            ['sortOrder'],
+            ['asc']
           ),
         };
 
@@ -310,10 +339,10 @@ const ProductDetailContainer = ({ productId }: Props) => {
       } else {
         const updatedCart = clone(cart);
         forEach(purchaseList, (item) => {
-          const { productOptionId, quantity } = item;
-          const cartItemIndex = findIndex(updatedCart[index].cartItems, { productOptionId });
+          const { productVariantId, quantity } = item;
+          const cartItemIndex = findIndex(updatedCart[index].cartItems, { productVariantId });
           if (cartItemIndex < 0) {
-            updatedCart[index].cartItems.push({ ...item, cartItemId: '' });
+            updatedCart[index].cartItems.push({ ...item, cartItemId: 0 });
           } else {
             updatedCart[index].cartItems[cartItemIndex].quantity += quantity;
           }
@@ -361,12 +390,14 @@ const ProductDetailContainer = ({ productId }: Props) => {
   };
 
   const onOptionSelect = (value: string) => {
-    const option = find(product.options, { productOptionId: value }) as ProductOption;
+    const variant = find(product.variants, {
+      productVariantId: Number(value),
+    }) as ProductVariant | undefined;
+    if (!variant) return;
 
-    const { productOptionId } = option;
-    const index = findIndex(purchaseList, { productOptionId });
+    const index = findIndex(purchaseList, { productVariantId: variant.productVariantId });
     if (index < 0) {
-      setPurchaseList((prev) => [...prev, { ...option, quantity: 1 }]);
+      setPurchaseList((prev) => [...prev, variantToPurchase(variant)]);
     } else {
       showAlert({ title: '안내', description: '이미 선택한 옵션입니다.' });
     }
@@ -380,26 +411,23 @@ const ProductDetailContainer = ({ productId }: Props) => {
     router.push(`/mypage/inquiry/write?productId=${productId}`);
   };
 
-  const getOptionList = (isRequired: boolean) => {
-    const options = filter(product.options, { isRequired });
-    return map(options, ({ productOptionId, optionName, optionPrice }) => ({
-      value: productOptionId,
-      label: `${optionName} (+${localeFormat(optionPrice)}원)`,
-    }));
-  };
-
   const { optionalOptions, requiredOptions } = useMemo(() => {
     return {
-      optionalOptions: getOptionList(false),
-      requiredOptions: getOptionList(true),
+      // variant 를 셀렉트 목록으로 나열 (단일 축)
+      requiredOptions: map(product.variants, ({ productVariantId, optionLabel, price }) => ({
+        value: String(productVariantId),
+        label: `${optionLabel} (${localeFormat(price)}원)`,
+      })),
+      optionalOptions: [],
     };
-  }, [product.options]);
+  }, [product.variants]);
 
   return (
     <>
       <Provider
         state={{
           product,
+          isPurchasable,
           optionalOptions,
           requiredOptions,
           isMounted,

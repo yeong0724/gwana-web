@@ -39,14 +39,14 @@ const MainContainer = () => {
   const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], ['0%', '20%']);
 
   const { data: productListData } = useProductListQuery(
-    { categoryId: '' },
+    { categorySlug: null },
     { gcTime: 60 * 60 * 1000, staleTime: 60 * 60 * 1000 }
   );
 
   const productList = productListData?.data ?? [];
   const popularProducts = take(shuffle([...productList]), 4);
 
-  const onClickProduct = (productId: string) => {
+  const onClickProduct = (productId: number) => {
     forward(`/product/${productId}`);
   };
 

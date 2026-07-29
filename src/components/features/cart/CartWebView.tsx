@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { first, isEmpty, map, size, some } from 'lodash-es';
+import { map, size, some } from 'lodash-es';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -68,10 +68,10 @@ const CartWebView = () => {
                     </div>
 
                     <div className="relative flex-shrink-0 bg-brand-100 overflow-hidden">
-                      {item.images && !isEmpty(item.images) ? (
+                      {item.thumbnailUrl ? (
                         <Image
-                          src={`${AWS_S3_DOMAIN}${first(item.images)}`}
-                          alt={item.productName}
+                          src={`${AWS_S3_DOMAIN}${item.thumbnailUrl}`}
+                          alt={item.name}
                           width={120}
                           height={120}
                         />
@@ -83,7 +83,7 @@ const CartWebView = () => {
                     <div className="flex-1">
                       <p className="text-[15px] text-warm-400">{item.categoryName}</p>
                       <p className="text-[16px] font-semibold text-brand-800 mt-1">
-                        {item.productName}
+                        {item.name}
                       </p>
                     </div>
                   </div>
@@ -97,18 +97,12 @@ const CartWebView = () => {
                       >
                         {/* 옵션 라벨 + 이름 */}
                         <div className="flex items-baseline gap-1.5 flex-1 min-w-0">
-                          {cartItem.isRequired ? (
-                            <span className="text-[13px] text-tea-600 font-medium flex-shrink-0">
-                              메인 상품
-                            </span>
-                          ) : (
-                            <span className="text-[13px] text-tea-600 font-medium flex-shrink-0">
-                              선택 옵션
-                            </span>
-                          )}
+                          <span className="text-[13px] text-tea-600 font-medium flex-shrink-0">
+                            구성
+                          </span>
                           <span className="text-[13px] text-warm-300">|</span>
                           <span className="text-[14px] text-brand-700 truncate">
-                            {cartItem.optionName}
+                            {cartItem.optionLabel}
                           </span>
                         </div>
 
@@ -150,7 +144,7 @@ const CartWebView = () => {
 
                         {/* 가격 */}
                         <span className="text-[14px] font-medium text-brand-900 w-[100px] text-right tabular-nums">
-                          {localeFormat(cartItem.optionPrice)}원
+                          {localeFormat(cartItem.price)}원
                         </span>
 
                         {/* 삭제 */}

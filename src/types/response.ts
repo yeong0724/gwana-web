@@ -1,4 +1,4 @@
-import { Order, OrderOptionGroup, ProductOption, RoleEnum, SocialProviderEnum } from '@/types';
+import { Order, OrderOptionGroup, RoleEnum, SocialProviderEnum } from '@/types';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -36,30 +36,51 @@ export type MenuGroup = {
 };
 
 export type Product = {
-  productId: string;
-  productName: string;
-  categoryId: string;
+  productId: number;
+  name: string;
+  categoryId: number;
+  categorySlug: string;
   categoryName: string;
-  images: string[];
-  infos: string[];
-  price: number;
+  summary: string | null;
+  detailContent?: string | null;
+  status: string;
+  displayPrice: number;
   shippingPrice: number;
+  thumbnailUrl: string | null; // gallery[0]
   avgRating: number;
   reviewCount: number;
-  createdAt: string;
-  createdBy: string | null;
-  modifiedAt: string;
-  modifiedBy: string | null;
+};
+
+// 판매 단위(SKU)
+export type ProductVariant = {
+  productVariantId: number;
+  productId: number;
+  optionLabel: string;
+  price: number;
+  status: string;
+  sortOrder: number;
+  thumbnailUrl: string | null;
+  // 프론트 전용: 드래그 재정렬/리스트 key 안정화용 (서버 미전송)
+  clientId?: string;
+};
+
+// 추가상품(애드온)
+export type ProductAddon = {
+  productAddonId: number;
+  name: string;
+  price: number;
 };
 
 export type PaymentSession = {
-  productId: string;
+  productVariantId: number;
+  productId: number;
   productName: string;
   categoryName: string;
+  optionLabel: string;
   quantity: number;
   price: number;
   shippingPrice: number;
-  images: string[];
+  thumbnailUrl: string | null;
 };
 
 export type PaymentSessionResponse = {
@@ -96,15 +117,21 @@ export interface RequestPaymentApproveResponse {
 }
 
 export interface ProductDetailResponse {
-  productId: string;
-  productName: string;
-  categoryId: string;
+  productId: number;
+  name: string;
+  categoryId: number;
   categoryName: string;
-  images: string[];
-  infos: string[];
-  price: number;
+  summary: string | null;
+  detailContent: string | null;
+  status: string;
   shippingPrice: number;
-  options: ProductOption[];
+  displayPrice: number;
+  galleryImages: string[];
+  detailImages: string[];
+  variants: ProductVariant[];
+  addons: ProductAddon[];
+  avgRating: number;
+  reviewCount: number;
 }
 
 export interface UpdateMyinfoResponse {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { filter, first, isEmpty, map, size, some } from 'lodash-es';
+import { filter, map, size, some } from 'lodash-es';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -75,10 +75,10 @@ const CartModileView = () => {
                         <div className="flex gap-2">
                           {/* 상품 이미지 */}
                           <div className="relative w-14 h-14 flex-shrink-0 bg-brand-100 overflow-hidden">
-                            {item.images && !isEmpty(item.images) ? (
+                            {item.thumbnailUrl ? (
                               <Image
-                                src={`${AWS_S3_DOMAIN}${first(item.images)}`}
-                                alt={item.productName}
+                                src={`${AWS_S3_DOMAIN}${item.thumbnailUrl}`}
+                                alt={item.name}
                                 fill
                                 className="object-cover"
                               />
@@ -93,7 +93,7 @@ const CartModileView = () => {
                               {item.categoryName}
                             </p>
                             <p className="text-[11px] text-brand-700 mt-1 line-clamp-2">
-                              {item.productName}
+                              {item.name}
                             </p>
                           </div>
                         </div>
@@ -104,19 +104,11 @@ const CartModileView = () => {
                             className="flex flex-col gap-2 mt-1 py-2"
                           >
                             <div className="flex items-baseline gap-1">
-                              {cartItem.isRequired ? (
-                                <span className="text-[11px] text-tea-600 font-medium">
-                                  메인 상품
-                                </span>
-                              ) : (
-                                <span className="text-[11px] text-tea-600 font-medium">
-                                  선택 옵션
-                                </span>
-                              )}
+                              <span className="text-[11px] text-tea-600 font-medium">구성</span>
 
                               <span className="text-[11px] text-warm-300">|</span>
                               <span className="text-[12px] text-brand-700">
-                                {cartItem.optionName}
+                                {cartItem.optionLabel}
                               </span>
                             </div>
                             <div className="flex items-center justify-between">
@@ -159,7 +151,7 @@ const CartModileView = () => {
                               <div className="flex items-center gap-2">
                                 {/* 금액 */}
                                 <span className="text-[13px] font-semibold text-brand-900 tabular-nums">
-                                  {localeFormat(cartItem.optionPrice)}원
+                                  {localeFormat(cartItem.price)}원
                                 </span>
                                 {/* 삭제 버튼 */}
                                 <button

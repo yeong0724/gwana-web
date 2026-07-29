@@ -83,7 +83,7 @@ export interface User {
 
 export type Inquiry = {
   inquiryId: number;
-  productId: string | null;
+  productId: number | null;
   productName: string | null;
   title: string;
   content: string;
@@ -106,7 +106,7 @@ export type Review = {
   reviewId: number;
 
   // 리뷰 대상 상품 ID
-  productId: string;
+  productId: number;
 
   // 리뷰 내용
   content: string;
@@ -145,31 +145,28 @@ export type DragScrollType = {
   };
 };
 
-export interface ProductOption {
-  productOptionId: string;
-  productId: string | null;
-  optionName: string;
-  optionPrice: number;
-  isRequired: boolean;
-  isQuantityAdjustable: boolean;
-}
-
-export interface Purchase extends ProductOption {
+// 판매 단위(variant) 선택 = 구매 항목
+export interface Purchase {
+  productVariantId: number;
+  productId: number;
+  optionLabel: string;
+  price: number;
+  status?: string;
   quantity: number;
 }
 
 export interface CartItem extends Purchase {
-  cartItemId: string;
+  cartItemId: number;
+  cartId?: number;
 }
 
 export type Cart = {
-  cartId: string;
-  productId: string;
-  productName: string;
-  categoryId: string;
+  cartId: number;
+  productId: number;
+  name: string;
+  categoryId: number;
   categoryName: string;
-  images: string[];
-  price: number;
+  thumbnailUrl: string | null;
   shippingPrice: number;
   cartItems: CartItem[];
 };
@@ -212,7 +209,7 @@ export type OrderItem = {
   productName: string;
   productThumbnailUrl: string;
   categoryName: string;
-  productOptionId: string;
+  productVariantId: number;
   optionName: string;
   optionPrice: number;
   quantity: number;
@@ -228,7 +225,7 @@ export type OrderOptionGroup = {
 };
 
 export type OrderOption = {
-  productOptionId: number;
+  productVariantId: number;
   optionName: string;
   optionPrice: number;
   quantity: number;

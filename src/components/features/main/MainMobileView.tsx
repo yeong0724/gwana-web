@@ -580,7 +580,7 @@ const MainMobileView = () => {
           </motion.p>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 items-start">
-            {filter(productList, { categoryId: 'substituteTea' }).map((product) => (
+            {filter(productList, { categorySlug: 'substituteTea' }).map((product) => (
               <ProductCard
                 key={product.productId}
                 product={product}

@@ -2,23 +2,34 @@ import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
 import {
   createProduct,
+  createProductAddon,
+  deleteProductAddon,
   deleteProductImage,
-  deleteProductOption,
+  deleteProductVariant,
+  getAdminProductDetail,
+  getAdminProductList,
+  getProductAddons,
   getProductDetail,
   getProductInquiryList,
   getProductList,
   updateProduct,
+  updateProductAddon,
+  updateProductStatus,
   uploadProductImage,
 } from '@/api/product';
 import {
   Inquiry,
   Product,
+  ProductAddon,
+  ProductAddonDeleteRequest,
+  ProductAddonUpsertRequest,
   ProductDetailRequest,
   ProductDetailResponse,
   ProductImageDeleteRequest,
   ProductInquiryListSearchRequest,
   ProductListRequest,
-  ProductOptionDeleteRequest,
+  ProductStatusUpdateRequest,
+  ProductVariantDeleteRequest,
   ProductUpdateRequest,
   UseInfiniteQueryCustomOptions,
   UseMutationCustomOptions,
@@ -31,7 +42,7 @@ const useProductService = () => {
     options?: UseQueryCustomOptions<Product[]>
   ) => {
     return useQuery({
-      queryKey: ['productList', payload.categoryId],
+      queryKey: ['productList', payload.categorySlug],
       queryFn: () => getProductList(payload),
       ...options,
     });
@@ -48,6 +59,64 @@ const useProductService = () => {
     });
   };
 
+  const useAdminProductListQuery = (
+    payload: ProductListRequest,
+    options?: UseQueryCustomOptions<Product[]>
+  ) => {
+    return useQuery({
+      queryKey: ['adminProductList', payload.categorySlug],
+      queryFn: () => getAdminProductList(payload),
+      ...options,
+    });
+  };
+
+  const useUpdateProductStatusMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductStatusUpdateRequest) => updateProductStatus(param),
+      ...options,
+    });
+  };
+
+  const useAdminProductDetailQuery = (
+    payload: ProductDetailRequest,
+    options?: UseQueryCustomOptions<ProductDetailResponse>
+  ) => {
+    return useQuery({
+      queryKey: ['adminProductDetail', payload.productId],
+      queryFn: () => getAdminProductDetail(payload),
+      ...options,
+    });
+  };
+
+  const useProductAddonsQuery = (options?: UseQueryCustomOptions<ProductAddon[]>) => {
+    return useQuery({
+      queryKey: ['productAddons'],
+      queryFn: () => getProductAddons(),
+      ...options,
+    });
+  };
+
+  const useCreateProductAddonMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductAddonUpsertRequest) => createProductAddon(param),
+      ...options,
+    });
+  };
+
+  const useUpdateProductAddonMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductAddonUpsertRequest) => updateProductAddon(param),
+      ...options,
+    });
+  };
+
+  const useDeleteProductAddonMutation = (options?: UseMutationCustomOptions<void>) => {
+    return useMutation({
+      mutationFn: (param: ProductAddonDeleteRequest) => deleteProductAddon(param),
+      ...options,
+    });
+  };
+
   const useUploadProductImagedMutation = (options?: UseMutationCustomOptions<string>) => {
     return useMutation({
       mutationFn: (param: FormData) => uploadProductImage(param),
@@ -55,7 +124,7 @@ const useProductService = () => {
     });
   };
 
-  const useCreateProductMutation = (options?: UseMutationCustomOptions<void>) => {
+  const useCreateProductMutation = (options?: UseMutationCustomOptions<ProductDetailResponse>) => {
     return useMutation({
       mutationFn: (param: ProductUpdateRequest) => createProduct(param),
       ...options,
@@ -76,9 +145,9 @@ const useProductService = () => {
     });
   };
 
-  const useDeleteProductOptionMutation = (options?: UseMutationCustomOptions<void>) => {
+  const useDeleteProductVariantMutation = (options?: UseMutationCustomOptions<void>) => {
     return useMutation({
-      mutationFn: (param: ProductOptionDeleteRequest) => deleteProductOption(param),
+      mutationFn: (param: ProductVariantDeleteRequest) => deleteProductVariant(param),
       ...options,
     });
   };
@@ -98,12 +167,19 @@ const useProductService = () => {
 
   return {
     useProductListQuery,
+    useAdminProductListQuery,
+    useUpdateProductStatusMutation,
+    useAdminProductDetailQuery,
     useProductDetailQuery,
+    useProductAddonsQuery,
+    useCreateProductAddonMutation,
+    useUpdateProductAddonMutation,
+    useDeleteProductAddonMutation,
     useUploadProductImagedMutation,
     useCreateProductMutation,
     useUpdateProductMutation,
     useDeleteProductImageMutation,
-    useDeleteProductOptionMutation,
+    useDeleteProductVariantMutation,
     useGetProductInquiryListInfiniteQuery,
   };
 };

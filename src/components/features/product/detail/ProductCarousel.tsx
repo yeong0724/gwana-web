@@ -35,23 +35,23 @@ const ProductCarousel = ({ product }: Props) => {
 
   return (
     <div className="flex-1">
-      {product?.images && product.images.length > 0 ? (
+      {product?.galleryImages && product.galleryImages.length > 0 ? (
         <div className="w-full group">
           <Carousel
             className="w-full relative"
             setApi={setCarouselApi}
             opts={{
               align: 'start',
-              loop: product.images.length > 1,
+              loop: product.galleryImages.length > 1,
             }}
           >
             <CarouselContent>
-              {product.images.map((image, index) => (
+              {product.galleryImages.map((image, index) => (
                 <CarouselItem key={index}>
                   <div className="relative w-full aspect-square">
                     <Image
                       src={`${AWS_S3_DOMAIN}${image}`}
-                      alt={`${product.productName} ${index + 1}`}
+                      alt={`${product.name} ${index + 1}`}
                       fill
                       className="object-cover"
                       sizes="100vw"
@@ -61,14 +61,14 @@ const ProductCarousel = ({ product }: Props) => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {product.images.length > 1 && (
+            {product.galleryImages.length > 1 && (
               <>
                 <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
                 <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
               </>
             )}
             {/* 페이지 인디케이터 — 이미지 2장 이상일 때만 노출 */}
-            {product.images.length > 1 && (
+            {product.galleryImages.length > 1 && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
                 <div className="flex items-center px-2 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-white text-[12px] font-medium tabular-nums pointer-events-auto leading-none">
                   <button
@@ -82,7 +82,7 @@ const ProductCarousel = ({ product }: Props) => {
                   <div className="flex items-center gap-1 px-2.5">
                     <span className="min-w-[1ch] text-center">{current + 1}</span>
                     <span className="text-white/55">|</span>
-                    <span>{product.images.length}</span>
+                    <span>{product.galleryImages.length}</span>
                   </div>
                   <button
                     type="button"

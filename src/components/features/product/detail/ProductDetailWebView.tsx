@@ -6,6 +6,7 @@ import { Share2, X } from 'lucide-react';
 
 import { OptionDropdown } from '@/components/common/form';
 import { Button } from '@/components/ui/button';
+import { customerStatusBadge } from '@/constants/options';
 import {
   Carousel,
   CarouselContent,
@@ -19,7 +20,9 @@ import { useControllerContext, useStateContext } from '@/context/productDetailCo
 import { localeFormat } from '@/lib/utils';
 
 const ProductDetailWebView = () => {
-  const { product, optionalOptions, requiredOptions, purchaseList, totalPrice } = useStateContext();
+  const { product, isPurchasable, optionalOptions, requiredOptions, purchaseList, totalPrice } =
+    useStateContext();
+  const statusBadge = customerStatusBadge[product.status];
   const {
     handleShare,
     onOptionSelect,
@@ -48,23 +51,23 @@ const ProductDetailWebView = () => {
         <div className="flex flex-row gap-20">
           {/* 좌측: 이미지 캐러셀 */}
           <div className="flex-[0_0_50%]">
-            {product?.images && product.images.length > 0 ? (
+            {product?.galleryImages && product.galleryImages.length > 0 ? (
               <div className="w-full group">
                 <Carousel
                   className="w-full relative"
                   setApi={setCarouselApi}
                   opts={{
                     align: 'start',
-                    loop: product.images.length > 1,
+                    loop: product.galleryImages.length > 1,
                   }}
                 >
                   <CarouselContent>
-                    {product.images.map((image, index) => (
+                    {product.galleryImages.map((image, index) => (
                       <CarouselItem key={index}>
                         <div className="relative w-full aspect-square">
                           <Image
                             src={`${AWS_S3_DOMAIN}${image}`}
-                            alt={`${product.productName} ${index + 1}`}
+                            alt={`${product.name} ${index + 1}`}
                             fill
                             className="object-cover"
                             sizes="50vw"
@@ -74,20 +77,20 @@ const ProductDetailWebView = () => {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  {product.images.length > 1 && (
+                  {product.galleryImages.length > 1 && (
                     <>
                       <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
                       <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 disabled:opacity-0 transition-opacity" />
                     </>
                   )}
                   {/* 페이지 인디케이터 - 캐러셀 안쪽 하단 */}
-                  {product.images.length > 1 && (
+                  {product.galleryImages.length > 1 && (
                     <div className="absolute bottom-4 left-4 right-4 flex justify-center">
                       <div className="w-3/4 relative h-[3px] bg-brand-900/30 overflow-hidden">
                         <div
                           className="absolute left-0 h-full bg-brand-900 transition-all duration-300 ease-out"
                           style={{
-                            width: `${((current + 1) / product.images.length) * 100}%`,
+                            width: `${((current + 1) / product.galleryImages.length) * 100}%`,
                           }}
                         />
                       </div>
@@ -121,10 +124,17 @@ const ProductDetailWebView = () => {
             </div>
 
             {/* 상품명 */}
-            <h1 className="text-[24px] font-bold mb-[15px]">{product.productName}</h1>
+            <div className="flex items-center gap-2 mb-[15px]">
+              {statusBadge && (
+                <span className="shrink-0 rounded-sm bg-warm-800 px-2 py-0.5 text-[13px] font-semibold text-white">
+                  {statusBadge}
+                </span>
+              )}
+              <h1 className="text-[24px] font-bold">{product.name}</h1>
+            </div>
 
             {/* 가격 */}
-            <div className="text-[22px] mb-6">{localeFormat(product.price)}원</div>
+            <div className="text-[22px] mb-6">{localeFormat(product.displayPrice)}원</div>
 
             {/* 배송비 정보 */}
             <div className="mb-6 pb-6">
@@ -176,15 +186,15 @@ const ProductDetailWebView = () => {
               <div className="space-y-3 mb-6">
                 {map(
                   purchaseList,
-                  ({ productOptionId, optionName, quantity, optionPrice, isRequired }, index) => (
+                  ({ productVariantId, optionLabel, quantity, price }, index) => (
                     <div
-                      key={`${productOptionId}-${index}`}
+                      key={`${productVariantId}-${index}`}
                       className="border border-brand-200/60 bg-brand-50 p-4 space-y-3"
                     >
                       {/* 이름 + X버튼 */}
                       <div className="flex items-start justify-between">
-                        <span className="text-sm font-medium text-brand-800">{optionName}</span>
-                        {(size(requiredOptions) > 1 || !isRequired) && (
+                        <span className="text-sm font-medium text-brand-800">{optionLabel}</span>
+                        {size(requiredOptions) > 1 && (
                           <button
                             type="button"
                             onClick={() => {
@@ -223,7 +233,7 @@ const ProductDetailWebView = () => {
                           </Button>
                         </div>
                         <span className="text-base font-semibold">
-                          {localeFormat(optionPrice * quantity)}원
+                          {localeFormat(price * quantity)}원
                         </span>
                       </div>
                     </div>
@@ -239,20 +249,29 @@ const ProductDetailWebView = () => {
             </div>
 
             {/* 버튼 영역 */}
-            <div className="flex">
+            {isPurchasable ? (
+              <div className="flex">
+                <Button
+                  onClick={handleAddToCart}
+                  className="flex-[0_0_35%] h-12 text-base bg-brand-900 text-white hover:bg-brand-800 rounded-none rounded-l-none cursor-pointer"
+                >
+                  장바구니
+                </Button>
+                <Button
+                  onClick={handlePurchase}
+                  className="flex-[0_0_65%] h-12 text-base bg-tea-500 text-white hover:bg-tea-600 rounded-none rounded-r-none cursor-pointer"
+                >
+                  구매하기
+                </Button>
+              </div>
+            ) : (
               <Button
-                onClick={handleAddToCart}
-                className="flex-[0_0_35%] h-12 text-base bg-brand-900 text-white hover:bg-brand-800 rounded-none rounded-l-none cursor-pointer"
+                disabled
+                className="h-12 w-full text-base bg-warm-300 text-white rounded-none disabled:opacity-100"
               >
-                장바구니
+                {statusBadge ?? '구매 불가'}
               </Button>
-              <Button
-                onClick={handlePurchase}
-                className="flex-[0_0_65%] h-12 text-base bg-tea-500 text-white hover:bg-tea-600 rounded-none rounded-r-none cursor-pointer"
-              >
-                구매하기
-              </Button>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -278,7 +297,7 @@ const ProductDetailWebView = () => {
 
         {/* 상세 이미지 영역 */}
         <div className="w-full space-y-0 md:px-12">
-          {product.infos.map((image, index) => (
+          {product.detailImages.map((image, index) => (
             <div key={index} className="relative w-full">
               <Image
                 src={`${AWS_S3_DOMAIN}${image}`}

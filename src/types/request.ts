@@ -1,5 +1,4 @@
 import { SortByEnum, YesOrNoEnum } from './enum';
-import { ProductDetailResponse } from './response';
 
 export interface GetAccessTokenByKakaoCodeRequest {
   code: string;
@@ -13,21 +12,58 @@ export interface LoginRequest {
 export type Non = object;
 
 export interface ProductListRequest {
-  categoryId: string;
+  categorySlug: string | null;
 }
 
 export interface ProductDetailRequest {
-  productId: string;
+  productId: number;
 }
 
-export type ProductUpdateRequest = ProductDetailResponse;
+export interface VariantUpsertRequest {
+  productVariantId?: number | null;
+  optionLabel: string;
+  price: number;
+  status?: string;
+  sortOrder?: number;
+  thumbnailUrl?: string | null;
+}
+
+export interface ProductUpdateRequest {
+  productId?: number;
+  categoryId: number;
+  name: string;
+  summary?: string | null;
+  detailContent?: string | null;
+  status?: string;
+  shippingPrice?: number;
+  variants: VariantUpsertRequest[];
+  galleryUrls: string[];
+  detailUrls: string[];
+  addonIds: number[];
+}
 
 export type ProductImageDeleteRequest = {
   imageUrl: string;
 };
 
-export type ProductOptionDeleteRequest = {
-  productOptionId: string;
+export type ProductVariantDeleteRequest = {
+  productVariantId: number;
+  productId: number;
+};
+
+export interface ProductAddonUpsertRequest {
+  productAddonId?: number | null;
+  name: string;
+  price: number;
+}
+
+export type ProductAddonDeleteRequest = {
+  productAddonId: number;
+};
+
+export type ProductStatusUpdateRequest = {
+  productId: number;
+  status: string;
 };
 
 export interface ValidateTokenRequest {
@@ -36,30 +72,30 @@ export interface ValidateTokenRequest {
 
 /* 장바구니 */
 export interface UpdateCartRequest {
-  productId: string;
-  optionId: string | null;
+  productId: number;
+  productVariantId: number | null;
   quantity: number;
 }
 
 export interface UpsertCartRequest {
-  productId: string;
+  productId: number;
   cartItems: {
-    productOptionId: string;
+    productVariantId: number;
     quantity: number;
   }[];
 }
 
 export interface UpdateCartItemQuantityRequest {
-  cartItemId: string;
+  cartItemId: number;
   quantity: number;
 }
 
 export interface DeleteCartItemRequest {
-  cartItemId: string;
+  cartItemId: number;
 }
 
 export interface DeleteCartRequest {
-  cartId: string;
+  cartId: number;
 }
 
 export interface KakaoLogoutRequest {
@@ -67,7 +103,7 @@ export interface KakaoLogoutRequest {
 }
 
 export interface CreatePaymentSessionRequest {
-  productId: string;
+  productVariantId: number;
   quantity: number;
 }
 
@@ -119,7 +155,8 @@ export interface CreateInquiryRequest {
 }
 
 export interface ReviewCreateRequest {
-  productId: string;
+  productId: number;
+  productVariantId?: number | null;
   content: string;
   rating: number;
   reviewImages: string[];
@@ -134,7 +171,7 @@ export type InquiryListSearchRequest = {
 };
 
 export type ProductInquiryListSearchRequest = {
-  productId: string;
+  productId: number;
   excludeSecret: string;
   isAnswered: string;
   page: number;
@@ -146,7 +183,7 @@ export type InquirySearchRequest = {
 };
 
 export type ReviewListSearchRequest = {
-  productId: string;
+  productId: number;
   sortBy: SortByEnum;
   photoOnly: boolean;
   page: number;

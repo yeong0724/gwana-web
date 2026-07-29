@@ -331,14 +331,14 @@ const PaymentContainer = ({ orderId }: Props) => {
                           <div className="mx-4 mb-3 space-y-1.5">
                             {orderOptions.map(
                               ({
-                                productOptionId,
+                                productVariantId,
                                 optionName,
                                 optionPrice,
                                 quantity,
                                 isRequired,
                               }) => (
                                 <div
-                                  key={productOptionId}
+                                  key={productVariantId}
                                   className="bg-gray-50 rounded-lg px-3 py-2.5 flex items-start justify-between gap-3"
                                 >
                                   <div className="flex items-start gap-2 min-w-0 flex-1">
